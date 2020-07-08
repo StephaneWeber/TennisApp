@@ -5,6 +5,7 @@ import com.sweber.tennis.model.Config;
 public enum Shoes {
     BASIC_SHOES(new Config(3, 0, 0, 0, 0, 0, 0)),
     FEATHER(new Config(18, 0, 0, 0, 0, 0, 0)),
+    FEATHER_2(new Config(23, 0, 0, 0, 0, 0, 2500)),
     RAPTOR(new Config(24, 6, 0, 0, 0, 0, 0)),
     RAPTOR_2(new Config(29, 6, 0, 0, 0, 0, 10900)),
     HUNTER(new Config(9, 0, 4, 0, 0, 0, 0)),

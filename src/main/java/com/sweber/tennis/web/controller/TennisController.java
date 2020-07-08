@@ -29,20 +29,38 @@ public class TennisController {
     }
 
     private void initModel(Model model) {
+        ConfigFilter configFilter = new ConfigFilter();
+        configFilter.setMinService(20);
+        configFilter.setMinForehand(20);
+        configFilter.setMinBackhand(20);
+        configFilter.setUpgradeAllowed(0);
+
+        List<FullConfig> fullConfigs = generateConfigs(configFilter);
+
         model.addAttribute("appName", appName);
-        model.addAttribute("list", new ArrayList<>());
+        model.addAttribute("list", fullConfigs);
         model.addAttribute("playerList", Player.values());
-        model.addAttribute("configFilter", new ConfigFilter());
+        model.addAttribute("configFilter", configFilter);
     }
 
     @PostMapping("/resetFilters")
     public String resetFilters(Model model) {
         initModel(model);
-        return "home";
+        return HOME_PAGE;
     }
 
     @PostMapping("/")
-    public String postVerification(ConfigFilter configFilter, Model model, HttpServletRequest httpServletRequest) {
+    public String postVerification(ConfigFilter configFilter, Model model) {
+        List<FullConfig> fullConfigs = generateConfigs(configFilter);
+
+        model.addAttribute("appName", appName);
+        model.addAttribute("list", fullConfigs);
+        model.addAttribute("playerList", Player.values());
+        model.addAttribute("configFilter", configFilter);
+        return HOME_PAGE;
+    }
+
+    private List<FullConfig> generateConfigs(ConfigFilter configFilter) {
         List<FullConfig> fullConfigs;
         ConfigGenerator configGenerator = new ConfigGenerator();
         String player = configFilter.getPlayer();
@@ -54,12 +72,7 @@ public class TennisController {
         } else {
             fullConfigs = configGenerator.generateAllConfigs(null, minConfig, minTotal, upgradeAllowed);
         }
-
-        model.addAttribute("appName", appName);
-        model.addAttribute("list", fullConfigs);
-        model.addAttribute("playerList", Player.values());
-        model.addAttribute("configFilter", configFilter);
-        return HOME_PAGE;
+        return fullConfigs;
     }
 
     private Config createMinConfig(ConfigFilter configFilter) {
