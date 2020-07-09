@@ -4,6 +4,7 @@ import com.sweber.tennis.model.Config;
 
 public enum Nutrition {
     BASIC_NUTRITION(new Config(0, 0, 0, 0, 0, 0, 0)),
+    PROTEIN(new Config(0, 13, 0, 0, 0, 0, 0)),
     HYDRATION(new Config(0, 10, 0, 0, 4, 0, 0)),
     HYDRATION_2(new Config(0, 14, 0, 0, 4, 0, 7200)),
     MACROBIOTICS(new Config(0, 0, 0, 11, 0, 0, 0)),
