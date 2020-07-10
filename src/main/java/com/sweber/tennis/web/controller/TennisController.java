@@ -11,8 +11,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -30,9 +28,11 @@ public class TennisController {
 
     private void initModel(Model model) {
         ConfigFilter configFilter = new ConfigFilter();
+        configFilter.setMinAgility(20);
         configFilter.setMinService(20);
         configFilter.setMinForehand(20);
         configFilter.setMinBackhand(20);
+        configFilter.setMinTotal(150);
         configFilter.setUpgradeAllowed(0);
 
         List<FullConfig> fullConfigs = generateConfigs(configFilter);
