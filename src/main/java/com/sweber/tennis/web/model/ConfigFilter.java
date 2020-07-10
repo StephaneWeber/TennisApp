@@ -10,6 +10,7 @@ public class ConfigFilter {
     private int minVolley;
     private int minForehand;
     private int minBackhand;
+    private int maxLevel;
 
     public String getPlayer() {
         return player;
@@ -81,5 +82,13 @@ public class ConfigFilter {
 
     public void setMinBackhand(int minBackhand) {
         this.minBackhand = minBackhand;
+    }
+
+    public int getMaxLevel() {
+        return maxLevel;
+    }
+
+    public void setMaxLevel(int maxLevel) {
+        this.maxLevel = maxLevel;
     }
 }

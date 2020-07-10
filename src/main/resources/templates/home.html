@@ -36,6 +36,14 @@
                                        class="form-control midWidth"/></td>
                         </tr>
                         <tr>
+                            <td>Max level</td>
+                            <td>
+                                <input id="maxLevel" type="range" name="maxLevel" min="5" max="13"
+                                       th:field="*{maxLevel}">
+                                <span id="maxLevelVal">0</span>
+                            </td>
+                        </tr>
+                        <tr>
                             <td>Min total</td>
                             <td><input id="minTotal" type="number" th:field="*{minTotal}"
                                        class="form-control midWidth"/>
@@ -162,12 +170,14 @@
     var volleySlider = document.getElementById("minVolley");
     var forehandSlider = document.getElementById("minForehand");
     var backhandSlider = document.getElementById("minBackhand");
+    var maxLevelSlider = document.getElementById("maxLevel");
     var agilitySliderOutput = document.getElementById("minAgilityVal");
     var enduranceSliderOutput = document.getElementById("minEnduranceVal");
     var serveSliderOutput = document.getElementById("minServiceVal");
     var volleySliderOutput = document.getElementById("minVolleyVal");
     var forehandSliderOutput = document.getElementById("minForehandVal");
     var backhandSliderOutput = document.getElementById("minBackhandVal");
+    var maxLevelSliderOutput = document.getElementById("maxLevelVal");
 
     // Update the current slider value (each time you drag the slider handle)
     agilitySliderOutput.innerHTML = agilitySlider.value;
@@ -193,6 +203,10 @@
     backhandSliderOutput.innerHTML = backhandSlider.value;
     backhandSlider.oninput = function () {
         backhandSliderOutput.innerHTML = this.value;
+    }
+    maxLevelSliderOutput.innerHTML = maxLevelSlider.value;
+    maxLevelSlider.oninput = function () {
+        maxLevelSliderOutput.innerHTML = this.value;
     }
 </script>
 </body>

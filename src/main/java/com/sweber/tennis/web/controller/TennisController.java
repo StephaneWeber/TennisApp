@@ -1,10 +1,10 @@
 package com.sweber.tennis.web.controller;
 
-import com.sweber.tennis.model.Config;
-import com.sweber.tennis.model.FullConfig;
+import com.sweber.tennis.config.Config;
 import com.sweber.tennis.model.Player;
 import com.sweber.tennis.service.ConfigGenerator;
 import com.sweber.tennis.web.model.ConfigFilter;
+import com.sweber.tennis.web.model.FullConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,6 +34,7 @@ public class TennisController {
         configFilter.setMinBackhand(20);
         configFilter.setMinTotal(150);
         configFilter.setUpgradeAllowed(0);
+        configFilter.setMaxLevel(6);
 
         List<FullConfig> fullConfigs = generateConfigs(configFilter);
 
@@ -66,11 +67,12 @@ public class TennisController {
         String player = configFilter.getPlayer();
         int minTotal = configFilter.getMinTotal();
         int upgradeAllowed = configFilter.getUpgradeAllowed();
+        int maxLevel = configFilter.getMaxLevel();
         Config minConfig = createMinConfig(configFilter);
         if (player != null && !player.isEmpty()) {
-            fullConfigs = configGenerator.generateAllConfigs(Player.valueOf(player), minConfig, minTotal, upgradeAllowed);
+            fullConfigs = configGenerator.generateAllConfigs(Player.valueOf(player), minConfig, minTotal, maxLevel, upgradeAllowed);
         } else {
-            fullConfigs = configGenerator.generateAllConfigs(null, minConfig, minTotal, upgradeAllowed);
+            fullConfigs = configGenerator.generateAllConfigs(null, minConfig, minTotal, maxLevel, upgradeAllowed);
         }
         return fullConfigs;
     }
@@ -82,6 +84,6 @@ public class TennisController {
                 configFilter.getMinVolley(),
                 configFilter.getMinForehand(),
                 configFilter.getMinBackhand(),
-                0);
+                0, 0);
     }
 }

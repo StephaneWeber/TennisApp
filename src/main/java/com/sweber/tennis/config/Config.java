@@ -1,4 +1,4 @@
-package com.sweber.tennis.model;
+package com.sweber.tennis.config;
 
 public class Config {
     private final int agility;
@@ -8,8 +8,9 @@ public class Config {
     private final int forehand;
     private final int backhand;
     private final int cost;
+    private final int level;
 
-    public Config(int agility, int endurance, int service, int volley, int forehand, int backhand, int cost) {
+    public Config(int agility, int endurance, int service, int volley, int forehand, int backhand, int cost, int level) {
         this.agility = agility;
         this.endurance = endurance;
         this.service = service;
@@ -17,6 +18,7 @@ public class Config {
         this.forehand = forehand;
         this.backhand = backhand;
         this.cost = cost;
+        this.level = level;
     }
 
     public int getAgility() {
@@ -47,6 +49,10 @@ public class Config {
         return cost;
     }
 
+    public int getLevel() {
+        return level;
+    }
+
     @Override
     public String toString() {
         return "Config{" +
@@ -57,6 +63,7 @@ public class Config {
                 ", forehand=" + forehand +
                 ", backhand=" + backhand +
                 ", cost=" + cost +
+                ", level=" + level +
                 '}';
     }
 }

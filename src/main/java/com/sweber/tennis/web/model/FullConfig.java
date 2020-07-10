@@ -1,11 +1,17 @@
-package com.sweber.tennis.model;
+package com.sweber.tennis.web.model;
 
+import com.sweber.tennis.config.Config;
+import com.sweber.tennis.model.Player;
 import com.sweber.tennis.model.gear.Grip;
 import com.sweber.tennis.model.gear.Nutrition;
 import com.sweber.tennis.model.gear.Racket;
 import com.sweber.tennis.model.gear.Shoes;
 import com.sweber.tennis.model.gear.Training;
 import com.sweber.tennis.model.gear.Wrist;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 public class FullConfig {
     private Player player;
@@ -69,6 +75,10 @@ public class FullConfig {
         return config.getCost();
     }
 
+    public int getLevel() {
+        return config.getLevel();
+    }
+
     private void computeConfig() {
         int agility = player.getConfig().getAgility() + racket.getConfig().getAgility() + grip.getConfig().getAgility() + shoes.getConfig().getAgility() + wrist.getConfig().getAgility() + nutrition.getConfig().getAgility() + training.getConfig().getAgility();
         int endurance = player.getConfig().getEndurance() + racket.getConfig().getEndurance() + grip.getConfig().getEndurance() + shoes.getConfig().getEndurance() + wrist.getConfig().getEndurance() + nutrition.getConfig().getEndurance() + training.getConfig().getEndurance();
@@ -77,8 +87,16 @@ public class FullConfig {
         int forehand = player.getConfig().getForehand() + racket.getConfig().getForehand() + grip.getConfig().getForehand() + shoes.getConfig().getForehand() + wrist.getConfig().getForehand() + nutrition.getConfig().getForehand() + training.getConfig().getForehand();
         int backhand = player.getConfig().getBackhand() + racket.getConfig().getBackhand() + grip.getConfig().getBackhand() + shoes.getConfig().getBackhand() + wrist.getConfig().getBackhand() + nutrition.getConfig().getBackhand() + training.getConfig().getBackhand();
         int cost = player.getConfig().getCost() + racket.getConfig().getCost() + grip.getConfig().getCost() + shoes.getConfig().getCost() + wrist.getConfig().getCost() + nutrition.getConfig().getCost() + training.getConfig().getCost();
-        config = new Config(agility, endurance, service, volley, forehand, backhand, cost);
+        config = new Config(agility, endurance, service, volley, forehand, backhand, cost, computeMaxLevel());
         value = agility + endurance + service + volley + forehand + backhand;
+    }
+
+    public int computeMaxLevel() {
+        List<Integer> listOfLevels = Arrays.asList(player.getConfig().getLevel(), racket.getConfig().getLevel(), grip.getConfig().getLevel(), shoes.getConfig().getLevel(), wrist.getConfig().getLevel(), nutrition.getConfig().getCost(), training.getConfig().getLevel());
+        return listOfLevels
+                .stream()
+                .mapToInt(v -> v)
+                .max().orElseThrow(NoSuchElementException::new);
     }
 
     @Override
@@ -107,8 +125,15 @@ public class FullConfig {
     }
 
     public boolean upgradeAllowed(int maxUpgradesAllowed) {
-        String fullName = player.name() + racket.name() + grip.name() + shoes.name() + wrist.name() + nutrition.name() + training.name();
-        long count = fullName.chars().filter(ch -> ch == '2').count();
-        return count <= maxUpgradesAllowed;
+        //TODO Reimplement this based on OwnedGear!
+//        OwnedGear
+//        String fullName = player.name() + racket.name() + grip.name() + shoes.name() + wrist.name() + nutrition.name() + training.name();
+//        long count = fullName.chars().filter(ch -> ch == '2').count();
+//        return count <= maxUpgradesAllowed;µ
+        return true;
+    }
+
+    public boolean maxLevelRespected(Integer maxLevel) {
+        return config.getLevel() <= maxLevel;
     }
 }
