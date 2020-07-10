@@ -18,5 +18,6 @@ class ConfigGeneratorTest {
 //        assertThat(fullConfigs).hasSize(3);
         long end = System.currentTimeMillis();
         System.out.println((end - start)); // 14125 configs - 30,151 sec
+        // branch -> 926 - 80154
     }
 }

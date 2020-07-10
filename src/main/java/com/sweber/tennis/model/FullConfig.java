@@ -86,7 +86,7 @@ public class FullConfig {
         value = agility + endurance + service + volley + forehand + backhand;
     }
 
-    public int computeMaxLevel() {
+    private int computeMaxLevel() {
         List<Integer> listOfLevels = Arrays.asList(player.getConfig().getLevel(), racket.getConfig().getLevel(), grip.getConfig().getLevel(), shoes.getConfig().getLevel(), wristband.getConfig().getLevel(), nutrition.getConfig().getCost(), workout.getConfig().getLevel());
         return listOfLevels
                 .stream()
@@ -159,9 +159,5 @@ public class FullConfig {
             return false;
         }
         return numberOfUpgrades <= maxUpgradesAllowed;
-    }
-
-    public boolean maxLevelRespected(Integer maxLevel) {
-        return config.getLevel() <= maxLevel;
     }
 }

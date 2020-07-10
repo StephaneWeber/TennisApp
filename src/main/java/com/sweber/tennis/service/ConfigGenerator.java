@@ -1,13 +1,16 @@
 package com.sweber.tennis.service;
 
 import com.sweber.tennis.config.Config;
+import com.sweber.tennis.config.OwnedGear;
 import com.sweber.tennis.model.FullConfig;
 import com.sweber.tennis.model.Player;
 import com.sweber.tennis.model.gear.GearItem;
+import com.sweber.tennis.model.gear.GearType;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.sweber.tennis.model.Player.ALL;
 import static com.sweber.tennis.model.gear.GearType.GRIP;
@@ -36,16 +39,16 @@ public class ConfigGenerator {
 
     private List<FullConfig> generateAllConfigsForPlayer(Player player, Config minimumConfig, Integer minTotalValue, Integer maxLevel, Integer upgradesAllowed) {
         List<FullConfig> results = new ArrayList<>();
-        for (GearItem racket : GearItem.maxLevel(RACKET, maxLevel)) {
-            for (GearItem grip : GearItem.maxLevel(GRIP, maxLevel)) {
-                for (GearItem shoes : GearItem.maxLevel(SHOES, maxLevel)) {
-                    for (GearItem wristband : GearItem.maxLevel(WRISTBAND, maxLevel)) {
-                        for (GearItem nutrition : GearItem.maxLevel(NUTRITION, maxLevel)) {
-                            for (GearItem workout : GearItem.maxLevel(WORKOUT, maxLevel)) {
+        List<GearItem> leveledGearItems = GearItem.maxLevel(maxLevel);
+        for (GearItem racket : potentialGearItems(leveledGearItems, RACKET)) {
+            for (GearItem grip : potentialGearItems(leveledGearItems, GRIP)) {
+                for (GearItem shoes : potentialGearItems(leveledGearItems, SHOES)) {
+                    for (GearItem wristband : potentialGearItems(leveledGearItems, WRISTBAND)) {
+                        for (GearItem nutrition : potentialGearItems(leveledGearItems, NUTRITION)) {
+                            for (GearItem workout : potentialGearItems(leveledGearItems, WORKOUT)) {
                                 FullConfig fullConfig = new FullConfig(player, racket, grip, shoes, wristband, nutrition, workout);
                                 if (fullConfig.getValue() > (minTotalValue == null ? 0 : minTotalValue)
                                         && fullConfig.satisfies(minimumConfig)
-                                        && fullConfig.maxLevelRespected(maxLevel)
                                         && fullConfig.upgradeAllowed(upgradesAllowed == null ? 0 : upgradesAllowed)) {
                                     results.add(fullConfig);
                                 }
@@ -57,5 +60,13 @@ public class ConfigGenerator {
         }
         results.sort(Comparator.comparingInt(FullConfig::getValue).reversed());
         return results;
+    }
+
+    private static List<GearItem> potentialGearItems(List<GearItem> items, GearType gearType) {
+        return items
+                .stream()
+                .filter(item -> item.getGearType() == gearType)
+                .filter(item -> OwnedGear.isUpgradeableTo(item) != OwnedGear.UpgradeStatus.FORBIDDEN)
+                .collect(Collectors.toList());
     }
 }

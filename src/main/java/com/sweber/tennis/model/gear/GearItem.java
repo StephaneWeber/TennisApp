@@ -195,4 +195,10 @@ public enum GearItem {
                 .filter(item -> item.getGearType() == gearType)
                 .collect(Collectors.toList());
     }
+
+    public static List<GearItem> maxLevel(int maxLevel) {
+        return Arrays.stream(GearItem.values())
+                .filter(item -> item.getConfig().getLevel() <= maxLevel)
+                .collect(Collectors.toList());
+    }
 }
