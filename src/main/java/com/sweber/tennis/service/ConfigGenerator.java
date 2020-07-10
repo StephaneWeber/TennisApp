@@ -6,8 +6,8 @@ import com.sweber.tennis.model.gear.Grip;
 import com.sweber.tennis.model.gear.Nutrition;
 import com.sweber.tennis.model.gear.Racket;
 import com.sweber.tennis.model.gear.Shoes;
-import com.sweber.tennis.model.gear.Training;
-import com.sweber.tennis.model.gear.Wrist;
+import com.sweber.tennis.model.gear.Workout;
+import com.sweber.tennis.model.gear.Wristband;
 import com.sweber.tennis.web.model.FullConfig;
 
 import java.util.ArrayList;
@@ -35,13 +35,13 @@ public class ConfigGenerator {
 
     private List<FullConfig> generateAllConfigsForPlayer(Player player, Config minimumConfig, Integer minTotalValue, Integer maxLevel, Integer upgradesAllowed) {
         List<FullConfig> results = new ArrayList<>();
-        for (Racket racket : Racket.values()) {
-            for (Grip grip : Grip.values()) {
-                for (Shoes shoes : Shoes.values()) {
-                    for (Wrist wrist : Wrist.values()) {
-                        for (Nutrition nutrition : Nutrition.values()) {
-                            for (Training training : Training.values()) {
-                                FullConfig fullConfig = new FullConfig(player, racket, grip, shoes, wrist, nutrition, training);
+        for (Racket racket : Racket.maxLevel(maxLevel)) {
+            for (Grip grip : Grip.maxLevel(maxLevel)) {
+                for (Shoes shoes : Shoes.maxLevel(maxLevel)) {
+                    for (Wristband wristband : Wristband.maxLevel(maxLevel)) {
+                        for (Nutrition nutrition : Nutrition.maxLevel(maxLevel)) {
+                            for (Workout workout : Workout.maxLevel(maxLevel)) {
+                                FullConfig fullConfig = new FullConfig(player, racket, grip, shoes, wristband, nutrition, workout);
                                 if (fullConfig.getValue() > (minTotalValue == null ? 0 : minTotalValue)
                                         && fullConfig.satisfies(minimumConfig)
                                         && fullConfig.maxLevelRespected(maxLevel)

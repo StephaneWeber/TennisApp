@@ -1,13 +1,14 @@
 package com.sweber.tennis.web.model;
 
 import com.sweber.tennis.config.Config;
+import com.sweber.tennis.config.OwnedGear;
 import com.sweber.tennis.model.Player;
 import com.sweber.tennis.model.gear.Grip;
 import com.sweber.tennis.model.gear.Nutrition;
 import com.sweber.tennis.model.gear.Racket;
 import com.sweber.tennis.model.gear.Shoes;
-import com.sweber.tennis.model.gear.Training;
-import com.sweber.tennis.model.gear.Wrist;
+import com.sweber.tennis.model.gear.Workout;
+import com.sweber.tennis.model.gear.Wristband;
 
 import java.util.Arrays;
 import java.util.List;
@@ -18,20 +19,20 @@ public class FullConfig {
     private Racket racket;
     private Grip grip;
     private Shoes shoes;
-    private Wrist wrist;
+    private Wristband wristband;
     private Nutrition nutrition;
-    private Training training;
+    private Workout workout;
     private Config config;
     private int value;
 
-    public FullConfig(Player player, Racket racket, Grip grip, Shoes shoes, Wrist wrist, Nutrition nutrition, Training training) {
+    public FullConfig(Player player, Racket racket, Grip grip, Shoes shoes, Wristband wristband, Nutrition nutrition, Workout workout) {
         this.player = player;
         this.racket = racket;
         this.grip = grip;
         this.shoes = shoes;
-        this.wrist = wrist;
+        this.wristband = wristband;
         this.nutrition = nutrition;
-        this.training = training;
+        this.workout = workout;
         computeConfig();
     }
 
@@ -51,16 +52,16 @@ public class FullConfig {
         return shoes.name();
     }
 
-    public String getWrist() {
-        return wrist.name();
+    public String getWristband() {
+        return wristband.name();
     }
 
     public String getNutrition() {
         return nutrition.name();
     }
 
-    public String getTraining() {
-        return training.name();
+    public String getWorkout() {
+        return workout.name();
     }
 
     public Config getConfig() {
@@ -80,19 +81,19 @@ public class FullConfig {
     }
 
     private void computeConfig() {
-        int agility = player.getConfig().getAgility() + racket.getConfig().getAgility() + grip.getConfig().getAgility() + shoes.getConfig().getAgility() + wrist.getConfig().getAgility() + nutrition.getConfig().getAgility() + training.getConfig().getAgility();
-        int endurance = player.getConfig().getEndurance() + racket.getConfig().getEndurance() + grip.getConfig().getEndurance() + shoes.getConfig().getEndurance() + wrist.getConfig().getEndurance() + nutrition.getConfig().getEndurance() + training.getConfig().getEndurance();
-        int service = player.getConfig().getService() + racket.getConfig().getService() + grip.getConfig().getService() + shoes.getConfig().getService() + wrist.getConfig().getService() + nutrition.getConfig().getService() + training.getConfig().getService();
-        int volley = player.getConfig().getVolley() + racket.getConfig().getVolley() + grip.getConfig().getVolley() + shoes.getConfig().getVolley() + wrist.getConfig().getVolley() + nutrition.getConfig().getVolley() + training.getConfig().getVolley();
-        int forehand = player.getConfig().getForehand() + racket.getConfig().getForehand() + grip.getConfig().getForehand() + shoes.getConfig().getForehand() + wrist.getConfig().getForehand() + nutrition.getConfig().getForehand() + training.getConfig().getForehand();
-        int backhand = player.getConfig().getBackhand() + racket.getConfig().getBackhand() + grip.getConfig().getBackhand() + shoes.getConfig().getBackhand() + wrist.getConfig().getBackhand() + nutrition.getConfig().getBackhand() + training.getConfig().getBackhand();
-        int cost = player.getConfig().getCost() + racket.getConfig().getCost() + grip.getConfig().getCost() + shoes.getConfig().getCost() + wrist.getConfig().getCost() + nutrition.getConfig().getCost() + training.getConfig().getCost();
+        int agility = player.getConfig().getAgility() + racket.getConfig().getAgility() + grip.getConfig().getAgility() + shoes.getConfig().getAgility() + wristband.getConfig().getAgility() + nutrition.getConfig().getAgility() + workout.getConfig().getAgility();
+        int endurance = player.getConfig().getEndurance() + racket.getConfig().getEndurance() + grip.getConfig().getEndurance() + shoes.getConfig().getEndurance() + wristband.getConfig().getEndurance() + nutrition.getConfig().getEndurance() + workout.getConfig().getEndurance();
+        int service = player.getConfig().getService() + racket.getConfig().getService() + grip.getConfig().getService() + shoes.getConfig().getService() + wristband.getConfig().getService() + nutrition.getConfig().getService() + workout.getConfig().getService();
+        int volley = player.getConfig().getVolley() + racket.getConfig().getVolley() + grip.getConfig().getVolley() + shoes.getConfig().getVolley() + wristband.getConfig().getVolley() + nutrition.getConfig().getVolley() + workout.getConfig().getVolley();
+        int forehand = player.getConfig().getForehand() + racket.getConfig().getForehand() + grip.getConfig().getForehand() + shoes.getConfig().getForehand() + wristband.getConfig().getForehand() + nutrition.getConfig().getForehand() + workout.getConfig().getForehand();
+        int backhand = player.getConfig().getBackhand() + racket.getConfig().getBackhand() + grip.getConfig().getBackhand() + shoes.getConfig().getBackhand() + wristband.getConfig().getBackhand() + nutrition.getConfig().getBackhand() + workout.getConfig().getBackhand();
+        int cost = player.getConfig().getCost() + racket.getConfig().getCost() + grip.getConfig().getCost() + shoes.getConfig().getCost() + wristband.getConfig().getCost() + nutrition.getConfig().getCost() + workout.getConfig().getCost();
         config = new Config(agility, endurance, service, volley, forehand, backhand, cost, computeMaxLevel());
         value = agility + endurance + service + volley + forehand + backhand;
     }
 
     public int computeMaxLevel() {
-        List<Integer> listOfLevels = Arrays.asList(player.getConfig().getLevel(), racket.getConfig().getLevel(), grip.getConfig().getLevel(), shoes.getConfig().getLevel(), wrist.getConfig().getLevel(), nutrition.getConfig().getCost(), training.getConfig().getLevel());
+        List<Integer> listOfLevels = Arrays.asList(player.getConfig().getLevel(), racket.getConfig().getLevel(), grip.getConfig().getLevel(), shoes.getConfig().getLevel(), wristband.getConfig().getLevel(), nutrition.getConfig().getCost(), workout.getConfig().getLevel());
         return listOfLevels
                 .stream()
                 .mapToInt(v -> v)
@@ -106,9 +107,9 @@ public class FullConfig {
                 ", racket=" + racket +
                 ", grip=" + grip +
                 ", shoes=" + shoes +
-                ", wrist=" + wrist +
+                ", wristband=" + wristband +
                 ", nutrition=" + nutrition +
-                ", training=" + training +
+                ", workout=" + workout +
                 ", config=" + config +
                 ", value=" + value +
                 '}';
@@ -124,13 +125,46 @@ public class FullConfig {
                 && config.getBackhand() >= minimumConfig.getBackhand();
     }
 
+    //TODO cleanup
     public boolean upgradeAllowed(int maxUpgradesAllowed) {
-        //TODO Reimplement this based on OwnedGear!
-//        OwnedGear
-//        String fullName = player.name() + racket.name() + grip.name() + shoes.name() + wrist.name() + nutrition.name() + training.name();
-//        long count = fullName.chars().filter(ch -> ch == '2').count();
-//        return count <= maxUpgradesAllowed;µ
-        return true;
+        int numberOfUpgrades = 0;
+        OwnedGear.UpgradeStatus upgradeableToRacket = OwnedGear.isUpgradeableTo(racket);
+        if (upgradeableToRacket == OwnedGear.UpgradeStatus.UPGRADE) {
+            numberOfUpgrades++;
+        } else if (upgradeableToRacket == OwnedGear.UpgradeStatus.FORBIDDEN) {
+            return false;
+        }
+        OwnedGear.UpgradeStatus upgradeableToGrip = OwnedGear.isUpgradeableTo(grip);
+        if (upgradeableToGrip == OwnedGear.UpgradeStatus.UPGRADE) {
+            numberOfUpgrades++;
+        } else if (upgradeableToRacket == OwnedGear.UpgradeStatus.FORBIDDEN) {
+            return false;
+        }
+        OwnedGear.UpgradeStatus upgradeableToShoes = OwnedGear.isUpgradeableTo(shoes);
+        if (upgradeableToShoes == OwnedGear.UpgradeStatus.UPGRADE) {
+            numberOfUpgrades++;
+        } else if (upgradeableToRacket == OwnedGear.UpgradeStatus.FORBIDDEN) {
+            return false;
+        }
+        OwnedGear.UpgradeStatus upgradeableToWrist = OwnedGear.isUpgradeableTo(wristband);
+        if (upgradeableToWrist == OwnedGear.UpgradeStatus.UPGRADE) {
+            numberOfUpgrades++;
+        } else if (upgradeableToRacket == OwnedGear.UpgradeStatus.FORBIDDEN) {
+            return false;
+        }
+        OwnedGear.UpgradeStatus upgradeableToNutrition = OwnedGear.isUpgradeableTo(nutrition);
+        if (upgradeableToNutrition == OwnedGear.UpgradeStatus.UPGRADE) {
+            numberOfUpgrades++;
+        } else if (upgradeableToRacket == OwnedGear.UpgradeStatus.FORBIDDEN) {
+            return false;
+        }
+        OwnedGear.UpgradeStatus upgradeableToTraining = OwnedGear.isUpgradeableTo(workout);
+        if (upgradeableToTraining == OwnedGear.UpgradeStatus.UPGRADE) {
+            numberOfUpgrades++;
+        } else if (upgradeableToRacket == OwnedGear.UpgradeStatus.FORBIDDEN) {
+            return false;
+        }
+        return numberOfUpgrades <= maxUpgradesAllowed;
     }
 
     public boolean maxLevelRespected(Integer maxLevel) {
