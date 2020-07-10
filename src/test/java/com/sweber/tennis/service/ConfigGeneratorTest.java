@@ -1,8 +1,8 @@
 package com.sweber.tennis.service;
 
 import com.sweber.tennis.config.Config;
+import com.sweber.tennis.model.FullConfig;
 import com.sweber.tennis.model.Player;
-import com.sweber.tennis.web.model.FullConfig;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

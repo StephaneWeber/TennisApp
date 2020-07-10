@@ -1,20 +1,21 @@
 package com.sweber.tennis.service;
 
 import com.sweber.tennis.config.Config;
+import com.sweber.tennis.model.FullConfig;
 import com.sweber.tennis.model.Player;
-import com.sweber.tennis.model.gear.Grip;
-import com.sweber.tennis.model.gear.Nutrition;
-import com.sweber.tennis.model.gear.Racket;
-import com.sweber.tennis.model.gear.Shoes;
-import com.sweber.tennis.model.gear.Workout;
-import com.sweber.tennis.model.gear.Wristband;
-import com.sweber.tennis.web.model.FullConfig;
+import com.sweber.tennis.model.gear.GearItem;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 import static com.sweber.tennis.model.Player.ALL;
+import static com.sweber.tennis.model.gear.GearType.GRIP;
+import static com.sweber.tennis.model.gear.GearType.NUTRITION;
+import static com.sweber.tennis.model.gear.GearType.RACKET;
+import static com.sweber.tennis.model.gear.GearType.SHOES;
+import static com.sweber.tennis.model.gear.GearType.WORKOUT;
+import static com.sweber.tennis.model.gear.GearType.WRISTBAND;
 
 public class ConfigGenerator {
     public List<FullConfig> generateAllConfigs(Player targetPlayer, Config minimumConfig, Integer minTotalValue, Integer maxLevel, Integer upgradesAllowed) {
@@ -35,12 +36,12 @@ public class ConfigGenerator {
 
     private List<FullConfig> generateAllConfigsForPlayer(Player player, Config minimumConfig, Integer minTotalValue, Integer maxLevel, Integer upgradesAllowed) {
         List<FullConfig> results = new ArrayList<>();
-        for (Racket racket : Racket.maxLevel(maxLevel)) {
-            for (Grip grip : Grip.maxLevel(maxLevel)) {
-                for (Shoes shoes : Shoes.maxLevel(maxLevel)) {
-                    for (Wristband wristband : Wristband.maxLevel(maxLevel)) {
-                        for (Nutrition nutrition : Nutrition.maxLevel(maxLevel)) {
-                            for (Workout workout : Workout.maxLevel(maxLevel)) {
+        for (GearItem racket : GearItem.maxLevel(RACKET, maxLevel)) {
+            for (GearItem grip : GearItem.maxLevel(GRIP, maxLevel)) {
+                for (GearItem shoes : GearItem.maxLevel(SHOES, maxLevel)) {
+                    for (GearItem wristband : GearItem.maxLevel(WRISTBAND, maxLevel)) {
+                        for (GearItem nutrition : GearItem.maxLevel(NUTRITION, maxLevel)) {
+                            for (GearItem workout : GearItem.maxLevel(WORKOUT, maxLevel)) {
                                 FullConfig fullConfig = new FullConfig(player, racket, grip, shoes, wristband, nutrition, workout);
                                 if (fullConfig.getValue() > (minTotalValue == null ? 0 : minTotalValue)
                                         && fullConfig.satisfies(minimumConfig)

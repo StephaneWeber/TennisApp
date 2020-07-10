@@ -1,31 +1,25 @@
-package com.sweber.tennis.web.model;
+package com.sweber.tennis.model;
 
 import com.sweber.tennis.config.Config;
 import com.sweber.tennis.config.OwnedGear;
-import com.sweber.tennis.model.Player;
-import com.sweber.tennis.model.gear.Grip;
-import com.sweber.tennis.model.gear.Nutrition;
-import com.sweber.tennis.model.gear.Racket;
-import com.sweber.tennis.model.gear.Shoes;
-import com.sweber.tennis.model.gear.Workout;
-import com.sweber.tennis.model.gear.Wristband;
+import com.sweber.tennis.model.gear.GearItem;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 public class FullConfig {
-    private Player player;
-    private Racket racket;
-    private Grip grip;
-    private Shoes shoes;
-    private Wristband wristband;
-    private Nutrition nutrition;
-    private Workout workout;
-    private Config config;
-    private int value;
+    protected Player player;
+    protected GearItem racket;
+    protected GearItem grip;
+    protected GearItem shoes;
+    protected GearItem wristband;
+    protected GearItem nutrition;
+    protected GearItem workout;
+    protected Config config;
+    protected int value;
 
-    public FullConfig(Player player, Racket racket, Grip grip, Shoes shoes, Wristband wristband, Nutrition nutrition, Workout workout) {
+    public FullConfig(Player player, GearItem racket, GearItem grip, GearItem shoes, GearItem wristband, GearItem nutrition, GearItem workout) {
         this.player = player;
         this.racket = racket;
         this.grip = grip;

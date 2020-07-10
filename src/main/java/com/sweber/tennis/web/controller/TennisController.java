@@ -1,10 +1,10 @@
 package com.sweber.tennis.web.controller;
 
 import com.sweber.tennis.config.Config;
+import com.sweber.tennis.model.FullConfig;
 import com.sweber.tennis.model.Player;
 import com.sweber.tennis.service.ConfigGenerator;
 import com.sweber.tennis.web.model.ConfigFilter;
-import com.sweber.tennis.web.model.FullConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
