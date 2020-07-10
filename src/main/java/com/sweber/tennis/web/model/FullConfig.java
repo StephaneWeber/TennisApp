@@ -137,31 +137,31 @@ public class FullConfig {
         OwnedGear.UpgradeStatus upgradeableToGrip = OwnedGear.isUpgradeableTo(grip);
         if (upgradeableToGrip == OwnedGear.UpgradeStatus.UPGRADE) {
             numberOfUpgrades++;
-        } else if (upgradeableToRacket == OwnedGear.UpgradeStatus.FORBIDDEN) {
+        } else if (upgradeableToGrip == OwnedGear.UpgradeStatus.FORBIDDEN) {
             return false;
         }
         OwnedGear.UpgradeStatus upgradeableToShoes = OwnedGear.isUpgradeableTo(shoes);
         if (upgradeableToShoes == OwnedGear.UpgradeStatus.UPGRADE) {
             numberOfUpgrades++;
-        } else if (upgradeableToRacket == OwnedGear.UpgradeStatus.FORBIDDEN) {
+        } else if (upgradeableToShoes == OwnedGear.UpgradeStatus.FORBIDDEN) {
             return false;
         }
         OwnedGear.UpgradeStatus upgradeableToWrist = OwnedGear.isUpgradeableTo(wristband);
         if (upgradeableToWrist == OwnedGear.UpgradeStatus.UPGRADE) {
             numberOfUpgrades++;
-        } else if (upgradeableToRacket == OwnedGear.UpgradeStatus.FORBIDDEN) {
+        } else if (upgradeableToWrist == OwnedGear.UpgradeStatus.FORBIDDEN) {
             return false;
         }
         OwnedGear.UpgradeStatus upgradeableToNutrition = OwnedGear.isUpgradeableTo(nutrition);
         if (upgradeableToNutrition == OwnedGear.UpgradeStatus.UPGRADE) {
             numberOfUpgrades++;
-        } else if (upgradeableToRacket == OwnedGear.UpgradeStatus.FORBIDDEN) {
+        } else if (upgradeableToNutrition == OwnedGear.UpgradeStatus.FORBIDDEN) {
             return false;
         }
         OwnedGear.UpgradeStatus upgradeableToTraining = OwnedGear.isUpgradeableTo(workout);
         if (upgradeableToTraining == OwnedGear.UpgradeStatus.UPGRADE) {
             numberOfUpgrades++;
-        } else if (upgradeableToRacket == OwnedGear.UpgradeStatus.FORBIDDEN) {
+        } else if (upgradeableToTraining == OwnedGear.UpgradeStatus.FORBIDDEN) {
             return false;
         }
         return numberOfUpgrades <= maxUpgradesAllowed;
