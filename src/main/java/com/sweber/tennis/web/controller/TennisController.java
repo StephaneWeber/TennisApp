@@ -34,7 +34,7 @@ public class TennisController {
         configFilter.setMinBackhand(20);
         configFilter.setMinTotal(150);
         configFilter.setUpgradeAllowed(0);
-        configFilter.setMaxLevel(999);
+        configFilter.setMaxLevel(6);
 
         List<FullConfig> fullConfigs = generateConfigs(configFilter);
 
