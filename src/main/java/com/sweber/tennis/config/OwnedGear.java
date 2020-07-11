@@ -5,6 +5,7 @@ import com.sweber.tennis.model.gear.GearType;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.sweber.tennis.config.OwnedGear.UpgradeStatus.FORBIDDEN;
 import static com.sweber.tennis.config.OwnedGear.UpgradeStatus.NO_UPGRADE;
@@ -18,34 +19,34 @@ public class OwnedGear {
     }
 
     private static final List<GearItem> ownedGear = Arrays.asList(
-            GearItem.BASIC_RACKET_1,
+            GearItem.BASIC_RACKET,
             GearItem.EAGLE_7,
-            GearItem.PANTHER_3,
             GearItem.PATRIOT_5,
+            GearItem.PANTHER_3,
             GearItem.BASIC_GRIP,
+            GearItem.WARRIOR_8,
             GearItem.TALON_5,
             GearItem.MACHETE_3,
-            GearItem.WARRIOR_8,
-            GearItem.BASIC_SHOES_1,
-            GearItem.FEATHER_4,
-            GearItem.PIRANHA_4,
+            GearItem.BASIC_SHOES,
+            GearItem.FEATHER_5,
             GearItem.RAPTOR_6,
             GearItem.HUNTER_3,
+            GearItem.PIRANHA_4,
             GearItem.BASIC_WRIST,
+            GearItem.TOMAHAWK_5,
             GearItem.MISSILE_3,
             GearItem.PIRATE_5,
-            GearItem.TOMAHAWK_5,
             GearItem.ARA_1,
-            GearItem.BASIC_NUTRITION_1,
-            GearItem.HYDRATION_5,
-            GearItem.MACROBIOTICS,
+            GearItem.BASIC_NUTRITION,
             GearItem.PROTEIN_4,
+            GearItem.HYDRATION_5,
+            GearItem.MACROBIOTICS_4,
             GearItem.VEGAN_1,
-            GearItem.BASIC_TRAINING_1,
+            GearItem.BASIC_TRAINING,
             GearItem.ENDURANCE_7,
-            GearItem.PLIOMETRICS_3);
+            GearItem.PLYOMETRICS_3);
 
-    public static UpgradeStatus isUpgradeableTo(GearItem gearItem) {
+   public static UpgradeStatus isUpgradeableTo(GearItem gearItem) {
         GearType gearType = gearItem.getGearType();
         String configGripName = getGearItemGenericName(gearItem.name());
         int gearItemlevel = gearItem.getConfig().getLevel();
@@ -58,7 +59,7 @@ public class OwnedGear {
                 .orElse(-1);
 
         int i = gearItemlevel - currentLevel;
-        if (i > 1) {
+        if (i > 1 || i < 0) {
             return FORBIDDEN;
         } else if (i == 1) {
             return UPGRADE;
@@ -73,5 +74,12 @@ public class OwnedGear {
             itemName = itemName.substring(0, endIndex);
         }
         return itemName;
+    }
+
+    public static List<GearItem> maxLevel(int maxLevel) {
+        return ownedGear
+                .stream()
+                .filter(item -> item.getConfig().getLevel() <= maxLevel)
+                .collect(Collectors.toList());
     }
 }

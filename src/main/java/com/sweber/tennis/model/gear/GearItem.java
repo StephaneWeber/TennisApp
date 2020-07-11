@@ -1,6 +1,7 @@
 package com.sweber.tennis.model.gear;
 
 import com.sweber.tennis.config.Config;
+import com.sweber.tennis.config.OwnedGear;
 
 import java.util.Arrays;
 import java.util.List;
@@ -14,7 +15,7 @@ import static com.sweber.tennis.model.gear.GearType.WORKOUT;
 import static com.sweber.tennis.model.gear.GearType.WRISTBAND;
 
 public enum GearItem {
-    BASIC_RACKET_1(RACKET, new Config(0, 0, 0, 0, 3, 0, 0, 1)),
+    BASIC_RACKET(RACKET, new Config(0, 0, 0, 0, 3, 0, 0, 1)),
     EAGLE_5(RACKET, new Config(3, 0, 0, 0, 13, 0, 2500, 5)),
     EAGLE_6(RACKET, new Config(3, 0, 0, 0, 16, 0, 4600, 6)),
     EAGLE_7(RACKET, new Config(4, 0, 0, 0, 20, 0, 7200, 7)),
@@ -63,7 +64,7 @@ public enum GearItem {
     MACHETE_10(GRIP, new Config(0, 0, 0, 0, 0, 34, 7200, 10)),
     MACHETE_11(GRIP, new Config(0, 0, 0, 0, 0, 36, 7200, 11)),
 
-    BASIC_SHOES_1(SHOES, new Config(3, 0, 0, 0, 0, 0, 0, 1)),
+    BASIC_SHOES(SHOES, new Config(3, 0, 0, 0, 0, 0, 0, 1)),
     FEATHER_4(SHOES, new Config(18, 0, 0, 0, 0, 0, 0, 4)),
     FEATHER_5(SHOES, new Config(23, 0, 0, 0, 0, 0, 2500, 5)),
     FEATHER_6(SHOES, new Config(28, 0, 0, 0, 0, 0, 2500, 6)),
@@ -127,7 +128,7 @@ public enum GearItem {
     ARA_10(WRISTBAND, new Config(0, 0, 6, 26, 0, 0, 7200, 10)),
     ARA_11(WRISTBAND, new Config(0, 0, 7, 28, 0, 0, 7200, 11)),
 
-    BASIC_NUTRITION_1(NUTRITION, new Config(0, 0, 0, 0, 0, 0, 0, 1)),
+    BASIC_NUTRITION(NUTRITION, new Config(0, 0, 0, 0, 0, 0, 0, 1)),
     PROTEIN_4(NUTRITION, new Config(0, 13, 0, 0, 0, 0, 0, 4)),
     PROTEIN_5(NUTRITION, new Config(0, 17, 0, 0, 0, 0, 0, 5)),
     PROTEIN_6(NUTRITION, new Config(0, 22, 0, 0, 0, 0, 0, 6)),
@@ -141,8 +142,14 @@ public enum GearItem {
     HYDRATION_9(NUTRITION, new Config(0, 23, 0, 0, 5, 0, 7200, 9)),
     HYDRATION_10(NUTRITION, new Config(0, 25, 0, 0, 5, 0, 7200, 10)),
     HYDRATION_11(NUTRITION, new Config(0, 28, 0, 0, 5, 0, 7200, 11)),
-    MACROBIOTICS(NUTRITION, new Config(0, 0, 0, 11, 0, 0, 0, 0)),
-    MACROBIOTICS_2(NUTRITION, new Config(0, 4, 0, 11, 0, 0, 10900, 0)),
+    MACROBIOTICS_4(NUTRITION, new Config(0, 0, 0, 11, 0, 0, 0, 4)),
+    MACROBIOTICS_5(NUTRITION, new Config(0, 4, 0, 11, 0, 0, 10900, 5)),
+    MACROBIOTICS_6(NUTRITION, new Config(0, 8, 0, 11, 0, 0, 10900, 6)),
+    MACROBIOTICS_7(NUTRITION, new Config(0, 12, 0, 12, 0, 0, 10900, 7)),
+    MACROBIOTICS_8(NUTRITION, new Config(0, 14, 0, 12, 0, 0, 10900, 8)),
+    MACROBIOTICS_9(NUTRITION, new Config(0, 15, 0, 13, 0, 0, 10900, 9)),
+    MACROBIOTICS_10(NUTRITION, new Config(0, 17, 0, 14, 0, 0, 10900, 10)),
+    MACROBIOTICS_11(NUTRITION, new Config(0, 19, 0, 15, 0, 0, 10900, 11)),
     VEGAN_1(NUTRITION, new Config(0, 0, 0, 3, 0, 0, 0, 1)),
     VEGAN_2(NUTRITION, new Config(0, 1, 0, 4, 0, 0, 7200, 2)),
     VEGAN_3(NUTRITION, new Config(0, 3, 0, 4, 0, 0, 7200, 3)),
@@ -155,7 +162,7 @@ public enum GearItem {
     VEGAN_10(NUTRITION, new Config(0, 25, 0, 6, 0, 0, 7200, 10)),
     VEGAN_11(NUTRITION, new Config(0, 28, 0, 7, 0, 0, 7200, 11)),
 
-    BASIC_TRAINING_1(WORKOUT, new Config(0, 0, 1, 0, 0, 0, 0, 1)),
+    BASIC_TRAINING(WORKOUT, new Config(0, 0, 1, 0, 0, 0, 0, 1)),
     ENDURANCE_5(WORKOUT, new Config(0, 6, 11, 0, 0, 0, 0, 5)),
     ENDURANCE_6(WORKOUT, new Config(0, 6, 16, 0, 0, 0, 0, 6)),
     ENDURANCE_7(WORKOUT, new Config(0, 6, 20, 0, 0, 0, 0, 7)),
@@ -163,15 +170,15 @@ public enum GearItem {
     ENDURANCE_9(WORKOUT, new Config(0, 7, 25, 0, 0, 0, 0, 9)),
     ENDURANCE_10(WORKOUT, new Config(0, 8, 27, 0, 0, 0, 0, 10)),
     ENDURANCE_11(WORKOUT, new Config(0, 8, 30, 0, 0, 0, 0, 11)),
-    PLIOMETRICS_3(WORKOUT, new Config(0, 0, 4, 0, 0, 3, 0, 3)),
-    PLIOMETRICS_4(WORKOUT, new Config(0, 0, 7, 0, 0, 4, 7200, 4)),
-    PLIOMETRICS_5(WORKOUT, new Config(0, 0, 11, 0, 0, 4, 7200, 5)),
-    PLIOMETRICS_6(WORKOUT, new Config(0, 0, 16, 0, 0, 4, 7200, 6)),
-    PLIOMETRICS_7(WORKOUT, new Config(0, 0, 20, 0, 0, 4, 7200, 7)),
-    PLIOMETRICS_8(WORKOUT, new Config(0, 0, 23, 0, 0, 4, 7200, 8)),
-    PLIOMETRICS_9(WORKOUT, new Config(0, 0, 25, 0, 0, 5, 7200, 9)),
-    PLIOMETRICS_10(WORKOUT, new Config(0, 0, 27, 0, 0, 5, 7200, 10)),
-    PLIOMETRICS_11(WORKOUT, new Config(0, 0, 30, 0, 0, 5, 7200, 11));
+    PLYOMETRICS_3(WORKOUT, new Config(0, 0, 4, 0, 0, 3, 0, 3)),
+    PLYOMETRICS_4(WORKOUT, new Config(0, 0, 7, 0, 0, 4, 7200, 4)),
+    PLYOMETRICS_5(WORKOUT, new Config(0, 0, 11, 0, 0, 4, 7200, 5)),
+    PLYOMETRICS_6(WORKOUT, new Config(0, 0, 16, 0, 0, 4, 7200, 6)),
+    PLYOMETRICS_7(WORKOUT, new Config(0, 0, 20, 0, 0, 4, 7200, 7)),
+    PLYOMETRICS_8(WORKOUT, new Config(0, 0, 23, 0, 0, 4, 7200, 8)),
+    PLYOMETRICS_9(WORKOUT, new Config(0, 0, 25, 0, 0, 5, 7200, 9)),
+    PLYOMETRICS_10(WORKOUT, new Config(0, 0, 27, 0, 0, 5, 7200, 10)),
+    PLYOMETRICS_11(WORKOUT, new Config(0, 0, 30, 0, 0, 5, 7200, 11));
 
     private final Config config;
     private final GearType gearType;
@@ -196,9 +203,10 @@ public enum GearItem {
                 .collect(Collectors.toList());
     }
 
-    public static List<GearItem> maxLevel(int maxLevel) {
+    public static List<GearItem> maxLevel(int maxLevel, int upgradesAllowed) {
         return Arrays.stream(GearItem.values())
                 .filter(item -> item.getConfig().getLevel() <= maxLevel)
+                .filter(item -> upgradesAllowed == 0 || OwnedGear.isUpgradeableTo(item) != OwnedGear.UpgradeStatus.FORBIDDEN)
                 .collect(Collectors.toList());
     }
 }

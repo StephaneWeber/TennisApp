@@ -12,8 +12,8 @@ class ConfigGeneratorTest {
     public void test() {
         long start = System.currentTimeMillis();
         ConfigGenerator configGenerator = new ConfigGenerator();
-        List<FullConfig> fullConfigs = configGenerator.generateAllConfigs(Player.JONAH, new Config(20, 0, 15, 0, 20, 25, 0, 0), 140, 6, 0);
-        fullConfigs.forEach(System.out::println);
+        List<FullConfig> fullConfigs = configGenerator.generateAllConfigs(Player.JONAH, new Config(20, 0, 15, 0, 20, 10, 0, 0), 140, 6, 2);
+        //fullConfigs.forEach(System.out::println);
         System.out.println(fullConfigs.size());
 //        assertThat(fullConfigs).hasSize(3);
         long end = System.currentTimeMillis();
