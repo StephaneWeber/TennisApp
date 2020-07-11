@@ -46,7 +46,7 @@ public class OwnedGear {
             GearItem.ENDURANCE_7,
             GearItem.PLYOMETRICS_3);
 
-   public static UpgradeStatus isUpgradeableTo(GearItem gearItem) {
+    public static UpgradeStatus isUpgradeableTo(GearItem gearItem) {
         GearType gearType = gearItem.getGearType();
         String configGripName = getGearItemGenericName(gearItem.name());
         int gearItemlevel = gearItem.getConfig().getLevel();
@@ -59,12 +59,12 @@ public class OwnedGear {
                 .orElse(-1);
 
         int i = gearItemlevel - currentLevel;
-        if (i > 1 || i < 0) {
-            return FORBIDDEN;
-        } else if (i == 1) {
+        if (i == 1) {
             return UPGRADE;
+        } else if (i <= 0) {
+            return NO_UPGRADE;
         }
-        return NO_UPGRADE;
+        return FORBIDDEN;
     }
 
     private static String getGearItemGenericName(String name) {
@@ -74,12 +74,5 @@ public class OwnedGear {
             itemName = itemName.substring(0, endIndex);
         }
         return itemName;
-    }
-
-    public static List<GearItem> maxLevel(int maxLevel) {
-        return ownedGear
-                .stream()
-                .filter(item -> item.getConfig().getLevel() <= maxLevel)
-                .collect(Collectors.toList());
     }
 }

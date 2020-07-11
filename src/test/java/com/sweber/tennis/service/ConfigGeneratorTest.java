@@ -12,7 +12,7 @@ class ConfigGeneratorTest {
     public void test() {
         long start = System.currentTimeMillis();
         ConfigGenerator configGenerator = new ConfigGenerator();
-        List<FullConfig> fullConfigs = configGenerator.generateAllConfigs(Player.JONAH, new Config(20, 0, 15, 0, 20, 10, 0, 0), 140, 6, 2);
+        List<FullConfig> fullConfigs = configGenerator.generateAllConfigs(Player.JONAH, new Config(20, 0, 20, 0, 20, 20, 0, 0), 140, 6, 0);
         //fullConfigs.forEach(System.out::println);
         System.out.println(fullConfigs.size());
 //        assertThat(fullConfigs).hasSize(3);

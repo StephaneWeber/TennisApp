@@ -39,7 +39,7 @@ public class ConfigGenerator {
 
     private List<FullConfig> generateAllConfigsForPlayer(Player player, Config minimumConfig, Integer minTotalValue, Integer maxLevel, Integer upgradesAllowed) {
         List<FullConfig> results = new ArrayList<>();
-        List<GearItem> leveledGearItems = getGearItems(maxLevel, upgradesAllowed);
+        List<GearItem> leveledGearItems = GearItem.maxLevel(maxLevel, upgradesAllowed);
         for (GearItem racket : potentialGearItems(leveledGearItems, RACKET)) {
             for (GearItem grip : potentialGearItems(leveledGearItems, GRIP)) {
                 for (GearItem shoes : potentialGearItems(leveledGearItems, SHOES)) {
@@ -60,10 +60,6 @@ public class ConfigGenerator {
         }
         results.sort(Comparator.comparingInt(FullConfig::getValue).reversed());
         return results;
-    }
-
-    private List<GearItem> getGearItems(Integer maxLevel, Integer upgradesAllowed) {
-        return (upgradesAllowed > 0) ? GearItem.maxLevel(maxLevel, upgradesAllowed) : OwnedGear.maxLevel(maxLevel);
     }
 
     private static List<GearItem> potentialGearItems(List<GearItem> items, GearType gearType) {
