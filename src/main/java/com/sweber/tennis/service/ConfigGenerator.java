@@ -21,10 +21,10 @@ import static com.sweber.tennis.model.gear.GearType.WORKOUT;
 import static com.sweber.tennis.model.gear.GearType.WRISTBAND;
 
 public class ConfigGenerator {
-    public List<FullConfig> generateAllConfigs(Player targetPlayer, Config minimumConfig, Integer minTotalValue, Integer maxLevel, Integer upgradesAllowed) {
+    public List<FullConfig> generateAllConfigs(Player targetPlayer, Config minimumConfig, int minTotalValue, int maxLevel, int upgradesAllowed) {
         List<FullConfig> results = new ArrayList<>();
         if (targetPlayer == null || targetPlayer == ALL) {
-            for (Player player : Player.values()) {
+            for (Player player : Player.maxLevel(maxLevel)) {
                 if (player != ALL) {
                     List<FullConfig> fullConfigs = generateAllConfigsForPlayer(player, minimumConfig, minTotalValue, maxLevel, upgradesAllowed);
                     results.addAll(fullConfigs);
@@ -37,7 +37,7 @@ public class ConfigGenerator {
         return results;
     }
 
-    private List<FullConfig> generateAllConfigsForPlayer(Player player, Config minimumConfig, Integer minTotalValue, Integer maxLevel, Integer upgradesAllowed) {
+    private List<FullConfig> generateAllConfigsForPlayer(Player player, Config minimumConfig, int minTotalValue, int maxLevel, int upgradesAllowed) {
         List<FullConfig> results = new ArrayList<>();
         List<GearItem> leveledGearItems = GearItem.maxLevel(maxLevel, upgradesAllowed);
         for (GearItem racket : potentialGearItems(leveledGearItems, RACKET)) {
@@ -47,9 +47,9 @@ public class ConfigGenerator {
                         for (GearItem nutrition : potentialGearItems(leveledGearItems, NUTRITION)) {
                             for (GearItem workout : potentialGearItems(leveledGearItems, WORKOUT)) {
                                 FullConfig fullConfig = new FullConfig(player, racket, grip, shoes, wristband, nutrition, workout);
-                                if (fullConfig.getValue() > (minTotalValue == null ? 0 : minTotalValue)
+                                if (fullConfig.getValue() >= minTotalValue
                                         && fullConfig.satisfies(minimumConfig)
-                                        && fullConfig.upgradeAllowed(upgradesAllowed == null ? 0 : upgradesAllowed)) {
+                                        && fullConfig.upgradeAllowed(upgradesAllowed)) {
                                     results.add(fullConfig);
                                 }
                             }
