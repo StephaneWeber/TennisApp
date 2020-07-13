@@ -15,7 +15,7 @@ public class OwnedGear {
             GearItem.BASIC_GRIP,
             GearItem.WARRIOR_8,
             GearItem.TALON_5,
-            GearItem.MACHETE_3,
+            GearItem.MACHETE_4,
             GearItem.BASIC_SHOES,
             GearItem.FEATHER_5,
             GearItem.RAPTOR_7,

@@ -22,6 +22,7 @@ public enum Player {
 
     public static List<Player> maxLevel(int maxLevel) {
         return Arrays.stream(Player.values())
+                .filter(player -> player != ALL)
                 .filter(item -> item.getConfig().getLevel() <= maxLevel)
                 .collect(Collectors.toList());
     }
