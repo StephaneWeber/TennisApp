@@ -46,19 +46,22 @@ public class OwnedGear {
             GearItem.ENDURANCE_7,
             GearItem.PLYOMETRICS_3);
 
-    public static UpgradeStatus isUpgradeableTo(GearItem gearItem) {
+    /* Returns -1 in case the item is not owned yet, to avoid getting configurations with it if update is allowed */
+    public static int ownedLevel(GearItem gearItem) {
         GearType gearType = gearItem.getGearType();
         String configGripName = getGearItemGenericName(gearItem.name());
-        int gearItemlevel = gearItem.getConfig().getLevel();
-        Integer currentLevel = ownedGear.stream()
+        return ownedGear.stream()
                 .filter(item -> item.name().startsWith(configGripName))
                 .filter(item -> item.getGearType() == gearType)
                 .findFirst()
                 .map(GearItem::getConfig)
                 .map(Config::getLevel)
-                .orElse(-1);
+                .orElse(-1); //TODO examine this -1 / 0 case. Seems working right, but not intuitive.
+    }
 
-        int i = gearItemlevel - currentLevel;
+    public static UpgradeStatus isUpgradeableTo(GearItem gearItem) {
+        int currentLevel = ownedLevel(gearItem);
+        int i = gearItem.getConfig().getLevel() - currentLevel;
         if (i == 1) {
             return UPGRADE;
         } else if (i <= 0) {
@@ -69,10 +72,9 @@ public class OwnedGear {
 
     private static String getGearItemGenericName(String name) {
         int endIndex = name.indexOf("_");
-        String itemName = name;
         if (endIndex != -1) {
-            itemName = itemName.substring(0, endIndex);
+            name = name.substring(0, endIndex);
         }
-        return itemName;
+        return name;
     }
 }
