@@ -1,8 +1,6 @@
 package com.sweber.tennis.model;
 
 import com.sweber.tennis.config.Config;
-import com.sweber.tennis.config.OwnedGear;
-import com.sweber.tennis.model.gear.GearItem;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,11 +20,12 @@ public enum Player {
         this.config = config;
     }
 
-    public static List<Player> maxLevel(Integer maxLevel) {
-         return Arrays.stream(Player.values())
+    public static List<Player> maxLevel(int maxLevel) {
+        return Arrays.stream(Player.values())
                 .filter(item -> item.getConfig().getLevel() <= maxLevel)
                 .collect(Collectors.toList());
     }
+
     public Config getConfig() {
         return config;
     }

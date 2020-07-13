@@ -7,6 +7,7 @@ import com.sweber.tennis.model.gear.GearItem;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Stream;
 
 public class FullConfig {
     protected Player player;
@@ -87,11 +88,10 @@ public class FullConfig {
     }
 
     private int computeMaxLevel() {
-        List<Integer> listOfLevels = Arrays.asList(player.getConfig().getLevel(), racket.getConfig().getLevel(), grip.getConfig().getLevel(), shoes.getConfig().getLevel(), wristband.getConfig().getLevel(), nutrition.getConfig().getCost(), workout.getConfig().getLevel());
-        return listOfLevels
-                .stream()
+        return Stream.of(player.getConfig().getLevel(), racket.getConfig().getLevel(), grip.getConfig().getLevel(), shoes.getConfig().getLevel(), wristband.getConfig().getLevel(), nutrition.getConfig().getCost(), workout.getConfig().getLevel())
                 .mapToInt(v -> v)
-                .max().orElseThrow(NoSuchElementException::new);
+                .max()
+                .orElseThrow(NoSuchElementException::new);
     }
 
     @Override
