@@ -119,45 +119,14 @@ public class FullConfig {
                 && config.getBackhand() >= minimumConfig.getBackhand();
     }
 
-    //TODO cleanup
     public boolean upgradeAllowed(int maxUpgradesAllowed) {
-        int numberOfUpgrades = 0;
-        OwnedGear.UpgradeStatus upgradeableToRacket = OwnedGear.isUpgradeableTo(racket);
-        if (upgradeableToRacket == OwnedGear.UpgradeStatus.UPGRADE) {
-            numberOfUpgrades++;
-        } else if (upgradeableToRacket == OwnedGear.UpgradeStatus.FORBIDDEN) {
-            return false;
-        }
-        OwnedGear.UpgradeStatus upgradeableToGrip = OwnedGear.isUpgradeableTo(grip);
-        if (upgradeableToGrip == OwnedGear.UpgradeStatus.UPGRADE) {
-            numberOfUpgrades++;
-        } else if (upgradeableToGrip == OwnedGear.UpgradeStatus.FORBIDDEN) {
-            return false;
-        }
-        OwnedGear.UpgradeStatus upgradeableToShoes = OwnedGear.isUpgradeableTo(shoes);
-        if (upgradeableToShoes == OwnedGear.UpgradeStatus.UPGRADE) {
-            numberOfUpgrades++;
-        } else if (upgradeableToShoes == OwnedGear.UpgradeStatus.FORBIDDEN) {
-            return false;
-        }
-        OwnedGear.UpgradeStatus upgradeableToWrist = OwnedGear.isUpgradeableTo(wristband);
-        if (upgradeableToWrist == OwnedGear.UpgradeStatus.UPGRADE) {
-            numberOfUpgrades++;
-        } else if (upgradeableToWrist == OwnedGear.UpgradeStatus.FORBIDDEN) {
-            return false;
-        }
-        OwnedGear.UpgradeStatus upgradeableToNutrition = OwnedGear.isUpgradeableTo(nutrition);
-        if (upgradeableToNutrition == OwnedGear.UpgradeStatus.UPGRADE) {
-            numberOfUpgrades++;
-        } else if (upgradeableToNutrition == OwnedGear.UpgradeStatus.FORBIDDEN) {
-            return false;
-        }
-        OwnedGear.UpgradeStatus upgradeableToTraining = OwnedGear.isUpgradeableTo(workout);
-        if (upgradeableToTraining == OwnedGear.UpgradeStatus.UPGRADE) {
-            numberOfUpgrades++;
-        } else if (upgradeableToTraining == OwnedGear.UpgradeStatus.FORBIDDEN) {
-            return false;
-        }
-        return numberOfUpgrades <= maxUpgradesAllowed;
+        List<Boolean> simpleUpgradesCheck = Arrays.asList(
+                OwnedGear.isUpgrade(racket), OwnedGear.isUpgrade(grip),
+                OwnedGear.isUpgrade(shoes), OwnedGear.isUpgrade(wristband),
+                OwnedGear.isUpgrade(nutrition), OwnedGear.isUpgrade(workout));
+        long hitCount = simpleUpgradesCheck.stream()
+                .filter(check -> check)
+                .count();
+        return hitCount == maxUpgradesAllowed;
     }
 }

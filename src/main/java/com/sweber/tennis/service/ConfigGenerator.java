@@ -66,7 +66,7 @@ public class ConfigGenerator {
         return items
                 .stream()
                 .filter(item -> item.getGearType() == gearType)
-                .filter(item -> OwnedGear.isUpgradeableTo(item) != OwnedGear.UpgradeStatus.FORBIDDEN)
+                .filter(OwnedGear::isPossibleUpgrade)
                 .collect(Collectors.toList());
     }
 }

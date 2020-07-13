@@ -5,20 +5,9 @@ import com.sweber.tennis.model.gear.GearType;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import static com.sweber.tennis.config.OwnedGear.UpgradeStatus.FORBIDDEN;
-import static com.sweber.tennis.config.OwnedGear.UpgradeStatus.NO_UPGRADE;
-import static com.sweber.tennis.config.OwnedGear.UpgradeStatus.UPGRADE;
 
 public class OwnedGear {
-    public enum UpgradeStatus {
-        UPGRADE,
-        NO_UPGRADE,
-        FORBIDDEN
-    }
-
-    private static final List<GearItem> ownedGear = Arrays.asList(
+    private static final List<GearItem> OWNED_GEAR = Arrays.asList(
             GearItem.BASIC_RACKET,
             GearItem.EAGLE_7,
             GearItem.PATRIOT_5,
@@ -46,32 +35,35 @@ public class OwnedGear {
             GearItem.ENDURANCE_7,
             GearItem.PLYOMETRICS_3);
 
-    /* Returns -1 in case the item is not owned yet, to avoid getting configurations with it if update is allowed */
-    public static int ownedLevel(GearItem gearItem) {
+    private OwnedGear() {
+    }
+
+    private static int ownedLevel(GearItem gearItem) {
         GearType gearType = gearItem.getGearType();
         String configGripName = getGearItemGenericName(gearItem.name());
-        return ownedGear.stream()
-                .filter(item -> item.name().startsWith(configGripName))
+        return OWNED_GEAR.stream()
                 .filter(item -> item.getGearType() == gearType)
+                .filter(item -> item.name().startsWith(configGripName))
                 .findFirst()
                 .map(GearItem::getConfig)
                 .map(Config::getLevel)
-                .orElse(-1); //TODO examine this -1 / 0 case. Seems working right, but not intuitive.
+                .orElse(0);
     }
 
-    public static UpgradeStatus isUpgradeableTo(GearItem gearItem) {
+    public static boolean isUpgrade(GearItem gearItem) {
         int currentLevel = ownedLevel(gearItem);
         int i = gearItem.getConfig().getLevel() - currentLevel;
-        if (i == 1) {
-            return UPGRADE;
-        } else if (i <= 0) {
-            return NO_UPGRADE;
-        }
-        return FORBIDDEN;
+        return (i == 1);
+    }
+
+    public static boolean isPossibleUpgrade(GearItem gearItem) {
+        int currentLevel = ownedLevel(gearItem);
+        int i = gearItem.getConfig().getLevel() - currentLevel;
+        return i <= 1;
     }
 
     private static String getGearItemGenericName(String name) {
-        int endIndex = name.indexOf("_");
+        int endIndex = name.indexOf('_');
         if (endIndex != -1) {
             name = name.substring(0, endIndex);
         }

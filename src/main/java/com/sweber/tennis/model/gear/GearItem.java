@@ -196,17 +196,10 @@ public enum GearItem {
         return gearType;
     }
 
-    public static List<GearItem> maxLevel(GearType gearType, int maxLevel) {
-        return Arrays.stream(GearItem.values())
-                .filter(item -> item.getConfig().getLevel() <= maxLevel)
-                .filter(item -> item.getGearType() == gearType)
-                .collect(Collectors.toList());
-    }
-
     public static List<GearItem> maxLevel(int maxLevel, int upgradesAllowed) {
         return Arrays.stream(GearItem.values())
                 .filter(item -> item.getConfig().getLevel() <= maxLevel)
-                .filter(item -> upgradesAllowed == 0 || OwnedGear.isUpgradeableTo(item) != OwnedGear.UpgradeStatus.FORBIDDEN)
+                .filter(item -> upgradesAllowed == 0 || OwnedGear.isPossibleUpgrade(item))
                 .collect(Collectors.toList());
     }
 }
