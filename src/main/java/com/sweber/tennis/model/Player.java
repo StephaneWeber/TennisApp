@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 public enum Player {
     //TODO Maintain versions from level 5 for handling cap at low levels. Not needed until level 5 is obtained.
     //No concept of update.
-    ALL(null),
+    ALL(null), // This value is only used for display in dropdown.
     JONAH(new Config(6, 4, 6, 4, 8, 6, 0, 4)),
     HOPE(new Config(7, 4, 4, 5, 5, 5, 0, 3)),
     FLORENCE(new Config(10, 9, 2, 3, 4, 4, 0, 3));
