@@ -23,9 +23,9 @@
                     <table border="0">
                         <tr>
                             <td>Player</td>
-                            <td><select name="player">
+                            <td><select name="player" th:field="*{player}">
+                                <option value="">ALL</option>
                                 <option th:value="${playerOpt}"
-                                        th:field="*{player}"
                                         th:each="playerOpt : ${T(com.sweber.tennis.model.Player).values()}"
                                         th:text="${playerOpt}"></option>
                             </select></td>

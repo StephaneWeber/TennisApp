@@ -8,11 +8,13 @@ import com.sweber.tennis.model.gear.GearItem;
 import com.sweber.tennis.model.gear.GearType;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static com.sweber.tennis.model.Player.ALL;
 import static com.sweber.tennis.model.gear.GearType.GRIP;
 import static com.sweber.tennis.model.gear.GearType.NUTRITION;
 import static com.sweber.tennis.model.gear.GearType.RACKET;
@@ -22,22 +24,16 @@ import static com.sweber.tennis.model.gear.GearType.WRISTBAND;
 
 public class ConfigGenerator {
     public List<FullConfig> generateAllConfigs(Player targetPlayer, Config minimumConfig, int minTotalValue, int maxLevel, int upgradesAllowed) {
-        List<FullConfig> results = new ArrayList<>();
-        if (targetPlayer == null || targetPlayer == ALL) {
-            for (Player player : Player.maxLevel(maxLevel)) {
-                if (player != ALL) {
-                    List<FullConfig> fullConfigs = generateAllConfigsForPlayer(player, minimumConfig, minTotalValue, maxLevel, upgradesAllowed);
-                    results.addAll(fullConfigs);
-                }
-            }
-        } else {
-            results = generateAllConfigsForPlayer(targetPlayer, minimumConfig, minTotalValue, maxLevel, upgradesAllowed);
-        }
-        results.sort(Comparator.comparingInt(FullConfig::getValue).reversed());
-        return results;
+        return Optional.ofNullable(targetPlayer)
+                .map(Collections::singletonList)
+                .orElse(Player.maxLevel(maxLevel))
+                .stream()
+                .flatMap(player -> generateAllConfigsForPlayer(player, minimumConfig, minTotalValue, maxLevel, upgradesAllowed))
+                .sorted(Comparator.comparingInt(FullConfig::getValue).reversed())
+                .collect(Collectors.toList());
     }
 
-    private List<FullConfig> generateAllConfigsForPlayer(Player player, Config minimumConfig, int minTotalValue, int maxLevel, int upgradesAllowed) {
+    private Stream<FullConfig> generateAllConfigsForPlayer(Player player, Config minimumConfig, int minTotalValue, int maxLevel, int upgradesAllowed) {
         List<FullConfig> results = new ArrayList<>();
         List<GearItem> leveledGearItems = GearItem.maxLevel(maxLevel, upgradesAllowed);
         for (GearItem racket : potentialGearItems(leveledGearItems, RACKET)) {
@@ -47,9 +43,7 @@ public class ConfigGenerator {
                         for (GearItem nutrition : potentialGearItems(leveledGearItems, NUTRITION)) {
                             for (GearItem workout : potentialGearItems(leveledGearItems, WORKOUT)) {
                                 FullConfig fullConfig = new FullConfig(player, racket, grip, shoes, wristband, nutrition, workout);
-                                if (fullConfig.getValue() >= minTotalValue
-                                        && fullConfig.satisfies(minimumConfig)
-                                        && fullConfig.upgradeAllowed(upgradesAllowed)) {
+                                if (isSuitableConfig(minimumConfig, minTotalValue, upgradesAllowed, fullConfig)) {
                                     results.add(fullConfig);
                                 }
                             }
@@ -58,11 +52,16 @@ public class ConfigGenerator {
                 }
             }
         }
-        results.sort(Comparator.comparingInt(FullConfig::getValue).reversed());
-        return results;
+        return results.stream();
     }
 
-    private static List<GearItem> potentialGearItems(List<GearItem> items, GearType gearType) {
+    private boolean isSuitableConfig(Config minimumConfig, int minTotalValue, int upgradesAllowed, FullConfig fullConfig) {
+        return fullConfig.getValue() >= minTotalValue
+                && fullConfig.satisfies(minimumConfig)
+                && fullConfig.upgradeAllowed(upgradesAllowed);
+    }
+
+    private List<GearItem> potentialGearItems(List<GearItem> items, GearType gearType) {
         return items
                 .stream()
                 .filter(item -> item.getGearType() == gearType)

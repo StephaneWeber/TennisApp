@@ -29,8 +29,8 @@ public class TennisController {
     private void initModel(Model model) {
         ConfigFilter configFilter = new ConfigFilter();
         configFilter.setMinAgility(20);
-        configFilter.setMinService(20);
-        configFilter.setMinForehand(20);
+        configFilter.setMinService(30);
+        configFilter.setMinForehand(30);
         configFilter.setMinBackhand(20);
         configFilter.setMinTotal(150);
         configFilter.setUpgradeAllowed(0);

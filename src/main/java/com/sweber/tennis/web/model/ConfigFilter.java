@@ -1,9 +1,9 @@
 package com.sweber.tennis.web.model;
 
 public class ConfigFilter {
-    private String player = "ALL";
+    private String player = null;
     private int minTotal = 100;
-    private int upgradeAllowed = 1;
+    private int upgradeAllowed = 0;
     private int minAgility;
     private int minEndurance;
     private int minService;
