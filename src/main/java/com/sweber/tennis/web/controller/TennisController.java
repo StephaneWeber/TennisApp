@@ -1,7 +1,7 @@
 package com.sweber.tennis.web.controller;
 
-import com.sweber.tennis.model.config.Config;
-import com.sweber.tennis.model.config.FullConfig;
+import com.sweber.tennis.model.config.Attributes;
+import com.sweber.tennis.model.config.GameConfig;
 import com.sweber.tennis.model.player.Player;
 import com.sweber.tennis.service.ConfigGeneratorService;
 import com.sweber.tennis.web.model.ConfigFilter;
@@ -33,21 +33,28 @@ public class TennisController {
     }
 
     private void initModel(Model model) {
+        ConfigFilter configFilter = setupInitialConfigFilter();
+
+        List<GameConfig> gameConfigs = generateConfigs(configFilter);
+
+        model.addAttribute("appName", appName);
+        model.addAttribute("list", gameConfigs);
+        model.addAttribute("playerList", Player.values());
+        model.addAttribute("configFilter", configFilter);
+    }
+
+    private ConfigFilter setupInitialConfigFilter() {
         ConfigFilter configFilter = new ConfigFilter();
-        configFilter.setMinAgility(20);
-        configFilter.setMinService(30);
-        configFilter.setMinForehand(30);
-        configFilter.setMinBackhand(20);
+        Attributes minAttributes = new Attributes();
+        minAttributes.setAgility(20);
+        minAttributes.setService(30);
+        minAttributes.setForehand(30);
+        minAttributes.setBackhand(20);
+        configFilter.setMinAttributes(minAttributes);
         configFilter.setMinTotal(150);
         configFilter.setUpgradeAllowed(0);
         configFilter.setMaxLevel(6);
-
-        List<FullConfig> fullConfigs = generateConfigs(configFilter);
-
-        model.addAttribute("appName", appName);
-        model.addAttribute("list", fullConfigs);
-        model.addAttribute("playerList", Player.values());
-        model.addAttribute("configFilter", configFilter);
+        return configFilter;
     }
 
     @PostMapping("/resetFilters")
@@ -58,37 +65,26 @@ public class TennisController {
 
     @PostMapping("/")
     public String postVerification(ConfigFilter configFilter, Model model) {
-        List<FullConfig> fullConfigs = generateConfigs(configFilter);
+        List<GameConfig> gameConfigs = generateConfigs(configFilter);
 
         model.addAttribute("appName", appName);
-        model.addAttribute("list", fullConfigs);
+        model.addAttribute("list", gameConfigs);
         model.addAttribute("playerList", Player.values());
         model.addAttribute("configFilter", configFilter);
         return HOME_PAGE;
     }
 
-    private List<FullConfig> generateConfigs(ConfigFilter configFilter) {
-        List<FullConfig> fullConfigs;
-        String player = configFilter.getPlayer();
+    private List<GameConfig> generateConfigs(ConfigFilter configFilter) {
+        List<GameConfig> gameConfigs;
+        String player = configFilter.getSelectedPlayer();
         int minTotal = configFilter.getMinTotal();
         int upgradeAllowed = configFilter.getUpgradeAllowed();
         int maxLevel = configFilter.getMaxLevel();
-        Config minConfig = createMinConfig(configFilter);
         if (player != null && !player.isEmpty()) {
-            fullConfigs = configGeneratorService.generateAllConfigs(Player.valueOf(player), minConfig, minTotal, maxLevel, upgradeAllowed);
+            gameConfigs = configGeneratorService.generateAllConfigs(Player.valueOf(player), configFilter.getMinAttributes(), minTotal, maxLevel, upgradeAllowed);
         } else {
-            fullConfigs = configGeneratorService.generateAllConfigs(null, minConfig, minTotal, maxLevel, upgradeAllowed);
+            gameConfigs = configGeneratorService.generateAllConfigs(null, configFilter.getMinAttributes(), minTotal, maxLevel, upgradeAllowed);
         }
-        return fullConfigs;
-    }
-
-    private Config createMinConfig(ConfigFilter configFilter) {
-        return new Config(configFilter.getMinAgility(),
-                configFilter.getMinEndurance(),
-                configFilter.getMinService(),
-                configFilter.getMinVolley(),
-                configFilter.getMinForehand(),
-                configFilter.getMinBackhand(),
-                0, 0);
+        return gameConfigs;
     }
 }

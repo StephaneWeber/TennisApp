@@ -1,7 +1,5 @@
 package com.sweber.tennis.model.gear;
 
-import com.sweber.tennis.model.config.Config;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -44,20 +42,19 @@ public class OwnedGear {
                 .filter(item -> item.getGearType() == gearType)
                 .filter(item -> item.name().startsWith(configGripName))
                 .findFirst()
-                .map(GearItem::getConfig)
-                .map(Config::getLevel)
+                .map(GearItem::getLevel)
                 .orElse(0);
     }
 
     public static boolean isUpgrade(GearItem gearItem) {
         int currentLevel = ownedLevel(gearItem);
-        int i = gearItem.getConfig().getLevel() - currentLevel;
+        int i = gearItem.getLevel() - currentLevel;
         return (i == 1);
     }
 
     public static boolean isPossibleUpgrade(GearItem gearItem) {
         int currentLevel = ownedLevel(gearItem);
-        int i = gearItem.getConfig().getLevel() - currentLevel;
+        int i = gearItem.getLevel() - currentLevel;
         return i <= 1;
     }
 

@@ -1,23 +1,20 @@
 package com.sweber.tennis.web.model;
 
+import com.sweber.tennis.model.config.Attributes;
+
 public class ConfigFilter {
-    private String player = null;
+    private String selectedPlayer = null;
     private int minTotal = 100;
     private int upgradeAllowed = 0;
-    private int minAgility;
-    private int minEndurance;
-    private int minService;
-    private int minVolley;
-    private int minForehand;
-    private int minBackhand;
+    private Attributes minAttributes;
     private int maxLevel;
 
-    public String getPlayer() {
-        return player;
+    public String getSelectedPlayer() {
+        return selectedPlayer;
     }
 
-    public void setPlayer(String player) {
-        this.player = player;
+    public void setSelectedPlayer(String selectedPlayer) {
+        this.selectedPlayer = selectedPlayer;
     }
 
     public int getMinTotal() {
@@ -36,52 +33,12 @@ public class ConfigFilter {
         this.upgradeAllowed = upgradeAllowed;
     }
 
-    public int getMinAgility() {
-        return minAgility;
+    public Attributes getMinAttributes() {
+        return minAttributes;
     }
 
-    public void setMinAgility(int minAgility) {
-        this.minAgility = minAgility;
-    }
-
-    public int getMinEndurance() {
-        return minEndurance;
-    }
-
-    public void setMinEndurance(int minEndurance) {
-        this.minEndurance = minEndurance;
-    }
-
-    public int getMinService() {
-        return minService;
-    }
-
-    public void setMinService(int minService) {
-        this.minService = minService;
-    }
-
-    public int getMinVolley() {
-        return minVolley;
-    }
-
-    public void setMinVolley(int minVolley) {
-        this.minVolley = minVolley;
-    }
-
-    public int getMinForehand() {
-        return minForehand;
-    }
-
-    public void setMinForehand(int minForehand) {
-        this.minForehand = minForehand;
-    }
-
-    public int getMinBackhand() {
-        return minBackhand;
-    }
-
-    public void setMinBackhand(int minBackhand) {
-        this.minBackhand = minBackhand;
+    public void setMinAttributes(Attributes minAttributes) {
+        this.minAttributes = minAttributes;
     }
 
     public int getMaxLevel() {

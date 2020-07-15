@@ -1,7 +1,7 @@
 package com.sweber.tennis.service;
 
-import com.sweber.tennis.model.config.Config;
-import com.sweber.tennis.model.config.FullConfig;
+import com.sweber.tennis.model.config.Attributes;
+import com.sweber.tennis.model.config.GameConfig;
 import com.sweber.tennis.model.gear.GearItem;
 import com.sweber.tennis.model.gear.GearType;
 import com.sweber.tennis.model.gear.OwnedGear;
@@ -25,18 +25,18 @@ import static com.sweber.tennis.model.gear.GearType.WRISTBAND;
 
 @Component
 public class ConfigGeneratorService {
-    public List<FullConfig> generateAllConfigs(Player targetPlayer, Config minimumConfig, int minTotalValue, int maxLevel, int upgradesAllowed) {
+    public List<GameConfig> generateAllConfigs(Player targetPlayer, Attributes minimumAttributes, int minTotalValue, int maxLevel, int upgradesAllowed) {
         return Optional.ofNullable(targetPlayer)
                 .map(Collections::singletonList)
                 .orElse(Player.maxLevel(maxLevel))
                 .stream()
-                .flatMap(player -> generateAllConfigsForPlayer(player, minimumConfig, minTotalValue, maxLevel, upgradesAllowed))
-                .sorted(Comparator.comparingInt(FullConfig::getValue).reversed())
+                .flatMap(player -> generateAllConfigsForPlayer(player, minimumAttributes, minTotalValue, maxLevel, upgradesAllowed))
+                .sorted(Comparator.comparingInt(GameConfig::getValue).reversed())
                 .collect(Collectors.toList());
     }
 
-    private Stream<FullConfig> generateAllConfigsForPlayer(Player player, Config minimumConfig, int minTotalValue, int maxLevel, int upgradesAllowed) {
-        List<FullConfig> results = new ArrayList<>();
+    private Stream<GameConfig> generateAllConfigsForPlayer(Player player, Attributes minimumAttributes, int minTotalValue, int maxLevel, int upgradesAllowed) {
+        List<GameConfig> results = new ArrayList<>();
         List<GearItem> leveledGearItems = GearItem.maxLevel(maxLevel, upgradesAllowed);
         for (GearItem racket : potentialGearItems(leveledGearItems, RACKET)) {
             for (GearItem grip : potentialGearItems(leveledGearItems, GRIP)) {
@@ -44,9 +44,9 @@ public class ConfigGeneratorService {
                     for (GearItem wristband : potentialGearItems(leveledGearItems, WRISTBAND)) {
                         for (GearItem nutrition : potentialGearItems(leveledGearItems, NUTRITION)) {
                             for (GearItem workout : potentialGearItems(leveledGearItems, WORKOUT)) {
-                                FullConfig fullConfig = new FullConfig(player, racket, grip, shoes, wristband, nutrition, workout);
-                                if (isSuitableConfig(minimumConfig, minTotalValue, upgradesAllowed, fullConfig)) {
-                                    results.add(fullConfig);
+                                GameConfig gameConfig = new GameConfig(player, racket, grip, shoes, wristband, nutrition, workout);
+                                if (isSuitableConfig(minimumAttributes, minTotalValue, upgradesAllowed, gameConfig)) {
+                                    results.add(gameConfig);
                                 }
                             }
                         }
@@ -57,10 +57,10 @@ public class ConfigGeneratorService {
         return results.stream();
     }
 
-    private boolean isSuitableConfig(Config minimumConfig, int minTotalValue, int upgradesAllowed, FullConfig fullConfig) {
-        return fullConfig.getValue() >= minTotalValue
-                && fullConfig.satisfies(minimumConfig)
-                && fullConfig.upgradeAllowed(upgradesAllowed);
+    private boolean isSuitableConfig(Attributes minimumAttributes, int minTotalValue, int upgradesAllowed, GameConfig gameConfig) {
+        return gameConfig.getValue() >= minTotalValue
+                && gameConfig.satisfies(minimumAttributes)
+                && gameConfig.upgradeAllowed(upgradesAllowed);
     }
 
     private List<GearItem> potentialGearItems(List<GearItem> items, GearType gearType) {
