@@ -1,7 +1,6 @@
-package com.sweber.tennis.config;
+package com.sweber.tennis.model.gear;
 
-import com.sweber.tennis.model.gear.GearItem;
-import com.sweber.tennis.model.gear.GearType;
+import com.sweber.tennis.model.config.Config;
 
 import java.util.Arrays;
 import java.util.List;

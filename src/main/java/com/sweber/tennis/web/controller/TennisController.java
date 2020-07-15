@@ -1,9 +1,9 @@
 package com.sweber.tennis.web.controller;
 
-import com.sweber.tennis.config.Config;
-import com.sweber.tennis.model.FullConfig;
-import com.sweber.tennis.model.Player;
-import com.sweber.tennis.service.ConfigGenerator;
+import com.sweber.tennis.model.config.Config;
+import com.sweber.tennis.model.config.FullConfig;
+import com.sweber.tennis.model.player.Player;
+import com.sweber.tennis.service.ConfigGeneratorService;
 import com.sweber.tennis.web.model.ConfigFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -17,8 +17,14 @@ import java.util.List;
 public class TennisController {
     public static final String HOME_PAGE = "home";
 
+    private final ConfigGeneratorService configGeneratorService;
+
     @Value("${spring.application.name}")
     String appName;
+
+    public TennisController(ConfigGeneratorService configGeneratorService) {
+        this.configGeneratorService = configGeneratorService;
+    }
 
     @GetMapping("/")
     public String homePage(Model model) {
@@ -63,16 +69,15 @@ public class TennisController {
 
     private List<FullConfig> generateConfigs(ConfigFilter configFilter) {
         List<FullConfig> fullConfigs;
-        ConfigGenerator configGenerator = new ConfigGenerator();
         String player = configFilter.getPlayer();
         int minTotal = configFilter.getMinTotal();
         int upgradeAllowed = configFilter.getUpgradeAllowed();
         int maxLevel = configFilter.getMaxLevel();
         Config minConfig = createMinConfig(configFilter);
         if (player != null && !player.isEmpty()) {
-            fullConfigs = configGenerator.generateAllConfigs(Player.valueOf(player), minConfig, minTotal, maxLevel, upgradeAllowed);
+            fullConfigs = configGeneratorService.generateAllConfigs(Player.valueOf(player), minConfig, minTotal, maxLevel, upgradeAllowed);
         } else {
-            fullConfigs = configGenerator.generateAllConfigs(null, minConfig, minTotal, maxLevel, upgradeAllowed);
+            fullConfigs = configGeneratorService.generateAllConfigs(null, minConfig, minTotal, maxLevel, upgradeAllowed);
         }
         return fullConfigs;
     }

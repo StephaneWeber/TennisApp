@@ -1,6 +1,6 @@
-package com.sweber.tennis.model;
+package com.sweber.tennis.model.player;
 
-import com.sweber.tennis.config.Config;
+import com.sweber.tennis.model.config.Config;
 
 import java.util.Arrays;
 import java.util.List;

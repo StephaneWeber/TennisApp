@@ -1,11 +1,12 @@
 package com.sweber.tennis.service;
 
-import com.sweber.tennis.config.Config;
-import com.sweber.tennis.config.OwnedGear;
-import com.sweber.tennis.model.FullConfig;
-import com.sweber.tennis.model.Player;
+import com.sweber.tennis.model.config.Config;
+import com.sweber.tennis.model.config.FullConfig;
 import com.sweber.tennis.model.gear.GearItem;
 import com.sweber.tennis.model.gear.GearType;
+import com.sweber.tennis.model.gear.OwnedGear;
+import com.sweber.tennis.model.player.Player;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,7 +23,8 @@ import static com.sweber.tennis.model.gear.GearType.SHOES;
 import static com.sweber.tennis.model.gear.GearType.WORKOUT;
 import static com.sweber.tennis.model.gear.GearType.WRISTBAND;
 
-public class ConfigGenerator {
+@Component
+public class ConfigGeneratorService {
     public List<FullConfig> generateAllConfigs(Player targetPlayer, Config minimumConfig, int minTotalValue, int maxLevel, int upgradesAllowed) {
         return Optional.ofNullable(targetPlayer)
                 .map(Collections::singletonList)

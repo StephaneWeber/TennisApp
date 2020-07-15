@@ -1,4 +1,4 @@
-package com.sweber.tennis.config;
+package com.sweber.tennis.model.config;
 
 public class Config {
     private final int agility;
