@@ -8,7 +8,7 @@ public class OwnedGear {
             GearItem.BASIC_RACKET,
             GearItem.EAGLE_7,
             GearItem.PATRIOT_5,
-            GearItem.PANTHER_3,
+            GearItem.PANTHER_4,
             GearItem.BASIC_GRIP,
             GearItem.WARRIOR_8,
             GearItem.TALON_5,
