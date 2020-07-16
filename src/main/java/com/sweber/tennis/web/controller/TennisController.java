@@ -1,6 +1,7 @@
 package com.sweber.tennis.web.controller;
 
 import com.sweber.tennis.model.config.Attributes;
+import com.sweber.tennis.model.config.Config;
 import com.sweber.tennis.model.config.GameConfig;
 import com.sweber.tennis.model.player.Player;
 import com.sweber.tennis.service.ConfigGeneratorService;
@@ -28,6 +29,12 @@ public class TennisController {
 
     @GetMapping("/")
     public String homePage(Model model) {
+        initModel(model);
+        return "home";
+    }
+
+    @GetMapping("/config")
+    public String getConfig(Config config, Model model) {
         initModel(model);
         return "home";
     }

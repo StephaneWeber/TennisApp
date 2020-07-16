@@ -12,15 +12,15 @@
 <body>
 <h1><span th:text="${appName}">Our App</span></h1>
 
-<div class="col-12 row">
-    <div class="col-lg-3">
+<div class="col-12 row container">
+    <div class="col-lg-3 container-fluid">
         <div>
             <form id="resetFiltersForm" th:action="@{/resetFilters}" method="post"></form>
             <form id="filtersForm" th:action="@{/}" th:object="${configFilter}" method="post">
                 <h2>Filters:</h2>
                 <br>
                 <div class="text-center">
-                    <table border="0">
+                    <table border="0" class="table-borderless">
                         <tr>
                             <td>Player</td>
                             <td><select name="player" th:field="*{selectedPlayer}">
@@ -116,18 +116,18 @@
             </form>
         </div>
     </div>
-    <div class="col-lg-9">
+    <div class="col-lg-9 container-fluid">
         <div class="tableFixHead" th:if="${list != null}">
-            <table border="1" class="tableFixHead">
+            <table border="1" class="table table-primary tableFixHead">
                 <thead>
                 <tr>
                     <th>Player</th>
-                    <th>Racket</th>
-                    <th>Grip</th>
-                    <th>Shoes</th>
-                    <th>Wrist</th>
-                    <th>Nutrition</th>
-                    <th>Training</th>
+                    <!--                    <th>Racket</th>-->
+                    <!--                    <th>Grip</th>-->
+                    <!--                    <th>Shoes</th>-->
+                    <!--                    <th>Wrist</th>-->
+                    <!--                    <th>Nutrition</th>-->
+                    <!--                    <th>Training</th>-->
                     <th>Agi</th>
                     <th>End</th>
                     <th>Ser</th>
@@ -135,18 +135,18 @@
                     <th>For</th>
                     <th>Bac</th>
                     <th>Total</th>
-                    <th>Cost</th>
+                    <!--TODO Activate when data is right                    <th>Cost</th>-->
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="gameConfig : ${list}">
+                <tr th:each="gameConfig : ${list}" th:title="${gameConfig.toString()}">
                     <td th:text="${gameConfig.player}"></td>
-                    <td th:text="${gameConfig.racket}"></td>
-                    <td th:text="${gameConfig.grip}"></td>
-                    <td th:text="${gameConfig.shoes}"></td>
-                    <td th:text="${gameConfig.wristband}"></td>
-                    <td th:text="${gameConfig.nutrition}"></td>
-                    <td th:text="${gameConfig.workout}"></td>
+                    <!--                    <td th:text="${gameConfig.racket}"></td>-->
+                    <!--                    <td th:text="${gameConfig.grip}"></td>-->
+                    <!--                    <td th:text="${gameConfig.shoes}"></td>-->
+                    <!--                    <td th:text="${gameConfig.wristband}"></td>-->
+                    <!--                    <td th:text="${gameConfig.nutrition}"></td>-->
+                    <!--                    <td th:text="${gameConfig.workout}"></td>-->
                     <td th:text="${gameConfig.attributes.agility}"
                         th:classappend="${gameConfig.attributes.agility >= maxAttributes.agility ? 'maxAttribute' : ''}"></td>
                     <td th:text="${gameConfig.attributes.endurance}"
@@ -159,8 +159,8 @@
                         th:classappend="${gameConfig.attributes.forehand >= maxAttributes.forehand ? 'maxAttribute' : ''}"></td>
                     <td th:text="${gameConfig.attributes.backhand}"
                         th:classappend="${gameConfig.attributes.backhand >= maxAttributes.backhand ? 'maxAttribute' : ''}"></td>
-                    <td th:text="${gameConfig.value}"><b>Total</b></td>
-                    <td th:text="${gameConfig.cost}"><b>Total</b></td>
+                    <td th:text="${gameConfig.value}" style="font-weight:bold"><b>Total</b></td>
+                    <!--TODO Activate when data is right                    <td th:text="${gameConfig.cost}"><b>Total</b></td>-->
                 </tr>
                 </tbody>
             </table>
