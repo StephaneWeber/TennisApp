@@ -126,6 +126,6 @@ public class GameConfig {
         long hitCount = simpleUpgradesCheck.stream()
                 .filter(check -> check)
                 .count();
-        return hitCount == maxUpgradesAllowed;
+        return hitCount <= maxUpgradesAllowed;
     }
 }

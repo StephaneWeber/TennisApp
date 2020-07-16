@@ -5,6 +5,7 @@ import com.sweber.tennis.model.config.GameConfig;
 import com.sweber.tennis.model.player.Player;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,5 +21,27 @@ class ConfigGeneratorServiceTest {
         System.out.println(String.format("Found %d configs in %d ms", gameConfigs.size(), (end - start)));
         // 247 - 329
         assertThat(gameConfigs).hasSize(247);
+    }
+
+    @Test
+    public void testUpgrades() {
+        ConfigGeneratorService configGeneratorService = new ConfigGeneratorService();
+        Attributes minimumAttributes = new Attributes(20, 0, 20, 0, 20, 20);
+        List<GameConfig> gameConfigs = new ArrayList<>();
+
+        gameConfigs = configGeneratorService.generateAllConfigs(Player.JONAH, minimumAttributes, 160, 6, 0);
+        System.out.println(String.format("Found %d configs", gameConfigs.size()));
+        gameConfigs = configGeneratorService.generateAllConfigs(Player.JONAH, minimumAttributes, 160, 6, 1);
+        System.out.println(String.format("Found %d configs", gameConfigs.size()));
+        gameConfigs = configGeneratorService.generateAllConfigs(Player.JONAH, minimumAttributes, 160, 6, 2);
+        System.out.println(String.format("Found %d configs", gameConfigs.size()));
+        gameConfigs = configGeneratorService.generateAllConfigs(Player.JONAH, minimumAttributes, 160, 6, 3);
+        System.out.println(String.format("Found %d configs", gameConfigs.size()));
+        gameConfigs = configGeneratorService.generateAllConfigs(Player.JONAH, minimumAttributes, 160, 6, 4);
+        System.out.println(String.format("Found %d configs", gameConfigs.size()));
+        gameConfigs = configGeneratorService.generateAllConfigs(Player.JONAH, minimumAttributes, 160, 6, 5);
+        System.out.println(String.format("Found %d configs", gameConfigs.size()));
+        gameConfigs = configGeneratorService.generateAllConfigs(Player.JONAH, minimumAttributes, 160, 6, 6);
+        System.out.println(String.format("Found %d configs", gameConfigs.size()));
     }
 }

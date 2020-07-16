@@ -33,8 +33,11 @@
                         </tr>
                         <tr>
                             <td>Upgrades allowed</td>
-                            <td><input id="upgradeAllowed" type="number" th:field="*{upgradeAllowed}"
-                                       class="form-control midWidth"/></td>
+                            <td>
+                                <input id="upgradeAllowed" type="range" name="upgradeAllowed" min="5" max="13"
+                                       th:field="*{upgradeAllowed}">
+                                <span id="upgradeAllowedVal">0</span>
+                            </td>
                         </tr>
                         <tr>
                             <td>Max level</td>
@@ -201,6 +204,7 @@
     var forehandSlider = document.getElementById("minForehand");
     var backhandSlider = document.getElementById("minBackhand");
     var maxLevelSlider = document.getElementById("maxLevel");
+    var upgradeAllowedSlider = document.getElementById("upgradeAllowed");
     var agilitySliderOutput = document.getElementById("minAgilityVal");
     var enduranceSliderOutput = document.getElementById("minEnduranceVal");
     var serveSliderOutput = document.getElementById("minServiceVal");
@@ -208,6 +212,7 @@
     var forehandSliderOutput = document.getElementById("minForehandVal");
     var backhandSliderOutput = document.getElementById("minBackhandVal");
     var maxLevelSliderOutput = document.getElementById("maxLevelVal");
+    var upgradeAllowedSliderOutput = document.getElementById("upgradeAllowedVal");
 
     // Update the current slider value (each time you drag the slider handle)
     agilitySliderOutput.innerHTML = agilitySlider.value;
@@ -237,6 +242,10 @@
     maxLevelSliderOutput.innerHTML = maxLevelSlider.value;
     maxLevelSlider.oninput = function () {
         maxLevelSliderOutput.innerHTML = this.value;
+    }
+    upgradeAllowedSliderOutput.innerHTML = upgradeAllowedSlider.value;
+    upgradeAllowedSlider.oninput = function () {
+        upgradeAllowedSliderOutput.innerHTML = this.value;
     }
 
     function selectConfig(racket, grip, shoes, wristband, nutrition, workout) {
