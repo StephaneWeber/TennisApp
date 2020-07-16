@@ -1,166 +1,157 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Home Page</title>
-    <link rel='stylesheet' th:href="@{/css/block-library.min.css}" href="" type='text/css' media='all'/>
-    <link rel='stylesheet' th:href='@{/css/bootstrap.min.css}' href="" type='text/css' media='all'/>
-    <link rel='stylesheet' th:href='@{/css/tennis.css}' href="" type='text/css' media='all'/>
-    <script type='text/javascript' th:src='@{/js/jquery.js}'></script>
-    <script type='text/javascript' th:src='@{/js/jquery-migrate.min.js}'></script>
-    <script type='text/javascript' th:src='@{/js/jquery.inputmask.min.js}'></script>
-    <script type='text/javascript' th:src='@{/js/font-awesome.js}'></script>
+    <link rel='stylesheet' th:href="@{/css/block-library.min.css}" type='text/css' media='all'/>
+    <link rel='stylesheet' th:href='@{/css/bootstrap.min.css}' type='text/css' media='all'/>
+    <link rel='stylesheet' th:href='@{/css/tennis.css}' type='text/css' media='all'/>
+    <script type='text/javascript' th:src='@{/js/jquery.js}' src=""></script>
+    <script type='text/javascript' th:src='@{/js/jquery-migrate.min.js}' src=""></script>
+    <script type='text/javascript' th:src='@{/js/jquery.inputmask.min.js}' src=""></script>
+    <script type='text/javascript' th:src='@{/js/font-awesome.js}' src=""></script>
+    <script type='text/javascript' th:src='@{/js/bootstrap.min.js}' src=""></script>
 </head>
 <body>
 <h1><span th:text="${appName}">Our App</span></h1>
 
 <div class="col-12 row container">
-    <div class="col-lg-3 container-fluid">
-        <div class="row">
-            <div>
-                <form id="resetFiltersForm" th:action="@{/resetFilters}" method="post"></form>
-                <form id="filtersForm" th:action="@{/}" th:object="${configFilter}" method="post">
-                    <h2>Filters:</h2>
-                    <br>
-                    <div class="text-center">
-                        <table border="0" class="table-borderless">
-                            <tr>
-                                <td>Player</td>
-                                <td><select name="player" th:field="*{selectedPlayer}">
-                                    <option value="">ALL</option>
-                                    <option th:value="${playerOpt.name()}"
-                                            th:each="playerOpt : ${T(com.sweber.tennis.model.player.Player).values()}"
-                                            th:text="${playerOpt.name()}"></option>
-                                </select></td>
-                            </tr>
-                            <tr>
-                                <td>Upgrades allowed</td>
-                                <td><input id="upgradeAllowed" type="number" th:field="*{upgradeAllowed}"
-                                           class="form-control midWidth"/></td>
-                            </tr>
-                            <tr>
-                                <td>Max level</td>
-                                <td>
-                                    <input id="maxLevel" type="range" name="maxLevel" min="5" max="13"
-                                           th:field="*{maxLevel}">
-                                    <span id="maxLevelVal">0</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Min total</td>
-                                <td><input id="minTotal" type="number" th:field="*{minTotal}"
-                                           class="form-control midWidth"/>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td colspan="2">
-                                    <table>
-                                        <tr>
-                                            <td>Agility</td>
-                                            <td>
-                                                <input id="minAgility" type="range" name="minAgility" min="0" max="50"
-                                                       th:field="*{minAttributes.agility}">
-                                                <span id="minAgilityVal">0</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Endurance</td>
-                                            <td>
-                                                <input id="minEndurance" type="range" name="minEndurance" min="0"
-                                                       max="50"
-                                                       th:field="*{minAttributes.endurance}">
-                                                <span id="minEnduranceVal">0</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Service</td>
-                                            <td>
-                                                <input id="minService" type="range" name="minService" min="0" max="50"
-                                                       th:field="*{minAttributes.service}">
-                                                <span id="minServiceVal">0</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Volley</td>
-                                            <td>
-                                                <input id="minVolley" type="range" name="minVolley" min="0" max="50"
-                                                       th:field="*{minAttributes.volley}">
-                                                <span id="minVolleyVal">0</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Forehand</td>
-                                            <td>
-                                                <input id="minForehand" type="range" name="minForehand" min="0" max="50"
-                                                       th:field="*{minAttributes.forehand}">
-                                                <span id="minForehandVal">0</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Backhand</td>
-                                            <td>
-                                                <input id="minBackhand" type="range" name="minBackhand" min="0" max="50"
-                                                       th:field="*{minAttributes.backhand}">
-                                                <span id="minBackhandVal">0</span>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                    <div class="text-center">
-                        <input class="btn btn-primary btn-lg" form="filtersForm" type="submit" th:value="Generate"/>
-                        <input class="btn btn-primary btn-lg" form="resetFiltersForm" type="submit" th:value="Reset"/>
-                    </div>
-                    <div class="text-center">
-                        <span th:text="${#lists.size(list)}"></span> results found
-                    </div>
-                </form>
-            </div>
-        </div>
-        <div class="row">
-            <h2>Selected configuration:</h2>
-            <table class="table table-secondary align-content-center">
-                <tr>
-                    <td>Racket</td>
-                    <td id="selRacket"></td>
-                </tr>
-                <tr>
-                    <td>Grip</td>
-                    <td id="selGrip"></td>
-                </tr>
-                <tr>
-                    <td>Wristband</td>
-                    <td id="selWristband"></td>
-                </tr>
-                <tr>
-                    <td>Shoes</td>
-                    <td id="selShoes"></td>
-                </tr>
-                <tr>
-                    <td>Nutrition</td>
-                    <td id="selNutrition"></td>
-                </tr>
-                <tr>
-                    <td>Training</td>
-                    <td id="selTraining"></td>
-                </tr>
-            </table>
-
+    <div class="col-lg-4 container-fluid">
+        <div>
+            <form id="resetFiltersForm" th:action="@{/resetFilters}" th:object="${configFilter}" method="post"></form>
+            <form id="filtersForm" th:action="@{/}" th:object="${configFilter}" method="post">
+                <h2>Filters:</h2>
+                <br>
+                <div class="text-center">
+                    <table border="0" class="table-borderless">
+                        <tr>
+                            <td>Player</td>
+                            <td><select name="player" th:field="*{selectedPlayer}">
+                                <option value="">ALL</option>
+                                <option th:value="${playerOpt.name()}"
+                                        th:each="playerOpt : ${T(com.sweber.tennis.model.player.Player).values()}"
+                                        th:text="${playerOpt.name()}"></option>
+                            </select></td>
+                        </tr>
+                        <tr>
+                            <td>Upgrades allowed</td>
+                            <td><input id="upgradeAllowed" type="number" th:field="*{upgradeAllowed}"
+                                       class="form-control midWidth"/></td>
+                        </tr>
+                        <tr>
+                            <td>Max level</td>
+                            <td>
+                                <input id="maxLevel" type="range" name="maxLevel" min="5" max="13"
+                                       th:field="*{maxLevel}">
+                                <span id="maxLevelVal">0</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Min total</td>
+                            <td><input id="minTotal" type="number" th:field="*{minTotal}"
+                                       class="form-control midWidth"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <table>
+                                    <tr>
+                                        <td>Agility</td>
+                                        <td>
+                                            <input id="minAgility" type="range" name="minAgility" min="0" max="50"
+                                                   th:field="*{minAttributes.agility}">
+                                            <span id="minAgilityVal">0</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Endurance</td>
+                                        <td>
+                                            <input id="minEndurance" type="range" name="minEndurance" min="0"
+                                                   max="50"
+                                                   th:field="*{minAttributes.endurance}">
+                                            <span id="minEnduranceVal">0</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Service</td>
+                                        <td>
+                                            <input id="minService" type="range" name="minService" min="0" max="50"
+                                                   th:field="*{minAttributes.service}">
+                                            <span id="minServiceVal">0</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Volley</td>
+                                        <td>
+                                            <input id="minVolley" type="range" name="minVolley" min="0" max="50"
+                                                   th:field="*{minAttributes.volley}">
+                                            <span id="minVolleyVal">0</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Forehand</td>
+                                        <td>
+                                            <input id="minForehand" type="range" name="minForehand" min="0" max="50"
+                                                   th:field="*{minAttributes.forehand}">
+                                            <span id="minForehandVal">0</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Backhand</td>
+                                        <td>
+                                            <input id="minBackhand" type="range" name="minBackhand" min="0" max="50"
+                                                   th:field="*{minAttributes.backhand}">
+                                            <span id="minBackhandVal">0</span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="text-center">
+                    <input class="btn btn-primary btn-lg" form="filtersForm" type="submit" th:value="Generate"/>
+                    <input class="btn btn-primary btn-lg" form="resetFiltersForm" type="submit" th:value="Reset"/>
+                </div>
+                <div class="text-center">
+                    <span th:text="${#lists.size(list)}"></span> results found
+                </div>
+            </form>
         </div>
     </div>
-    <div class="col-lg-9 container-fluid">
+    <div class="col-lg-2 container-fluid">
+        <h2>Selected configuration:</h2>
+        <table class="table table-secondary align-content-center">
+            <tr>
+                <td>Racket</td>
+                <td id="selRacket"></td>
+            </tr>
+            <tr>
+                <td>Grip</td>
+                <td id="selGrip"></td>
+            </tr>
+            <tr>
+                <td>Wristband</td>
+                <td id="selWristband"></td>
+            </tr>
+            <tr>
+                <td>Shoes</td>
+                <td id="selShoes"></td>
+            </tr>
+            <tr>
+                <td>Nutrition</td>
+                <td id="selNutrition"></td>
+            </tr>
+            <tr>
+                <td>Training</td>
+                <td id="selWorkout"></td>
+            </tr>
+        </table>
+    </div>
+    <div class="col-lg-6 container-fluid">
         <div class="tableFixHead" th:if="${list != null}">
-            <table border="1" class="table table-primary tableFixHead">
+            <table id="configTable" border="1" class="table table-primary tableFixHead">
                 <thead>
                 <tr>
                     <th>Player</th>
-                    <!--                    <th>Racket</th>-->
-                    <!--                    <th>Grip</th>-->
-                    <!--                    <th>Shoes</th>-->
-                    <!--                    <th>Wrist</th>-->
-                    <!--                    <th>Nutrition</th>-->
-                    <!--                    <th>Training</th>-->
                     <th>Agi</th>
                     <th>End</th>
                     <th>Ser</th>
@@ -172,14 +163,15 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="gameConfig : ${list}" th:title="${gameConfig.toString()}">
+                <tr th:each="gameConfig : ${list}" th:title="${gameConfig.toString()}"
+                    th:data-racket="${gameConfig.racket}"
+                    th:data-grip="${gameConfig.grip}"
+                    th:data-shoes="${gameConfig.shoes}"
+                    th:data-wristband="${gameConfig.wristband}"
+                    th:data-nutrition="${gameConfig.nutrition}"
+                    th:data-workout="${gameConfig.workout}"
+                    th:onclick="selectConfig(this.getAttribute('data-racket'), this.getAttribute('data-grip'), this.getAttribute('data-shoes'), this.getAttribute('data-wristband'), this.getAttribute('data-nutrition'), this.getAttribute('data-workout'));">
                     <td th:text="${gameConfig.player}"></td>
-                    <!--                    <td th:text="${gameConfig.racket}"></td>-->
-                    <!--                    <td th:text="${gameConfig.grip}"></td>-->
-                    <!--                    <td th:text="${gameConfig.shoes}"></td>-->
-                    <!--                    <td th:text="${gameConfig.wristband}"></td>-->
-                    <!--                    <td th:text="${gameConfig.nutrition}"></td>-->
-                    <!--                    <td th:text="${gameConfig.workout}"></td>-->
                     <td th:text="${gameConfig.attributes.agility}"
                         th:classappend="${gameConfig.attributes.agility >= maxAttributes.agility ? 'maxAttribute' : ''}"></td>
                     <td th:text="${gameConfig.attributes.endurance}"
@@ -201,7 +193,6 @@
     </div>
 </div>
 
-<script type='text/javascript' th:src='@{/js/bootstrap.min.js}' src=""></script>
 <script>
     var agilitySlider = document.getElementById("minAgility");
     var enduranceSlider = document.getElementById("minEndurance");
@@ -247,6 +238,26 @@
     maxLevelSlider.oninput = function () {
         maxLevelSliderOutput.innerHTML = this.value;
     }
+
+    function selectConfig(racket, grip, shoes, wristband, nutrition, workout) {
+        jQuery(document).ready(function ($) {
+            $("#selRacket").html(racket);
+            $("#selGrip").html(grip);
+            $("#selShoes").html(shoes);
+            $("#selWristband").html(wristband);
+            $("#selNutrition").html(nutrition);
+            $("#selWorkout").html(workout);
+        });
+    }
+
+    jQuery(document).ready(function ($) {
+        $("#configTable tr").click(function () {
+            var selected = $(this).hasClass("active");
+            $("#configTable tr").removeClass("active");
+            if (!selected)
+                $(this).addClass("active");
+        });
+    });
 </script>
 </body>
 </html>
