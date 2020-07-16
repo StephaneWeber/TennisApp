@@ -41,6 +41,7 @@ public class TennisController {
         model.addAttribute("list", gameConfigs);
         model.addAttribute("playerList", Player.values());
         model.addAttribute("configFilter", configFilter);
+        model.addAttribute("maxAttributes", new Attributes(50, 50, 50, 50, 50, 50));
     }
 
     private ConfigFilter setupInitialConfigFilter() {
@@ -66,12 +67,42 @@ public class TennisController {
     @PostMapping("/")
     public String postVerification(ConfigFilter configFilter, Model model) {
         List<GameConfig> gameConfigs = generateConfigs(configFilter);
+        Attributes maxAttributes = computeMaxAttributes(gameConfigs);
 
         model.addAttribute("appName", appName);
         model.addAttribute("list", gameConfigs);
         model.addAttribute("playerList", Player.values());
         model.addAttribute("configFilter", configFilter);
+        model.addAttribute("maxAttributes", maxAttributes);
         return HOME_PAGE;
+    }
+
+    private Attributes computeMaxAttributes(List<GameConfig> gameConfigs) {
+        Attributes attributes = new Attributes();
+        gameConfigs.forEach(gameConfig -> upgradeMaxAttributes(attributes, gameConfig));
+        return attributes;
+    }
+
+    private void upgradeMaxAttributes(Attributes attributes, GameConfig gameConfig) {
+        Attributes gameConfigAttributes = gameConfig.getAttributes();
+        if (gameConfigAttributes.getAgility() >= attributes.getAgility()) {
+            attributes.setAgility(gameConfigAttributes.getAgility());
+        }
+        if (gameConfigAttributes.getEndurance() >= attributes.getEndurance()) {
+            attributes.setEndurance(gameConfigAttributes.getEndurance());
+        }
+        if (gameConfigAttributes.getService() >= attributes.getService()) {
+            attributes.setService(gameConfigAttributes.getService());
+        }
+        if (gameConfigAttributes.getVolley() >= attributes.getVolley()) {
+            attributes.setVolley(gameConfigAttributes.getVolley());
+        }
+        if (gameConfigAttributes.getForehand() >= attributes.getForehand()) {
+            attributes.setForehand(gameConfigAttributes.getForehand());
+        }
+        if (gameConfigAttributes.getBackhand() >= attributes.getBackhand()) {
+            attributes.setBackhand(gameConfigAttributes.getBackhand());
+        }
     }
 
     private List<GameConfig> generateConfigs(ConfigFilter configFilter) {

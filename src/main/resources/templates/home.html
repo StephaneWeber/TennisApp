@@ -147,12 +147,18 @@
                     <td th:text="${gameConfig.wristband}"></td>
                     <td th:text="${gameConfig.nutrition}"></td>
                     <td th:text="${gameConfig.workout}"></td>
-                    <td th:text="${gameConfig.attributes.agility}"></td>
-                    <td th:text="${gameConfig.attributes.endurance}"></td>
-                    <td th:text="${gameConfig.attributes.service}"></td>
-                    <td th:text="${gameConfig.attributes.volley}"></td>
-                    <td th:text="${gameConfig.attributes.forehand}"></td>
-                    <td th:text="${gameConfig.attributes.backhand}"></td>
+                    <td th:text="${gameConfig.attributes.agility}"
+                        th:classappend="${gameConfig.attributes.agility >= maxAttributes.agility ? 'maxAttribute' : ''}"></td>
+                    <td th:text="${gameConfig.attributes.endurance}"
+                        th:classappend="${gameConfig.attributes.endurance >= maxAttributes.endurance ? 'maxAttribute' : ''}"></td>
+                    <td th:text="${gameConfig.attributes.service}"
+                        th:classappend="${gameConfig.attributes.service >= maxAttributes.service ? 'maxAttribute' : ''}"></td>
+                    <td th:text="${gameConfig.attributes.volley}"
+                        th:classappend="${gameConfig.attributes.volley >= maxAttributes.volley ? 'maxAttribute' : ''}"></td>
+                    <td th:text="${gameConfig.attributes.forehand}"
+                        th:classappend="${gameConfig.attributes.forehand >= maxAttributes.forehand ? 'maxAttribute' : ''}"></td>
+                    <td th:text="${gameConfig.attributes.backhand}"
+                        th:classappend="${gameConfig.attributes.backhand >= maxAttributes.backhand ? 'maxAttribute' : ''}"></td>
                     <td th:text="${gameConfig.value}"><b>Total</b></td>
                     <td th:text="${gameConfig.cost}"><b>Total</b></td>
                 </tr>
