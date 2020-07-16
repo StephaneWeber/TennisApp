@@ -35,7 +35,7 @@ public class OwnedGear {
     private OwnedGear() {
     }
 
-    private static int ownedLevel(GearItem gearItem) {
+    public static int ownedLevel(GearItem gearItem) {
         GearType gearType = gearItem.getGearType();
         String configGripName = getGearItemGenericName(gearItem.name());
         return OWNED_GEAR.stream()

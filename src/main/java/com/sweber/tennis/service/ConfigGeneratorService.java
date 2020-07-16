@@ -37,7 +37,7 @@ public class ConfigGeneratorService {
 
     private Stream<GameConfig> generateAllConfigsForPlayer(Player player, Attributes minimumAttributes, int minTotalValue, int maxLevel, int upgradesAllowed) {
         List<GameConfig> results = new ArrayList<>();
-        List<GearItem> leveledGearItems = GearItem.maxLevel(maxLevel, upgradesAllowed);
+        List<GearItem> leveledGearItems = GearItem.leveledGearItems(maxLevel, upgradesAllowed);
         for (GearItem racket : potentialGearItems(leveledGearItems, RACKET)) {
             for (GearItem grip : potentialGearItems(leveledGearItems, GRIP)) {
                 for (GearItem shoes : potentialGearItems(leveledGearItems, SHOES)) {

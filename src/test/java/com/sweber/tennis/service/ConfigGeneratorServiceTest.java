@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 class ConfigGeneratorServiceTest {
     @Test
     public void test() {
@@ -16,6 +18,7 @@ class ConfigGeneratorServiceTest {
         List<GameConfig> gameConfigs = configGeneratorService.generateAllConfigs(Player.JONAH, minimumAttributes, 140, 6, 0);
         long end = System.currentTimeMillis();
         System.out.println(String.format("Found %d configs in %d ms", gameConfigs.size(), (end - start)));
-        // 1423 - 619
+        // 247 - 329
+        assertThat(gameConfigs).hasSize(247);
     }
 }

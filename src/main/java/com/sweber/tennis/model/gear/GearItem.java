@@ -204,9 +204,10 @@ public enum GearItem {
         return gearType;
     }
 
-    public static List<GearItem> maxLevel(int maxLevel, int upgradesAllowed) {
+    public static List<GearItem> leveledGearItems(int maxLevel, int upgradesAllowed) {
         return Arrays.stream(GearItem.values())
                 .filter(item -> item.getLevel() <= maxLevel)
+                .filter(item -> item.getLevel() >= Math.min(maxLevel, OwnedGear.ownedLevel(item)))
                 .filter(item -> upgradesAllowed == 0 || OwnedGear.isPossibleUpgrade(item))
                 .collect(Collectors.toList());
     }
