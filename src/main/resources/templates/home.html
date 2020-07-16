@@ -187,7 +187,7 @@
                         th:classappend="${gameConfig.attributes.forehand >= maxAttributes.forehand ? 'maxAttribute' : ''}"></td>
                     <td th:text="${gameConfig.attributes.backhand}"
                         th:classappend="${gameConfig.attributes.backhand >= maxAttributes.backhand ? 'maxAttribute' : ''}"></td>
-                    <td th:text="${gameConfig.value}" style="font-weight:bold"><b>Total</b></td>
+                    <td th:text="${gameConfig.value}" style="font-weight:bold"></td>
                     <!--TODO Activate when data is right                    <td th:text="${gameConfig.cost}"><b>Total</b></td>-->
                 </tr>
                 </tbody>
@@ -196,7 +196,7 @@
     </div>
 </div>
 
-<script>
+<script type="javascript">
     var agilitySlider = document.getElementById("minAgility");
     var enduranceSlider = document.getElementById("minEndurance");
     var serveSlider = document.getElementById("minService");

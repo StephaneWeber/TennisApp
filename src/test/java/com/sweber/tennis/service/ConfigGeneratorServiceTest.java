@@ -29,6 +29,7 @@ class ConfigGeneratorServiceTest {
         Attributes minimumAttributes = new Attributes(20, 0, 20, 0, 20, 20);
         List<GameConfig> gameConfigs = new ArrayList<>();
 
+        long start = System.currentTimeMillis();
         gameConfigs = configGeneratorService.generateAllConfigs(Player.JONAH, minimumAttributes, 160, 6, 0);
         System.out.println(String.format("Found %d configs", gameConfigs.size()));
         gameConfigs = configGeneratorService.generateAllConfigs(Player.JONAH, minimumAttributes, 160, 6, 1);
@@ -43,5 +44,8 @@ class ConfigGeneratorServiceTest {
         System.out.println(String.format("Found %d configs", gameConfigs.size()));
         gameConfigs = configGeneratorService.generateAllConfigs(Player.JONAH, minimumAttributes, 160, 6, 6);
         System.out.println(String.format("Found %d configs", gameConfigs.size()));
+        long end = System.currentTimeMillis();
+        System.out.println(String.format("Found in %d ms", (end - start)));
+        // 23-147-408-684-820-852-858 in 1239ms
     }
 }
