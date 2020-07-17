@@ -16,8 +16,8 @@
 <div class="col-12 row container">
     <div class="col-lg-4 container-fluid">
         <div>
-            <form id="resetFiltersForm" th:action="@{/}" th:object="${configFilter}" method="get"></form>
-            <form id="filtersForm" th:action="@{/}" th:object="${configFilter}" method="post">
+            <form id="resetFiltersForm" th:action="@{/}" th:object="${configFilter}" th:method="get"></form>
+            <form id="filtersForm" th:action="@{/}" th:object="${configFilter}" th:method="post">
                 <h2>Filters:</h2>
                 <br>
                 <div class="text-center">
