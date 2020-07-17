@@ -166,14 +166,15 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="gameConfig : ${list}" th:title="${gameConfig.toString()}"
+                <tr th:each="gameConfig : ${list}"
                     th:data-racket="${gameConfig.racket}"
                     th:data-grip="${gameConfig.grip}"
                     th:data-shoes="${gameConfig.shoes}"
                     th:data-wristband="${gameConfig.wristband}"
                     th:data-nutrition="${gameConfig.nutrition}"
                     th:data-workout="${gameConfig.workout}"
-                    th:onclick="selectConfig(this.getAttribute('data-racket'), this.getAttribute('data-grip'), this.getAttribute('data-shoes'), this.getAttribute('data-wristband'), this.getAttribute('data-nutrition'), this.getAttribute('data-workout'));">
+                    th:onclick="|selectConfig(this.getAttribute('data-racket'), this.getAttribute('data-grip'), this.getAttribute('data-shoes'), this.getAttribute('data-wristband'), this.getAttribute('data-nutrition'), this.getAttribute('data-workout'))|"
+                >
                     <td th:text="${gameConfig.player}"></td>
                     <td th:text="${gameConfig.attributes.agility}"
                         th:classappend="${gameConfig.attributes.agility >= maxAttributes.agility ? 'maxAttribute' : ''}"></td>
@@ -196,57 +197,59 @@
     </div>
 </div>
 
-<script type="javascript">
-    var agilitySlider = document.getElementById("minAgility");
-    var enduranceSlider = document.getElementById("minEndurance");
-    var serveSlider = document.getElementById("minService");
-    var volleySlider = document.getElementById("minVolley");
-    var forehandSlider = document.getElementById("minForehand");
-    var backhandSlider = document.getElementById("minBackhand");
-    var maxLevelSlider = document.getElementById("maxLevel");
-    var upgradeAllowedSlider = document.getElementById("upgradeAllowed");
-    var agilitySliderOutput = document.getElementById("minAgilityVal");
-    var enduranceSliderOutput = document.getElementById("minEnduranceVal");
-    var serveSliderOutput = document.getElementById("minServiceVal");
-    var volleySliderOutput = document.getElementById("minVolleyVal");
-    var forehandSliderOutput = document.getElementById("minForehandVal");
-    var backhandSliderOutput = document.getElementById("minBackhandVal");
-    var maxLevelSliderOutput = document.getElementById("maxLevelVal");
-    var upgradeAllowedSliderOutput = document.getElementById("upgradeAllowedVal");
+<script>
+    jQuery(document).ready(function ($) {
+        var agilitySlider = document.getElementById("minAgility");
+        var enduranceSlider = document.getElementById("minEndurance");
+        var serveSlider = document.getElementById("minService");
+        var volleySlider = document.getElementById("minVolley");
+        var forehandSlider = document.getElementById("minForehand");
+        var backhandSlider = document.getElementById("minBackhand");
+        var maxLevelSlider = document.getElementById("maxLevel");
+        var upgradeAllowedSlider = document.getElementById("upgradeAllowed");
+        var agilitySliderOutput = document.getElementById("minAgilityVal");
+        var enduranceSliderOutput = document.getElementById("minEnduranceVal");
+        var serveSliderOutput = document.getElementById("minServiceVal");
+        var volleySliderOutput = document.getElementById("minVolleyVal");
+        var forehandSliderOutput = document.getElementById("minForehandVal");
+        var backhandSliderOutput = document.getElementById("minBackhandVal");
+        var maxLevelSliderOutput = document.getElementById("maxLevelVal");
+        var upgradeAllowedSliderOutput = document.getElementById("upgradeAllowedVal");
 
-    // Update the current slider value (each time you drag the slider handle)
-    agilitySliderOutput.innerHTML = agilitySlider.value;
-    agilitySlider.oninput = function () {
-        agilitySliderOutput.innerHTML = this.value;
-    }
-    enduranceSliderOutput.innerHTML = enduranceSlider.value;
-    enduranceSlider.oninput = function () {
-        enduranceSliderOutput.innerHTML = this.value;
-    }
-    serveSliderOutput.innerHTML = serveSlider.value;
-    serveSlider.oninput = function () {
-        serveSliderOutput.innerHTML = this.value;
-    }
-    volleySliderOutput.innerHTML = volleySlider.value;
-    volleySlider.oninput = function () {
-        volleySliderOutput.innerHTML = this.value;
-    }
-    forehandSliderOutput.innerHTML = forehandSlider.value;
-    forehandSlider.oninput = function () {
-        forehandSliderOutput.innerHTML = this.value;
-    }
-    backhandSliderOutput.innerHTML = backhandSlider.value;
-    backhandSlider.oninput = function () {
-        backhandSliderOutput.innerHTML = this.value;
-    }
-    maxLevelSliderOutput.innerHTML = maxLevelSlider.value;
-    maxLevelSlider.oninput = function () {
-        maxLevelSliderOutput.innerHTML = this.value;
-    }
-    upgradeAllowedSliderOutput.innerHTML = upgradeAllowedSlider.value;
-    upgradeAllowedSlider.oninput = function () {
-        upgradeAllowedSliderOutput.innerHTML = this.value;
-    }
+        // Update the current slider value (each time you drag the slider handle)
+        agilitySliderOutput.innerHTML = agilitySlider.value;
+        agilitySlider.oninput = function () {
+            agilitySliderOutput.innerHTML = this.value;
+        }
+        enduranceSliderOutput.innerHTML = enduranceSlider.value;
+        enduranceSlider.oninput = function () {
+            enduranceSliderOutput.innerHTML = this.value;
+        }
+        serveSliderOutput.innerHTML = serveSlider.value;
+        serveSlider.oninput = function () {
+            serveSliderOutput.innerHTML = this.value;
+        }
+        volleySliderOutput.innerHTML = volleySlider.value;
+        volleySlider.oninput = function () {
+            volleySliderOutput.innerHTML = this.value;
+        }
+        forehandSliderOutput.innerHTML = forehandSlider.value;
+        forehandSlider.oninput = function () {
+            forehandSliderOutput.innerHTML = this.value;
+        }
+        backhandSliderOutput.innerHTML = backhandSlider.value;
+        backhandSlider.oninput = function () {
+            backhandSliderOutput.innerHTML = this.value;
+        }
+        maxLevelSliderOutput.innerHTML = maxLevelSlider.value;
+        maxLevelSlider.oninput = function () {
+            maxLevelSliderOutput.innerHTML = this.value;
+        }
+        upgradeAllowedSliderOutput.innerHTML = upgradeAllowedSlider.value;
+        upgradeAllowedSlider.oninput = function () {
+            upgradeAllowedSliderOutput.innerHTML = this.value;
+        }
+    });
 
     function selectConfig(racket, grip, shoes, wristband, nutrition, workout) {
         jQuery(document).ready(function ($) {
