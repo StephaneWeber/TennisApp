@@ -7,7 +7,7 @@ public class OwnedGear {
     private static final List<GearItem> OWNED_GEAR = Arrays.asList(
             GearItem.BASIC_RACKET,
             GearItem.EAGLE_7,
-            GearItem.PATRIOT_5,
+            GearItem.PATRIOT_6,
             GearItem.PANTHER_4,
             GearItem.BASIC_GRIP,
             GearItem.WARRIOR_8,
