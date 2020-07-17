@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.thymeleaf.util.StringUtils;
 
 import java.util.List;
 
@@ -28,13 +29,6 @@ public class TennisController {
 
     @GetMapping("/")
     public String homePage(Model model) {
-        ConfigFilter configFilter = setupInitialConfigFilter();
-        initModel(configFilter, model);
-        return HOME_PAGE;
-    }
-
-    @PostMapping("/resetFilters")
-    public String resetFilters(Model model) {
         ConfigFilter configFilter = setupInitialConfigFilter();
         initModel(configFilter, model);
         return HOME_PAGE;
@@ -73,11 +67,11 @@ public class TennisController {
 
     private Attributes computeMaxAttributes(List<GameConfig> gameConfigs) {
         Attributes attributes = new Attributes();
-        gameConfigs.forEach(gameConfig -> upgradeMaxAttributes(attributes, gameConfig));
+        gameConfigs.forEach(gameConfig -> computeMaxAttributes(attributes, gameConfig));
         return attributes;
     }
 
-    private void upgradeMaxAttributes(Attributes attributes, GameConfig gameConfig) {
+    private void computeMaxAttributes(Attributes attributes, GameConfig gameConfig) {
         Attributes gameConfigAttributes = gameConfig.getAttributes();
         if (gameConfigAttributes.getAgility() >= attributes.getAgility()) {
             attributes.setAgility(gameConfigAttributes.getAgility());
@@ -100,16 +94,10 @@ public class TennisController {
     }
 
     private List<GameConfig> generateConfigs(ConfigFilter configFilter) {
-        List<GameConfig> gameConfigs;
         String player = configFilter.getSelectedPlayer();
         int minTotal = configFilter.getMinTotal();
         int upgradeAllowed = configFilter.getUpgradeAllowed();
         int maxLevel = configFilter.getMaxLevel();
-        if (player != null && !player.isEmpty()) {
-            gameConfigs = configGeneratorService.generateAllConfigs(Player.valueOf(player), configFilter.getMinAttributes(), minTotal, maxLevel, upgradeAllowed);
-        } else {
-            gameConfigs = configGeneratorService.generateAllConfigs(null, configFilter.getMinAttributes(), minTotal, maxLevel, upgradeAllowed);
-        }
-        return gameConfigs;
+        return configGeneratorService.generateAllConfigs(StringUtils.isEmpty(player) ? null : Player.valueOf(player), configFilter.getMinAttributes(), minTotal, maxLevel, upgradeAllowed);
     }
 }
