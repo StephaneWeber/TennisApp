@@ -28,20 +28,33 @@ public class TennisController {
 
     @GetMapping("/")
     public String homePage(Model model) {
-        initModel(model);
-        return "home";
+        ConfigFilter configFilter = setupInitialConfigFilter();
+        initModel(configFilter, model);
+        return HOME_PAGE;
     }
 
-    private void initModel(Model model) {
+    @PostMapping("/resetFilters")
+    public String resetFilters(Model model) {
         ConfigFilter configFilter = setupInitialConfigFilter();
+        initModel(configFilter, model);
+        return HOME_PAGE;
+    }
 
+    @PostMapping("/")
+    public String postVerification(ConfigFilter configFilter, Model model) {
+        initModel(configFilter, model);
+        return HOME_PAGE;
+    }
+
+    private void initModel(ConfigFilter configFilter, Model model) {
         List<GameConfig> gameConfigs = generateConfigs(configFilter);
+        Attributes maxAttributes = computeMaxAttributes(gameConfigs);
 
         model.addAttribute("appName", appName);
         model.addAttribute("list", gameConfigs);
         model.addAttribute("playerList", Player.values());
         model.addAttribute("configFilter", configFilter);
-        model.addAttribute("maxAttributes", new Attributes(50, 50, 50, 50, 50, 50));
+        model.addAttribute("maxAttributes", maxAttributes);
     }
 
     private ConfigFilter setupInitialConfigFilter() {
@@ -56,25 +69,6 @@ public class TennisController {
         configFilter.setUpgradeAllowed(0);
         configFilter.setMaxLevel(6);
         return configFilter;
-    }
-
-    @PostMapping("/resetFilters")
-    public String resetFilters(Model model) {
-        initModel(model);
-        return HOME_PAGE;
-    }
-
-    @PostMapping("/")
-    public String postVerification(ConfigFilter configFilter, Model model) {
-        List<GameConfig> gameConfigs = generateConfigs(configFilter);
-        Attributes maxAttributes = computeMaxAttributes(gameConfigs);
-
-        model.addAttribute("appName", appName);
-        model.addAttribute("list", gameConfigs);
-        model.addAttribute("playerList", Player.values());
-        model.addAttribute("configFilter", configFilter);
-        model.addAttribute("maxAttributes", maxAttributes);
-        return HOME_PAGE;
     }
 
     private Attributes computeMaxAttributes(List<GameConfig> gameConfigs) {
