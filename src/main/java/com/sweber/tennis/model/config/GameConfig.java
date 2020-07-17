@@ -4,8 +4,6 @@ import com.sweber.tennis.model.gear.GearItem;
 import com.sweber.tennis.model.gear.OwnedGear;
 import com.sweber.tennis.model.player.Player;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Stream;
 
 public class GameConfig {
@@ -108,7 +106,7 @@ public class GameConfig {
                 '}';
     }
 
-    public boolean satisfies(Attributes minimumAttributes) {
+    public boolean matchingAttributes(Attributes minimumAttributes) {
         if (minimumAttributes == null) return true;
         return getAttributes().getAgility() >= minimumAttributes.getAgility()
                 && getAttributes().getEndurance() >= minimumAttributes.getEndurance()
@@ -119,13 +117,12 @@ public class GameConfig {
     }
 
     public boolean upgradeAllowed(int maxUpgradesAllowed) {
-        List<Boolean> simpleUpgradesCheck = Arrays.asList(
-                OwnedGear.isUpgrade(racket), OwnedGear.isUpgrade(grip),
-                OwnedGear.isUpgrade(shoes), OwnedGear.isUpgrade(wristband),
-                OwnedGear.isUpgrade(nutrition), OwnedGear.isUpgrade(workout));
-        long hitCount = simpleUpgradesCheck.stream()
+        long numberOfUpgrades = Stream.of(
+                OwnedGear.isNextLevel(racket), OwnedGear.isNextLevel(grip),
+                OwnedGear.isNextLevel(shoes), OwnedGear.isNextLevel(wristband),
+                OwnedGear.isNextLevel(nutrition), OwnedGear.isNextLevel(workout))
                 .filter(check -> check)
                 .count();
-        return hitCount <= maxUpgradesAllowed;
+        return numberOfUpgrades <= maxUpgradesAllowed;
     }
 }

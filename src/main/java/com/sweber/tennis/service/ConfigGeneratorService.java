@@ -59,7 +59,7 @@ public class ConfigGeneratorService {
 
     private boolean isSuitableConfig(Attributes minimumAttributes, int minTotalValue, int upgradesAllowed, GameConfig gameConfig) {
         return gameConfig.getValue() >= minTotalValue
-                && gameConfig.satisfies(minimumAttributes)
+                && gameConfig.matchingAttributes(minimumAttributes)
                 && gameConfig.upgradeAllowed(upgradesAllowed);
     }
 

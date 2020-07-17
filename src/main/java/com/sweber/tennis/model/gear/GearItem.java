@@ -208,7 +208,7 @@ public enum GearItem {
         return Arrays.stream(GearItem.values())
                 .filter(item -> item.getLevel() <= maxLevel)
                 .filter(item -> item.getLevel() >= Math.min(maxLevel, OwnedGear.ownedLevel(item)))
-                .filter(item -> upgradesAllowed == 0 || OwnedGear.isPossibleUpgrade(item))
+                .filter(item -> upgradesAllowed == 0 ? OwnedGear.isOwned(item) : OwnedGear.isPossibleUpgrade(item))
                 .collect(Collectors.toList());
     }
 }

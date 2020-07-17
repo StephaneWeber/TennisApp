@@ -46,16 +46,16 @@ public class OwnedGear {
                 .orElse(0);
     }
 
-    public static boolean isUpgrade(GearItem gearItem) {
-        int currentLevel = ownedLevel(gearItem);
-        int i = gearItem.getLevel() - currentLevel;
-        return (i == 1);
+    public static boolean isNextLevel(GearItem gearItem) {
+        return (gearItem.getLevel() - ownedLevel(gearItem) == 1);
     }
 
     public static boolean isPossibleUpgrade(GearItem gearItem) {
-        int currentLevel = ownedLevel(gearItem);
-        int i = gearItem.getLevel() - currentLevel;
-        return i <= 1;
+        return (gearItem.getLevel() - ownedLevel(gearItem) <= 1);
+    }
+
+    public static boolean isOwned(GearItem gearItem) {
+        return (gearItem.getLevel() - ownedLevel(gearItem) <= 0);
     }
 
     private static String getGearItemGenericName(String name) {

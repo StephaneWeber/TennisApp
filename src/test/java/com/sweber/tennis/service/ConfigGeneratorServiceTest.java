@@ -46,6 +46,6 @@ class ConfigGeneratorServiceTest {
         System.out.println(String.format("Found %d configs", gameConfigs.size()));
         long end = System.currentTimeMillis();
         System.out.println(String.format("Found in %d ms", (end - start)));
-        // 23-147-408-684-820-852-858 in 1239ms
+        // 23-147-408-684-820-852-858 in 844ms
     }
 }
