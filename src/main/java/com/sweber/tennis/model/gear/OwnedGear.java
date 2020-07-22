@@ -1,7 +1,4 @@
-package com.sweber.tennis.config;
-
-import com.sweber.tennis.model.gear.GearItem;
-import com.sweber.tennis.model.gear.GearType;
+package com.sweber.tennis.model.gear;
 
 import java.util.Arrays;
 import java.util.List;
@@ -10,56 +7,58 @@ public class OwnedGear {
     private static final List<GearItem> OWNED_GEAR = Arrays.asList(
             GearItem.BASIC_RACKET,
             GearItem.EAGLE_7,
-            GearItem.PATRIOT_5,
-            GearItem.PANTHER_3,
+            GearItem.PATRIOT_6,
+            GearItem.PANTHER_4,
+            GearItem.SAMURAI_3,
             GearItem.BASIC_GRIP,
             GearItem.WARRIOR_8,
             GearItem.TALON_5,
-            GearItem.MACHETE_4,
+            GearItem.MACHETE_7,
+            GearItem.KATANA_3,
             GearItem.BASIC_SHOES,
             GearItem.FEATHER_5,
             GearItem.RAPTOR_7,
             GearItem.HUNTER_3,
-            GearItem.PIRANHA_4,
+            GearItem.PIRANHA_5,
             GearItem.BASIC_WRIST,
-            GearItem.TOMAHAWK_5,
+            GearItem.TOMAHAWK_6,
             GearItem.MISSILE_3,
             GearItem.PIRATE_5,
             GearItem.ARA_1,
             GearItem.BASIC_NUTRITION,
-            GearItem.PROTEIN_4,
-            GearItem.HYDRATION_6,
-            GearItem.MACROBIOTICS_4,
+            GearItem.PROTEIN_5,
+            GearItem.HYDRATION_7,
+            GearItem.MACROBIOTICS_5,
             GearItem.VEGAN_1,
             GearItem.BASIC_TRAINING,
-            GearItem.ENDURANCE_7,
-            GearItem.PLYOMETRICS_3);
+            GearItem.ENDURANCE_8,
+            GearItem.PLYOMETRICS_4,
+            GearItem.WEIGHTLIFTING_1);
 
     private OwnedGear() {
     }
 
-    private static int ownedLevel(GearItem gearItem) {
+    public static int ownedLevel(GearItem gearItem) {
         GearType gearType = gearItem.getGearType();
         String configGripName = getGearItemGenericName(gearItem.name());
         return OWNED_GEAR.stream()
                 .filter(item -> item.getGearType() == gearType)
                 .filter(item -> item.name().startsWith(configGripName))
                 .findFirst()
-                .map(GearItem::getConfig)
-                .map(Config::getLevel)
+                .map(GearItem::getLevel)
                 .orElse(0);
     }
 
-    public static boolean isUpgrade(GearItem gearItem) {
-        int currentLevel = ownedLevel(gearItem);
-        int i = gearItem.getConfig().getLevel() - currentLevel;
-        return (i == 1);
+    public static boolean isNextLevel(GearItem gearItem) {
+        return (gearItem.getLevel() - ownedLevel(gearItem) == 1);
     }
 
     public static boolean isPossibleUpgrade(GearItem gearItem) {
-        int currentLevel = ownedLevel(gearItem);
-        int i = gearItem.getConfig().getLevel() - currentLevel;
-        return i <= 1;
+        return (gearItem.getLevel() - ownedLevel(gearItem) <= 1);
+    }
+
+    public static boolean isOwned(GearItem gearItem) {
+        return (gearItem.getLevel() - ownedLevel(gearItem) <= 0);
     }
 
     private static String getGearItemGenericName(String name) {
