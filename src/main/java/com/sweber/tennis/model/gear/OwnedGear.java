@@ -13,7 +13,7 @@ public class OwnedGear {
             GearItem.BASIC_GRIP,
             GearItem.WARRIOR_8,
             GearItem.TALON_5,
-            GearItem.MACHETE_6,
+            GearItem.MACHETE_7,
             GearItem.KATANA_3,
             GearItem.BASIC_SHOES,
             GearItem.FEATHER_5,
