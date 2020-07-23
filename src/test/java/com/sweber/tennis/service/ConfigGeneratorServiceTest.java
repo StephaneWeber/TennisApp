@@ -2,6 +2,7 @@ package com.sweber.tennis.service;
 
 import com.sweber.tennis.model.config.Attributes;
 import com.sweber.tennis.model.config.GameConfig;
+import com.sweber.tennis.model.player.Player;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,6 +16,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ConfigGeneratorServiceTest {
     @Autowired
     private ConfigGeneratorService configGeneratorService;
+    @Autowired
+    private PlayerService playerService;
 
     @Test
     public void test() {
@@ -25,6 +28,14 @@ class ConfigGeneratorServiceTest {
         System.out.println(String.format("Found %d configs in %d ms", gameConfigs.size(), (end - start)));
         // 541 - 55
         assertThat(gameConfigs).hasSize(541);
+    }
+
+    @Test
+    public void testPlayerService() {
+        List<Player> players = playerService.maxLevel(3);
+        assertThat(players).hasSize(2);
+        players = playerService.maxLevel(4);
+        assertThat(players).hasSize(3);
     }
 
     @Test

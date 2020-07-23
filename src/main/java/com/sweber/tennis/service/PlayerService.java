@@ -64,9 +64,24 @@ public class PlayerService {
     }
 
     public List<Player> maxLevel(int maxLevel) {
-        return ownedPlayers.stream()
+        return players.stream()
+                .filter(this::isOwned)
                 .filter(item -> item.getLevel() <= maxLevel)
+                .filter(item -> item.getLevel() >= Math.min(maxLevel, ownedLevel(item)))
                 .collect(Collectors.toList());
+    }
+
+    private int ownedLevel(Player player) {
+        String playerName = getPlayerGenericName(player.getName());
+        return ownedPlayers.stream()
+                .filter(item -> item.getName().startsWith(playerName))
+                .findFirst()
+                .map(Player::getLevel)
+                .orElse(0);
+    }
+
+    private boolean isOwned(Player player) {
+        return (player.getLevel() - ownedLevel(player) <= 0);
     }
 
     public Player getPlayer(String playerName) {
@@ -74,5 +89,13 @@ public class PlayerService {
                 .filter(item -> item.getName().equals(playerName))
                 .findFirst()
                 .orElse(null);
+    }
+
+    private String getPlayerGenericName(String name) {
+        int endIndex = name.indexOf('_');
+        if (endIndex != -1) {
+            name = name.substring(0, endIndex);
+        }
+        return name;
     }
 }
