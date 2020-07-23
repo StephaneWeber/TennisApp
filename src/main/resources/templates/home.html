@@ -29,7 +29,7 @@
                                     <td><select name="player" th:field="*{selectedPlayer}">
                                         <option value="">ALL</option>
                                         <option th:value="${playerOpt.name}"
-                                                th:each="playerOpt : ${players}"
+                                                th:each="playerOpt : ${playerList}"
                                                 th:text="${playerOpt.name}"></option>
                                     </select></td>
                                 </tr>
@@ -137,6 +137,10 @@
                 <h2>Selected configuration:</h2>
                 <table class="table table-secondary align-content-center">
                     <tr>
+                        <td>Player</td>
+                        <td id="selPlayer"></td>
+                    </tr>
+                    <tr>
                         <td>Racket</td>
                         <td id="selRacket"></td>
                     </tr>
@@ -182,15 +186,16 @@
                 </thead>
                 <tbody>
                 <tr th:each="gameConfig : ${list}"
+                    th:data-player="${gameConfig.playerName}"
                     th:data-racket="${gameConfig.racketName}"
                     th:data-grip="${gameConfig.gripName}"
                     th:data-shoes="${gameConfig.shoesName}"
                     th:data-wristband="${gameConfig.wristbandName}"
                     th:data-nutrition="${gameConfig.nutritionName}"
                     th:data-workout="${gameConfig.workoutName}"
-                    th:onclick="|selectConfig(this.getAttribute('data-racket'), this.getAttribute('data-grip'), this.getAttribute('data-shoes'), this.getAttribute('data-wristband'), this.getAttribute('data-nutrition'), this.getAttribute('data-workout'))|"
+                    th:onclick="|selectConfig(this.getAttribute('data-player'), this.getAttribute('data-racket'), this.getAttribute('data-grip'), this.getAttribute('data-shoes'), this.getAttribute('data-wristband'), this.getAttribute('data-nutrition'), this.getAttribute('data-workout'))|"
                 >
-                    <td th:text="${gameConfig.player}"></td>
+                    <td th:text="${gameConfig.player.name}"></td>
                     <td th:text="${gameConfig.attributes.agility}"
                         th:classappend="${gameConfig.attributes.agility >= maxAttributes.agility ? 'maxAttribute' : ''}"></td>
                     <td th:text="${gameConfig.attributes.endurance}"
@@ -266,8 +271,9 @@
         }
     });
 
-    function selectConfig(racket, grip, shoes, wristband, nutrition, workout) {
+    function selectConfig(player, racket, grip, shoes, wristband, nutrition, workout) {
         jQuery(document).ready(function ($) {
+            $("#selPlayer").html(player);
             $("#selRacket").html(racket);
             $("#selGrip").html(grip);
             $("#selShoes").html(shoes);

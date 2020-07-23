@@ -121,7 +121,7 @@ public class GameConfig {
     @Override
     public String toString() {
         return "GameConfig{" +
-                "player=" + player +
+                "player=" + player.getName() +
                 ", racket=" + racket.getName() +
                 ", grip=" + grip.getName() +
                 ", shoes=" + shoes.getName() +
