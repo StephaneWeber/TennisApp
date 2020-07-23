@@ -4,7 +4,6 @@ import com.sweber.tennis.model.config.Attributes;
 import com.sweber.tennis.model.config.GameConfig;
 import com.sweber.tennis.model.gear.GearItem;
 import com.sweber.tennis.model.gear.GearType;
-import com.sweber.tennis.model.gear.OwnedGear;
 import com.sweber.tennis.model.player.Player;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +24,12 @@ import static com.sweber.tennis.model.gear.GearType.WRISTBAND;
 
 @Component
 public class ConfigGeneratorService {
+    private final GearItemService gearItemService;
+
+    public ConfigGeneratorService(GearItemService gearItemService) {
+        this.gearItemService = gearItemService;
+    }
+
     public List<GameConfig> generateAllConfigs(Player targetPlayer, Attributes minimumAttributes, int minTotalValue, int maxLevel, int upgradesAllowed) {
         return Optional.ofNullable(targetPlayer)
                 .map(Collections::singletonList)
@@ -37,7 +42,7 @@ public class ConfigGeneratorService {
 
     private Stream<GameConfig> generateAllConfigsForPlayer(Player player, Attributes minimumAttributes, int minTotalValue, int maxLevel, int upgradesAllowed) {
         List<GameConfig> results = new ArrayList<>();
-        List<GearItem> leveledGearItems = GearItem.leveledGearItems(maxLevel, upgradesAllowed);
+        List<GearItem> leveledGearItems = gearItemService.leveledGearItems(maxLevel, upgradesAllowed);
         for (GearItem racket : potentialGearItems(leveledGearItems, RACKET)) {
             for (GearItem grip : potentialGearItems(leveledGearItems, GRIP)) {
                 for (GearItem shoes : potentialGearItems(leveledGearItems, SHOES)) {
@@ -60,14 +65,24 @@ public class ConfigGeneratorService {
     private boolean isSuitableConfig(Attributes minimumAttributes, int minTotalValue, int upgradesAllowed, GameConfig gameConfig) {
         return gameConfig.getValue() >= minTotalValue
                 && gameConfig.matchingAttributes(minimumAttributes)
-                && gameConfig.upgradeAllowed(upgradesAllowed);
+                && upgradeAllowed(gameConfig, upgradesAllowed);
+    }
+
+    private boolean upgradeAllowed(GameConfig gameConfig, int maxUpgradesAllowed) {
+        long numberOfUpgrades = Stream.of(
+                gearItemService.isNextLevel(gameConfig.getRacket()), gearItemService.isNextLevel(gameConfig.getGrip()),
+                gearItemService.isNextLevel(gameConfig.getShoes()), gearItemService.isNextLevel(gameConfig.getWristband()),
+                gearItemService.isNextLevel(gameConfig.getNutrition()), gearItemService.isNextLevel(gameConfig.getWorkout()))
+                .filter(check -> check)
+                .count();
+        return numberOfUpgrades <= maxUpgradesAllowed;
     }
 
     private List<GearItem> potentialGearItems(List<GearItem> items, GearType gearType) {
         return items
                 .stream()
                 .filter(item -> item.getGearType() == gearType)
-                .filter(OwnedGear::isPossibleUpgrade)
+                .filter(gearItemService::isPossibleUpgrade)
                 .collect(Collectors.toList());
     }
 }

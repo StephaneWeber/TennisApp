@@ -182,12 +182,12 @@
                 </thead>
                 <tbody>
                 <tr th:each="gameConfig : ${list}"
-                    th:data-racket="${gameConfig.racket}"
-                    th:data-grip="${gameConfig.grip}"
-                    th:data-shoes="${gameConfig.shoes}"
-                    th:data-wristband="${gameConfig.wristband}"
-                    th:data-nutrition="${gameConfig.nutrition}"
-                    th:data-workout="${gameConfig.workout}"
+                    th:data-racket="${gameConfig.racketName}"
+                    th:data-grip="${gameConfig.gripName}"
+                    th:data-shoes="${gameConfig.shoesName}"
+                    th:data-wristband="${gameConfig.wristbandName}"
+                    th:data-nutrition="${gameConfig.nutritionName}"
+                    th:data-workout="${gameConfig.workoutName}"
                     th:onclick="|selectConfig(this.getAttribute('data-racket'), this.getAttribute('data-grip'), this.getAttribute('data-shoes'), this.getAttribute('data-wristband'), this.getAttribute('data-nutrition'), this.getAttribute('data-workout'))|"
                 >
                     <td th:text="${gameConfig.player}"></td>

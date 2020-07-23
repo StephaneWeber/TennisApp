@@ -1,7 +1,6 @@
 package com.sweber.tennis.model.config;
 
 import com.sweber.tennis.model.gear.GearItem;
-import com.sweber.tennis.model.gear.OwnedGear;
 import com.sweber.tennis.model.player.Player;
 
 import java.util.stream.Stream;
@@ -32,28 +31,52 @@ public class GameConfig {
         return player.name();
     }
 
-    public String getRacket() {
-        return racket.name();
+    public String getRacketName() {
+        return racket.getName();
     }
 
-    public String getGrip() {
-        return grip.name();
+    public GearItem getRacket() {
+        return racket;
     }
 
-    public String getShoes() {
-        return shoes.name();
+    public String getGripName() {
+        return grip.getName();
     }
 
-    public String getWristband() {
-        return wristband.name();
+    public GearItem getGrip() {
+        return grip;
     }
 
-    public String getNutrition() {
-        return nutrition.name();
+    public String getShoesName() {
+        return shoes.getName();
     }
 
-    public String getWorkout() {
-        return workout.name();
+    public GearItem getShoes() {
+        return shoes;
+    }
+
+    public String getWristbandName() {
+        return wristband.getName();
+    }
+
+    public GearItem getWristband() {
+        return wristband;
+    }
+
+    public String getNutritionName() {
+        return nutrition.getName();
+    }
+
+    public GearItem getNutrition() {
+        return nutrition;
+    }
+
+    public String getWorkoutName() {
+        return workout.getName();
+    }
+
+    public GearItem getWorkout() {
+        return workout;
     }
 
     public Attributes getAttributes() {
@@ -114,15 +137,5 @@ public class GameConfig {
                 && getAttributes().getVolley() >= minimumAttributes.getVolley()
                 && getAttributes().getForehand() >= minimumAttributes.getForehand()
                 && getAttributes().getBackhand() >= minimumAttributes.getBackhand();
-    }
-
-    public boolean upgradeAllowed(int maxUpgradesAllowed) {
-        long numberOfUpgrades = Stream.of(
-                OwnedGear.isNextLevel(racket), OwnedGear.isNextLevel(grip),
-                OwnedGear.isNextLevel(shoes), OwnedGear.isNextLevel(wristband),
-                OwnedGear.isNextLevel(nutrition), OwnedGear.isNextLevel(workout))
-                .filter(check -> check)
-                .count();
-        return numberOfUpgrades <= maxUpgradesAllowed;
     }
 }
