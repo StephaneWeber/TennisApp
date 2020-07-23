@@ -27,7 +27,7 @@ public class GearItemService {
 
     private List<GearItem> loadData() throws IOException {
         List<GearItem> gearItemsData = new ArrayList<>();
-        File dataFile = new ClassPathResource("data/gears.csv").getFile();
+        File dataFile = new ClassPathResource("data/gear.csv").getFile();
         try (BufferedReader br = new BufferedReader(new FileReader(dataFile))) {
             String line = br.readLine();
             while (line != null) {
