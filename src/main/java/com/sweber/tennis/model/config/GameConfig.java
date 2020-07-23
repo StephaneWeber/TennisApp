@@ -27,8 +27,12 @@ public class GameConfig {
         computeConfig();
     }
 
-    public String getPlayer() {
-        return player.name();
+    public Player getPlayer() {
+        return player;
+    }
+
+    public String getPlayerName() {
+        return player.getName();
     }
 
     public String getRacketName() {
@@ -108,7 +112,7 @@ public class GameConfig {
     }
 
     private int computeMaxLevel() {
-        return Stream.of(player.getLevel(), racket.getLevel(), grip.getLevel(), shoes.getLevel(), wristband.getLevel(), nutrition.getCost(), workout.getLevel())
+        return Stream.of(player.getLevel(), racket.getLevel(), grip.getLevel(), shoes.getLevel(), wristband.getLevel(), nutrition.getLevel(), workout.getLevel())
                 .mapToInt(v -> v)
                 .max()
                 .orElse(11); // MaxLevel by default if we cannot compute one ...
@@ -127,15 +131,5 @@ public class GameConfig {
                 ", config=" + config +
                 ", value=" + value +
                 '}';
-    }
-
-    public boolean matchingAttributes(Attributes minimumAttributes) {
-        if (minimumAttributes == null) return true;
-        return getAttributes().getAgility() >= minimumAttributes.getAgility()
-                && getAttributes().getEndurance() >= minimumAttributes.getEndurance()
-                && getAttributes().getService() >= minimumAttributes.getService()
-                && getAttributes().getVolley() >= minimumAttributes.getVolley()
-                && getAttributes().getForehand() >= minimumAttributes.getForehand()
-                && getAttributes().getBackhand() >= minimumAttributes.getBackhand();
     }
 }

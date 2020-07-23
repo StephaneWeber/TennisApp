@@ -6,6 +6,7 @@ import com.sweber.tennis.model.gear.GearItem;
 import com.sweber.tennis.model.gear.GearType;
 import com.sweber.tennis.model.player.Player;
 import org.springframework.stereotype.Component;
+import org.thymeleaf.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,15 +26,18 @@ import static com.sweber.tennis.model.gear.GearType.WRISTBAND;
 @Component
 public class ConfigGeneratorService {
     private final GearItemService gearItemService;
+    private final PlayerService playerService;
 
-    public ConfigGeneratorService(GearItemService gearItemService) {
+    public ConfigGeneratorService(GearItemService gearItemService, PlayerService playerService) {
         this.gearItemService = gearItemService;
+        this.playerService = playerService;
     }
 
-    public List<GameConfig> generateAllConfigs(Player targetPlayer, Attributes minimumAttributes, int minTotalValue, int maxLevel, int upgradesAllowed) {
+    public List<GameConfig> generateAllConfigs(String playerName, Attributes minimumAttributes, int minTotalValue, int maxLevel, int upgradesAllowed) {
+        Player targetPlayer = StringUtils.isEmpty(playerName) ? null : playerService.getPlayer(playerName);
         return Optional.ofNullable(targetPlayer)
                 .map(Collections::singletonList)
-                .orElse(Player.maxLevel(maxLevel))
+                .orElse(playerService.maxLevel(maxLevel))
                 .stream()
                 .flatMap(player -> generateAllConfigsForPlayer(player, minimumAttributes, minTotalValue, maxLevel, upgradesAllowed))
                 .sorted(Comparator.comparingInt(GameConfig::getValue).reversed())
@@ -64,8 +68,18 @@ public class ConfigGeneratorService {
 
     private boolean isSuitableConfig(Attributes minimumAttributes, int minTotalValue, int upgradesAllowed, GameConfig gameConfig) {
         return gameConfig.getValue() >= minTotalValue
-                && gameConfig.matchingAttributes(minimumAttributes)
+                && matchingAttributes(gameConfig, minimumAttributes)
                 && upgradeAllowed(gameConfig, upgradesAllowed);
+    }
+
+    private boolean matchingAttributes(GameConfig gameConfig, Attributes minimumAttributes) {
+        if (minimumAttributes == null) return true;
+        return gameConfig.getAttributes().getAgility() >= minimumAttributes.getAgility()
+                && gameConfig.getAttributes().getEndurance() >= minimumAttributes.getEndurance()
+                && gameConfig.getAttributes().getService() >= minimumAttributes.getService()
+                && gameConfig.getAttributes().getVolley() >= minimumAttributes.getVolley()
+                && gameConfig.getAttributes().getForehand() >= minimumAttributes.getForehand()
+                && gameConfig.getAttributes().getBackhand() >= minimumAttributes.getBackhand();
     }
 
     private boolean upgradeAllowed(GameConfig gameConfig, int maxUpgradesAllowed) {

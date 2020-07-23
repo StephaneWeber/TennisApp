@@ -2,15 +2,14 @@ package com.sweber.tennis.web.controller;
 
 import com.sweber.tennis.model.config.Attributes;
 import com.sweber.tennis.model.config.GameConfig;
-import com.sweber.tennis.model.player.Player;
 import com.sweber.tennis.service.ConfigGeneratorService;
+import com.sweber.tennis.service.PlayerService;
 import com.sweber.tennis.web.model.ConfigFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.thymeleaf.util.StringUtils;
 
 import java.util.List;
 
@@ -19,12 +18,14 @@ public class TennisController {
     public static final String HOME_PAGE = "home";
 
     private final ConfigGeneratorService configGeneratorService;
+    private final PlayerService playerService;
 
     @Value("${spring.application.name}")
     String appName;
 
-    public TennisController(ConfigGeneratorService configGeneratorService) {
+    public TennisController(ConfigGeneratorService configGeneratorService, PlayerService playerService) {
         this.configGeneratorService = configGeneratorService;
+        this.playerService = playerService;
     }
 
     @GetMapping("/")
@@ -46,7 +47,7 @@ public class TennisController {
 
         model.addAttribute("appName", appName);
         model.addAttribute("list", gameConfigs);
-        model.addAttribute("playerList", Player.values());
+        model.addAttribute("playerList", playerService.maxLevel(configFilter.getMaxLevel()));
         model.addAttribute("configFilter", configFilter);
         model.addAttribute("maxAttributes", maxAttributes);
     }
@@ -95,9 +96,10 @@ public class TennisController {
 
     private List<GameConfig> generateConfigs(ConfigFilter configFilter) {
         String player = configFilter.getSelectedPlayer();
+        Attributes minAttributes = configFilter.getMinAttributes();
         int minTotal = configFilter.getMinTotal();
         int upgradeAllowed = configFilter.getUpgradeAllowed();
         int maxLevel = configFilter.getMaxLevel();
-        return configGeneratorService.generateAllConfigs(StringUtils.isEmpty(player) ? null : Player.valueOf(player), configFilter.getMinAttributes(), minTotal, maxLevel, upgradeAllowed);
+        return configGeneratorService.generateAllConfigs(player, minAttributes, minTotal, maxLevel, upgradeAllowed);
     }
 }

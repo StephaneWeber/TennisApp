@@ -2,7 +2,6 @@ package com.sweber.tennis.service;
 
 import com.sweber.tennis.model.config.Attributes;
 import com.sweber.tennis.model.config.GameConfig;
-import com.sweber.tennis.model.player.Player;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,7 +20,7 @@ class ConfigGeneratorServiceTest {
     public void test() {
         long start = System.currentTimeMillis();
         Attributes minimumAttributes = new Attributes(20, 0, 20, 0, 20, 20);
-        List<GameConfig> gameConfigs = configGeneratorService.generateAllConfigs(Player.JONAH, minimumAttributes, 140, 6, 0);
+        List<GameConfig> gameConfigs = configGeneratorService.generateAllConfigs("JONAH_4", minimumAttributes, 140, 6, 0);
         long end = System.currentTimeMillis();
         System.out.println(String.format("Found %d configs in %d ms", gameConfigs.size(), (end - start)));
         // 525 - 51
@@ -34,19 +33,19 @@ class ConfigGeneratorServiceTest {
         List<GameConfig> gameConfigs = new ArrayList<>();
 
         long start = System.currentTimeMillis();
-        gameConfigs = configGeneratorService.generateAllConfigs(Player.JONAH, minimumAttributes, 160, 6, 0);
+        gameConfigs = configGeneratorService.generateAllConfigs("JONAH_4", minimumAttributes, 160, 6, 0);
         System.out.println(String.format("Found %d configs", gameConfigs.size()));
-        gameConfigs = configGeneratorService.generateAllConfigs(Player.JONAH, minimumAttributes, 160, 6, 1);
+        gameConfigs = configGeneratorService.generateAllConfigs("JONAH_4", minimumAttributes, 160, 6, 1);
         System.out.println(String.format("Found %d configs", gameConfigs.size()));
-        gameConfigs = configGeneratorService.generateAllConfigs(Player.JONAH, minimumAttributes, 160, 6, 2);
+        gameConfigs = configGeneratorService.generateAllConfigs("JONAH_4", minimumAttributes, 160, 6, 2);
         System.out.println(String.format("Found %d configs", gameConfigs.size()));
-        gameConfigs = configGeneratorService.generateAllConfigs(Player.JONAH, minimumAttributes, 160, 6, 3);
+        gameConfigs = configGeneratorService.generateAllConfigs("JONAH_4", minimumAttributes, 160, 6, 3);
         System.out.println(String.format("Found %d configs", gameConfigs.size()));
-        gameConfigs = configGeneratorService.generateAllConfigs(Player.JONAH, minimumAttributes, 160, 6, 4);
+        gameConfigs = configGeneratorService.generateAllConfigs("JONAH_4", minimumAttributes, 160, 6, 4);
         System.out.println(String.format("Found %d configs", gameConfigs.size()));
-        gameConfigs = configGeneratorService.generateAllConfigs(Player.JONAH, minimumAttributes, 160, 6, 5);
+        gameConfigs = configGeneratorService.generateAllConfigs("JONAH_4", minimumAttributes, 160, 6, 5);
         System.out.println(String.format("Found %d configs", gameConfigs.size()));
-        gameConfigs = configGeneratorService.generateAllConfigs(Player.JONAH, minimumAttributes, 160, 6, 6);
+        gameConfigs = configGeneratorService.generateAllConfigs("JONAH_4", minimumAttributes, 160, 6, 6);
         System.out.println(String.format("Found %d configs", gameConfigs.size()));
         long end = System.currentTimeMillis();
         System.out.println(String.format("Found in %d ms", (end - start)));
