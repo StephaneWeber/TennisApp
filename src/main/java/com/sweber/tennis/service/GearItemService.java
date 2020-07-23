@@ -4,9 +4,11 @@ import com.sweber.tennis.model.config.Attributes;
 import com.sweber.tennis.model.config.Config;
 import com.sweber.tennis.model.gear.GearItem;
 import com.sweber.tennis.model.gear.GearType;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,8 +27,8 @@ public class GearItemService {
 
     private List<GearItem> loadData() throws IOException {
         List<GearItem> gearItemsData = new ArrayList<>();
-        String pathToFile = "c:/dev/workspace/perso/TennisApp/src/main/resources/data/gears.csv";
-        try (BufferedReader br = new BufferedReader(new FileReader(pathToFile))) {
+        File dataFile = new ClassPathResource("data/gears.csv").getFile();
+        try (BufferedReader br = new BufferedReader(new FileReader(dataFile))) {
             String line = br.readLine();
             while (line != null) {
                 String[] attributes = line.split(",");
@@ -41,8 +43,8 @@ public class GearItemService {
 
     private List<GearItem> loadOwnedData() throws IOException {
         List<GearItem> ownedGearItemsData = new ArrayList<>();
-        String pathToFile = "c:/dev/workspace/perso/TennisApp/src/main/resources/data/owned_gear.csv";
-        try (BufferedReader br = new BufferedReader(new FileReader(pathToFile))) {
+        File dataFile = new ClassPathResource("data/owned_gear.csv").getFile();
+        try (BufferedReader br = new BufferedReader(new FileReader(dataFile))) {
             String line = br.readLine();
             while (line != null) {
                 String gearItem = line.trim();
