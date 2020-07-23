@@ -64,7 +64,7 @@ public class PlayerService {
     }
 
     public List<Player> maxLevel(int maxLevel) {
-        return players.stream()
+        return ownedPlayers.stream()
                 .filter(item -> item.getLevel() <= maxLevel)
                 .collect(Collectors.toList());
     }
