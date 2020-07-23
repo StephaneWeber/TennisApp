@@ -118,12 +118,12 @@ public class GameConfig {
     public String toString() {
         return "GameConfig{" +
                 "player=" + player +
-                ", racket=" + racket +
-                ", grip=" + grip +
-                ", shoes=" + shoes +
-                ", wristband=" + wristband +
-                ", nutrition=" + nutrition +
-                ", workout=" + workout +
+                ", racket=" + racket.getName() +
+                ", grip=" + grip.getName() +
+                ", shoes=" + shoes.getName() +
+                ", wristband=" + wristband.getName() +
+                ", nutrition=" + nutrition.getName() +
+                ", workout=" + workout.getName() +
                 ", config=" + config +
                 ", value=" + value +
                 '}';
