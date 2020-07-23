@@ -90,10 +90,10 @@ public class GearItemService {
 
     private int ownedLevel(GearItem gearItem) {
         GearType gearType = gearItem.getGearType();
-        String configGripName = getGearItemGenericName(gearItem.getName());
+        String configGearName = getGearItemGenericName(gearItem.getName());
         return ownedGearItems.stream()
                 .filter(item -> item.getGearType() == gearType)
-                .filter(item -> item.getName().startsWith(configGripName))
+                .filter(item -> item.getName().startsWith(configGearName))
                 .findFirst()
                 .map(GearItem::getLevel)
                 .orElse(0);

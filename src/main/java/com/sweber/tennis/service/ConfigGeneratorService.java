@@ -6,7 +6,6 @@ import com.sweber.tennis.model.gear.GearItem;
 import com.sweber.tennis.model.gear.GearType;
 import com.sweber.tennis.model.player.Player;
 import org.springframework.stereotype.Component;
-import org.thymeleaf.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,8 +33,7 @@ public class ConfigGeneratorService {
     }
 
     public List<GameConfig> generateAllConfigs(String playerName, Attributes minimumAttributes, int minTotalValue, int maxLevel, int upgradesAllowed) {
-        Player targetPlayer = StringUtils.isEmpty(playerName) ? null : playerService.getPlayer(playerName);
-        return Optional.ofNullable(targetPlayer)
+        return Optional.ofNullable(playerService.getPlayer(playerName))
                 .map(Collections::singletonList)
                 .orElse(playerService.maxLevel(maxLevel))
                 .stream()

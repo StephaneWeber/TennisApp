@@ -25,19 +25,19 @@ public class PlayerService {
     }
 
     private List<Player> loadData() throws IOException {
-        List<Player> gearItemsData = new ArrayList<>();
+        List<Player> playersData = new ArrayList<>();
         File dataFile = new ClassPathResource("data/players.csv").getFile();
         try (BufferedReader br = new BufferedReader(new FileReader(dataFile))) {
             String line = br.readLine();
             while (line != null) {
-                String[] attributes = line.split(",");
-                Player book = getPlayer(attributes);
-                gearItemsData.add(book);
+                String[] inputData = line.split(",");
+                Player player = getPlayer(inputData);
+                playersData.add(player);
                 line = br.readLine();
             }
         }
 
-        return gearItemsData;
+        return playersData;
     }
 
     private List<Player> loadOwnedData() throws IOException {
@@ -46,9 +46,9 @@ public class PlayerService {
         try (BufferedReader br = new BufferedReader(new FileReader(dataFile))) {
             String line = br.readLine();
             while (line != null) {
-                String player = line.trim();
-                Player item = getPlayer(player);
-                ownedPlayersData.add(item);
+                String playerName = line.trim();
+                Player player = getPlayer(playerName);
+                ownedPlayersData.add(player);
                 line = br.readLine();
             }
         }
@@ -57,10 +57,10 @@ public class PlayerService {
     }
 
     private Player getPlayer(String[] inputData) {
-        String gearName = inputData[0].trim();
+        String playerName = inputData[0].trim();
         Attributes attributes = new Attributes(Integer.parseInt(inputData[1].trim()), Integer.parseInt(inputData[2].trim()), Integer.parseInt(inputData[3].trim()), Integer.parseInt(inputData[4].trim()), Integer.parseInt(inputData[5].trim()), Integer.parseInt(inputData[6].trim()));
         Config config = new Config(attributes, Integer.parseInt(inputData[7].trim()), Integer.parseInt(inputData[8].trim()));
-        return new Player(gearName, config);
+        return new Player(playerName, config);
     }
 
     public List<Player> maxLevel(int maxLevel) {
@@ -69,10 +69,10 @@ public class PlayerService {
                 .collect(Collectors.toList());
     }
 
-    public Player getPlayer(String player) {
+    public Player getPlayer(String playerName) {
         return players.stream()
-                .filter(item -> item.getName().equals(player))
+                .filter(item -> item.getName().equals(playerName))
                 .findFirst()
-                .orElseThrow();
+                .orElse(null);
     }
 }
