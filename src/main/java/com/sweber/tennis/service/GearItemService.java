@@ -15,64 +15,63 @@ import java.util.stream.Collectors;
 
 @Service
 public class GearItemService {
-    private final List<GearItem> GEAR_ITEMS;
-    private final List<GearItem> OWNED_GEAR_ITEMS;
+    private final List<GearItem> gearItems;
+    private final List<GearItem> ownedGearItems;
 
-    public GearItemService() {
-        GEAR_ITEMS = loadData();
-        OWNED_GEAR_ITEMS = loadOwnedData();
+    public GearItemService() throws IOException {
+        gearItems = loadData();
+        ownedGearItems = loadOwnedData();
     }
 
-    private List<GearItem> loadData() {
-        List<GearItem> gearItems = new ArrayList<>();
+    private List<GearItem> loadData() throws IOException {
+        List<GearItem> gearItemsData = new ArrayList<>();
         String pathToFile = "c:/dev/workspace/perso/TennisApp/src/main/resources/data/gears.csv";
         try (BufferedReader br = new BufferedReader(new FileReader(pathToFile))) {
             String line = br.readLine();
             while (line != null) {
                 String[] attributes = line.split(",");
                 GearItem book = getGearItem(attributes);
-                gearItems.add(book);
+                gearItemsData.add(book);
                 line = br.readLine();
             }
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
         }
 
-        return gearItems;
+        return gearItemsData;
     }
 
-    private List<GearItem> loadOwnedData() {
-        List<GearItem> gearItems = new ArrayList<>();
+    private List<GearItem> loadOwnedData() throws IOException {
+        List<GearItem> ownedGearItemsData = new ArrayList<>();
         String pathToFile = "c:/dev/workspace/perso/TennisApp/src/main/resources/data/owned_gear.csv";
         try (BufferedReader br = new BufferedReader(new FileReader(pathToFile))) {
             String line = br.readLine();
             while (line != null) {
                 String gearItem = line.trim();
                 GearItem item = getGearItem(gearItem);
-                gearItems.add(item);
+                ownedGearItemsData.add(item);
                 line = br.readLine();
             }
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
         }
 
-        return gearItems;
+        return ownedGearItemsData;
     }
 
     private GearItem getGearItem(String gearItem) {
-        return GEAR_ITEMS.stream()
+        return gearItems.stream()
                 .filter(item -> item.getName().equals(gearItem))
                 .findFirst()
                 .orElseThrow();
     }
 
-    private GearItem getGearItem(String[] attributes) {
-        Config config = new Config(new Attributes(Integer.parseInt(attributes[2].trim()), Integer.parseInt(attributes[3].trim()), Integer.parseInt(attributes[4].trim()), Integer.parseInt(attributes[5].trim()), Integer.parseInt(attributes[6].trim()), Integer.parseInt(attributes[7].trim())), Integer.parseInt(attributes[8].trim()), Integer.parseInt(attributes[9].trim()));
-        return new GearItem(attributes[0].trim(), GearType.valueOf(attributes[1].trim()), config);
+    private GearItem getGearItem(String[] inputData) {
+        String gearName = inputData[0].trim();
+        GearType gearType = GearType.valueOf(inputData[1].trim());
+        Attributes attributes = new Attributes(Integer.parseInt(inputData[2].trim()), Integer.parseInt(inputData[3].trim()), Integer.parseInt(inputData[4].trim()), Integer.parseInt(inputData[5].trim()), Integer.parseInt(inputData[6].trim()), Integer.parseInt(inputData[7].trim()));
+        Config config = new Config(attributes, Integer.parseInt(inputData[8].trim()), Integer.parseInt(inputData[9].trim()));
+        return new GearItem(gearName, gearType, config);
     }
 
     public List<GearItem> leveledGearItems(int maxLevel, int upgradesAllowed) {
-        return GEAR_ITEMS.stream()
+        return gearItems.stream()
                 .filter(item -> item.getLevel() <= maxLevel)
                 .filter(item -> item.getLevel() >= Math.min(maxLevel, ownedLevel(item)))
                 .filter(item -> upgradesAllowed == 0 ? isOwned(item) : isPossibleUpgrade(item))
@@ -90,7 +89,7 @@ public class GearItemService {
     private int ownedLevel(GearItem gearItem) {
         GearType gearType = gearItem.getGearType();
         String configGripName = getGearItemGenericName(gearItem.getName());
-        return OWNED_GEAR_ITEMS.stream()
+        return ownedGearItems.stream()
                 .filter(item -> item.getGearType() == gearType)
                 .filter(item -> item.getName().startsWith(configGripName))
                 .findFirst()
