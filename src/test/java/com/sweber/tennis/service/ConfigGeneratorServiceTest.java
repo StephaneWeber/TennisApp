@@ -23,8 +23,8 @@ class ConfigGeneratorServiceTest {
         List<GameConfig> gameConfigs = configGeneratorService.generateAllConfigs("JONAH_4", minimumAttributes, 140, 6, 0);
         long end = System.currentTimeMillis();
         System.out.println(String.format("Found %d configs in %d ms", gameConfigs.size(), (end - start)));
-        // 525 - 51
-        assertThat(gameConfigs).hasSize(525);
+        // 541 - 55
+        assertThat(gameConfigs).hasSize(541);
     }
 
     @Test
