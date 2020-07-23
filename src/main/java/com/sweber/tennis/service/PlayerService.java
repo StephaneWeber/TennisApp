@@ -16,17 +16,20 @@ import java.util.stream.Collectors;
 
 @Service
 public class PlayerService {
+    private static final String PLAYERS_CSV = "data/players.csv";
+    private static final String OWNED_PLAYERS_CSV = "data/owned_players.csv";
+
     private final List<Player> players;
     private final List<Player> ownedPlayers;
 
     public PlayerService() throws IOException {
-        players = loadData();
-        ownedPlayers = loadOwnedData();
+        players = loadPlayers();
+        ownedPlayers = loadOwnedPlayers();
     }
 
-    private List<Player> loadData() throws IOException {
+    private List<Player> loadPlayers() throws IOException {
         List<Player> playersData = new ArrayList<>();
-        File dataFile = new ClassPathResource("data/players.csv").getFile();
+        File dataFile = new ClassPathResource(PLAYERS_CSV).getFile();
         try (BufferedReader br = new BufferedReader(new FileReader(dataFile))) {
             String line = br.readLine();
             while (line != null) {
@@ -36,13 +39,12 @@ public class PlayerService {
                 line = br.readLine();
             }
         }
-
         return playersData;
     }
 
-    private List<Player> loadOwnedData() throws IOException {
+    private List<Player> loadOwnedPlayers() throws IOException {
         List<Player> ownedPlayersData = new ArrayList<>();
-        File dataFile = new ClassPathResource("data/owned_players.csv").getFile();
+        File dataFile = new ClassPathResource(OWNED_PLAYERS_CSV).getFile();
         try (BufferedReader br = new BufferedReader(new FileReader(dataFile))) {
             String line = br.readLine();
             while (line != null) {
@@ -52,18 +54,26 @@ public class PlayerService {
                 line = br.readLine();
             }
         }
-
         return ownedPlayersData;
     }
 
     private Player getPlayer(String[] inputData) {
         String playerName = inputData[0].trim();
         Attributes attributes = new Attributes(Integer.parseInt(inputData[1].trim()), Integer.parseInt(inputData[2].trim()), Integer.parseInt(inputData[3].trim()), Integer.parseInt(inputData[4].trim()), Integer.parseInt(inputData[5].trim()), Integer.parseInt(inputData[6].trim()));
-        Config config = new Config(attributes, Integer.parseInt(inputData[7].trim()), Integer.parseInt(inputData[8].trim()));
+        int cost = Integer.parseInt(inputData[7].trim());
+        int level = Integer.parseInt(inputData[8].trim());
+        Config config = new Config(attributes, cost, level);
         return new Player(playerName, config);
     }
 
-    public List<Player> maxLevel(int maxLevel) {
+    public Player getPlayer(String playerName) {
+        return players.stream()
+                .filter(item -> item.getName().equals(playerName))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public List<Player> leveledPlayers(int maxLevel) {
         return players.stream()
                 .filter(this::isOwned)
                 .filter(item -> item.getLevel() <= maxLevel)
@@ -82,13 +92,6 @@ public class PlayerService {
 
     private boolean isOwned(Player player) {
         return (player.getLevel() - ownedLevel(player) <= 0);
-    }
-
-    public Player getPlayer(String playerName) {
-        return players.stream()
-                .filter(item -> item.getName().equals(playerName))
-                .findFirst()
-                .orElse(null);
     }
 
     private String getPlayerGenericName(String name) {

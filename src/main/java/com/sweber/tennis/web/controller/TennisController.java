@@ -47,7 +47,7 @@ public class TennisController {
 
         model.addAttribute("appName", appName);
         model.addAttribute("list", gameConfigs);
-        model.addAttribute("playerList", playerService.maxLevel(configFilter.getMaxLevel()));
+        model.addAttribute("playerList", playerService.leveledPlayers(configFilter.getMaxLevel()));
         model.addAttribute("configFilter", configFilter);
         model.addAttribute("maxAttributes", maxAttributes);
     }

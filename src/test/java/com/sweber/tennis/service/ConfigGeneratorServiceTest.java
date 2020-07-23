@@ -32,9 +32,9 @@ class ConfigGeneratorServiceTest {
 
     @Test
     public void testPlayerService() {
-        List<Player> players = playerService.maxLevel(3);
+        List<Player> players = playerService.leveledPlayers(3);
         assertThat(players).hasSize(2);
-        players = playerService.maxLevel(4);
+        players = playerService.leveledPlayers(4);
         assertThat(players).hasSize(3);
     }
 
