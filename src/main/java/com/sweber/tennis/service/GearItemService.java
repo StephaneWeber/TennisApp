@@ -55,9 +55,12 @@ public class GearItemService {
             String line = br.readLine();
             while (line != null) {
                 String[] inputData = line.split(",");
-                String gearItemName = inputData[0].trim() + "_" + inputData[1].trim();
-                GearItem gearItem = getGearItem(gearItemName);
-                ownedGearItemsData.add(gearItem);
+                int level = Integer.parseInt(inputData[1].trim());
+                if (level != 0) {
+                    String gearItemName = inputData[0].trim() + "_" + level;
+                    GearItem gearItem = getGearItem(gearItemName);
+                    ownedGearItemsData.add(gearItem);
+                }
                 line = br.readLine();
             }
         }

@@ -49,9 +49,12 @@ public class PlayerService {
             String line = br.readLine();
             while (line != null) {
                 String[] inputData = line.split(",");
-                String playerName = inputData[0].trim() + "_" + inputData[1].trim();
-                Player player = getPlayer(playerName);
-                ownedPlayersData.add(player);
+                int level = Integer.parseInt(inputData[1].trim());
+                if (level != 0) {
+                    String playerName = inputData[0].trim() + "_" + level;
+                    Player player = getPlayer(playerName);
+                    ownedPlayersData.add(player);
+                }
                 line = br.readLine();
             }
         }
