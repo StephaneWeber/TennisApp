@@ -48,7 +48,8 @@ public class PlayerService {
         try (BufferedReader br = new BufferedReader(new FileReader(dataFile))) {
             String line = br.readLine();
             while (line != null) {
-                String playerName = line.trim();
+                String[] inputData = line.split(",");
+                String playerName = inputData[0].trim() + "_" + inputData[1].trim();
                 Player player = getPlayer(playerName);
                 ownedPlayersData.add(player);
                 line = br.readLine();

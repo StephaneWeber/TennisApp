@@ -54,7 +54,8 @@ public class GearItemService {
         try (BufferedReader br = new BufferedReader(new FileReader(dataFile))) {
             String line = br.readLine();
             while (line != null) {
-                String gearItemName = line.trim();
+                String[] inputData = line.split(",");
+                String gearItemName = inputData[0].trim() + "_" + inputData[1].trim();
                 GearItem gearItem = getGearItem(gearItemName);
                 ownedGearItemsData.add(gearItem);
                 line = br.readLine();

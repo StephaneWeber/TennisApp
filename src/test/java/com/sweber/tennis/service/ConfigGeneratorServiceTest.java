@@ -45,18 +45,25 @@ class ConfigGeneratorServiceTest {
 
         long start = System.currentTimeMillis();
         gameConfigs = configGeneratorService.generateAllConfigs("JONAH_4", minimumAttributes, 160, 6, 0);
+        assertThat(gameConfigs).hasSize(73);
         System.out.println(String.format("Found %d configs", gameConfigs.size()));
         gameConfigs = configGeneratorService.generateAllConfigs("JONAH_4", minimumAttributes, 160, 6, 1);
+        assertThat(gameConfigs).hasSize(380);
         System.out.println(String.format("Found %d configs", gameConfigs.size()));
         gameConfigs = configGeneratorService.generateAllConfigs("JONAH_4", minimumAttributes, 160, 6, 2);
+        assertThat(gameConfigs).hasSize(918);
         System.out.println(String.format("Found %d configs", gameConfigs.size()));
         gameConfigs = configGeneratorService.generateAllConfigs("JONAH_4", minimumAttributes, 160, 6, 3);
+        assertThat(gameConfigs).hasSize(1378);
         System.out.println(String.format("Found %d configs", gameConfigs.size()));
         gameConfigs = configGeneratorService.generateAllConfigs("JONAH_4", minimumAttributes, 160, 6, 4);
+        assertThat(gameConfigs).hasSize(1592);
         System.out.println(String.format("Found %d configs", gameConfigs.size()));
         gameConfigs = configGeneratorService.generateAllConfigs("JONAH_4", minimumAttributes, 160, 6, 5);
+        assertThat(gameConfigs).hasSize(1648);
         System.out.println(String.format("Found %d configs", gameConfigs.size()));
         gameConfigs = configGeneratorService.generateAllConfigs("JONAH_4", minimumAttributes, 160, 6, 6);
+        assertThat(gameConfigs).hasSize(1655);
         System.out.println(String.format("Found %d configs", gameConfigs.size()));
         long end = System.currentTimeMillis();
         System.out.println(String.format("Found in %d ms", (end - start)));
