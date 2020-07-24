@@ -3,6 +3,8 @@ package com.sweber.tennis.service;
 import com.sweber.tennis.model.config.Attributes;
 import com.sweber.tennis.model.config.Config;
 import com.sweber.tennis.model.player.Player;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +18,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class PlayerService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(PlayerService.class);
     private static final String PLAYERS_CSV = "data/players.csv";
     private static final String OWNED_PLAYERS_CSV = "data/owned_players.csv";
 
@@ -24,7 +27,9 @@ public class PlayerService {
 
     public PlayerService() throws IOException {
         players = loadPlayers();
+        LOGGER.info("Loaded {} players", players.size());
         ownedPlayers = loadOwnedPlayers();
+        LOGGER.info("Loaded {} owned players", ownedPlayers.size());
     }
 
     private List<Player> loadPlayers() throws IOException {
@@ -95,7 +100,7 @@ public class PlayerService {
     }
 
     private boolean isOwned(Player player) {
-        return (player.getLevel() - ownedLevel(player) <= 0);
+        return player.getLevel() <= ownedLevel(player);
     }
 
     private String getPlayerGenericName(String name) {

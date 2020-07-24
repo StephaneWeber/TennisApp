@@ -7,11 +7,20 @@ import com.sweber.tennis.model.gear.GearType;
 import com.sweber.tennis.model.player.Player;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.sweber.tennis.model.gear.GearType.*;
+import static com.sweber.tennis.model.gear.GearType.GRIP;
+import static com.sweber.tennis.model.gear.GearType.NUTRITION;
+import static com.sweber.tennis.model.gear.GearType.RACKET;
+import static com.sweber.tennis.model.gear.GearType.SHOES;
+import static com.sweber.tennis.model.gear.GearType.WORKOUT;
+import static com.sweber.tennis.model.gear.GearType.WRISTBAND;
 
 @Component
 public class ConfigGeneratorService {
@@ -74,19 +83,23 @@ public class ConfigGeneratorService {
 
     private boolean upgradeAllowed(GameConfig gameConfig, int maxUpgradesAllowed) {
         long numberOfUpgrades = Stream.of(
-                gearItemService.isNextLevel(gameConfig.getRacket()), gearItemService.isNextLevel(gameConfig.getGrip()),
-                gearItemService.isNextLevel(gameConfig.getShoes()), gearItemService.isNextLevel(gameConfig.getWristband()),
-                gearItemService.isNextLevel(gameConfig.getNutrition()), gearItemService.isNextLevel(gameConfig.getWorkout()))
+                isSimpleUpgrade(gameConfig.getRacket()), isSimpleUpgrade(gameConfig.getGrip()),
+                isSimpleUpgrade(gameConfig.getShoes()), isSimpleUpgrade(gameConfig.getWristband()),
+                isSimpleUpgrade(gameConfig.getNutrition()), isSimpleUpgrade(gameConfig.getWorkout()))
                 .filter(check -> check)
                 .count();
         return numberOfUpgrades <= maxUpgradesAllowed;
+    }
+
+    private boolean isSimpleUpgrade(GearItem gearItem) {
+        return gearItem.getLevel() == gearItemService.ownedLevel(gearItem) + 1;
     }
 
     private List<GearItem> potentialGearItems(List<GearItem> items, GearType gearType) {
         return items
                 .stream()
                 .filter(item -> item.getGearType() == gearType)
-                .filter(gearItemService::isPossibleUpgrade)
+                .filter(item -> item.getLevel() <= gearItemService.ownedLevel(item) + 1)
                 .collect(Collectors.toList());
     }
 }

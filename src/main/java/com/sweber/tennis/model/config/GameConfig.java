@@ -106,9 +106,12 @@ public class GameConfig {
         int volley = player.getAttributes().getVolley() + racket.getAttributes().getVolley() + grip.getAttributes().getVolley() + shoes.getAttributes().getVolley() + wristband.getAttributes().getVolley() + nutrition.getAttributes().getVolley() + workout.getAttributes().getVolley();
         int forehand = player.getAttributes().getForehand() + racket.getAttributes().getForehand() + grip.getAttributes().getForehand() + shoes.getAttributes().getForehand() + wristband.getAttributes().getForehand() + nutrition.getAttributes().getForehand() + workout.getAttributes().getForehand();
         int backhand = player.getAttributes().getBackhand() + racket.getAttributes().getBackhand() + grip.getAttributes().getBackhand() + shoes.getAttributes().getBackhand() + wristband.getAttributes().getBackhand() + nutrition.getAttributes().getBackhand() + workout.getAttributes().getBackhand();
-        int cost = player.getCost() + racket.getCost() + grip.getCost() + shoes.getCost() + wristband.getCost() + nutrition.getCost() + workout.getCost();
-        config = new Config(new Attributes(agility, endurance, service, volley, forehand, backhand), cost, computeMaxLevel());
+        config = new Config(new Attributes(agility, endurance, service, volley, forehand, backhand), computeCost(), computeMaxLevel());
         value = agility + endurance + service + volley + forehand + backhand;
+    }
+
+    private int computeCost() {
+        return player.getCost() + racket.getCost() + grip.getCost() + shoes.getCost() + wristband.getCost() + nutrition.getCost() + workout.getCost();
     }
 
     private int computeMaxLevel() {

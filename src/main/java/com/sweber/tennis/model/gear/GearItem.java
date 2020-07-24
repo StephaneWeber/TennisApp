@@ -23,6 +23,7 @@ public class GearItem {
     }
 
     public int getCost() {
+//TODO make this work        return BeanUtil.getBean(GearItemService.class).ownedLevel(this) == 0 ? 0 : config.getCost();
         return config.getCost();
     }
 

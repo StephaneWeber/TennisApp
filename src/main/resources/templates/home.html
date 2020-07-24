@@ -25,7 +25,7 @@
                         <div class="col-lg-5">
                             <table class="table-borderless">
                                 <tr>
-                                    <td>Player</td>
+                                    <th>Player</th>
                                     <td><select name="player" th:field="*{selectedPlayer}">
                                         <option value="">ALL</option>
                                         <option th:value="${playerOpt.name}"
@@ -34,7 +34,7 @@
                                     </select></td>
                                 </tr>
                                 <tr>
-                                    <td>Upgrades allowed</td>
+                                    <th>Upgrades allowed</th>
                                     <td>
                                         <input id="upgradeAllowed" type="range" name="upgradeAllowed" min="0" max="6"
                                                th:field="*{upgradeAllowed}">
@@ -43,7 +43,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>Max level</td>
+                                    <th>Max level</th>
                                     <td>
                                         <input id="maxLevel" type="range" name="maxLevel" min="5" max="13"
                                                th:field="*{maxLevel}">
@@ -52,7 +52,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>Min total</td>
+                                    <th>Min total</th>
                                     <td><input id="minTotal" type="number" th:field="*{minTotal}"
                                                class="form-control midWidth"/>
                                     </td>
@@ -62,7 +62,7 @@
                         <div class="col-lg-5">
                             <table class="table-borderless">
                                 <tr>
-                                    <td>Agility</td>
+                                    <th>Agility</th>
                                     <td>
                                         <input id="minAgility" type="range" name="minAgility" min="0" max="50"
                                                th:field="*{minAttributes.agility}">
@@ -71,7 +71,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>Endurance</td>
+                                    <th>Endurance</th>
                                     <td>
                                         <input id="minEndurance" type="range" name="minEndurance" min="0"
                                                max="50"
@@ -81,7 +81,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>Service</td>
+                                    <th>Service</th>
                                     <td>
                                         <input id="minService" type="range" name="minService" min="0" max="50"
                                                th:field="*{minAttributes.service}">
@@ -90,7 +90,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>Volley</td>
+                                    <th>Volley</th>
                                     <td>
                                         <input id="minVolley" type="range" name="minVolley" min="0" max="50"
                                                th:field="*{minAttributes.volley}">
@@ -99,7 +99,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>Forehand</td>
+                                    <th>Forehand</th>
                                     <td>
                                         <input id="minForehand" type="range" name="minForehand" min="0" max="50"
                                                th:field="*{minAttributes.forehand}">
@@ -108,7 +108,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>Backhand</td>
+                                    <th>Backhand</th>
                                     <td>
                                         <input id="minBackhand" type="range" name="minBackhand" min="0" max="50"
                                                th:field="*{minAttributes.backhand}">

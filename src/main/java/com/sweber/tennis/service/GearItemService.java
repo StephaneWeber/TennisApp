@@ -86,25 +86,17 @@ public class GearItemService {
 
     public List<GearItem> leveledGearItems(int maxLevel, int upgradesAllowed) {
         return gearItems.stream()
-                .filter(item -> item.getLevel() <= maxLevel)
-                .filter(item -> item.getLevel() >= Math.min(maxLevel, ownedLevel(item)))
-                .filter(item -> upgradesAllowed == 0 ? isOwned(item) : isPossibleUpgrade(item))
+                .filter(item -> matchingLevel(item, maxLevel, upgradesAllowed))
                 .collect(Collectors.toList());
     }
 
-    public boolean isPossibleUpgrade(GearItem gearItem) {
-        return (gearItem.getLevel() - ownedLevel(gearItem) <= 1);
+    private boolean matchingLevel(GearItem item, int maxLevel, int upgradesAllowed) {
+        return item.getLevel() >= Math.min(maxLevel, ownedLevel(item))
+                && item.getLevel() <= ownedLevel(item) + (upgradesAllowed == 0 ? 0 : 1)
+                && item.getLevel() <= maxLevel;
     }
 
-    public boolean isNextLevel(GearItem gearItem) {
-        return (gearItem.getLevel() - ownedLevel(gearItem) == 1);
-    }
-
-    private boolean isOwned(GearItem gearItem) {
-        return (gearItem.getLevel() - ownedLevel(gearItem) <= 0);
-    }
-
-    private int ownedLevel(GearItem gearItem) {
+    public int ownedLevel(GearItem gearItem) {
         GearType gearType = gearItem.getGearType();
         String configGearName = getGearItemGenericName(gearItem.getName());
         return ownedGearItems.stream()
