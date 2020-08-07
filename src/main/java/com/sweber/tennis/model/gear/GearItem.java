@@ -2,6 +2,8 @@ package com.sweber.tennis.model.gear;
 
 import com.sweber.tennis.model.config.Attributes;
 import com.sweber.tennis.model.config.Config;
+import com.sweber.tennis.service.BeanUtil;
+import com.sweber.tennis.service.GearItemService;
 
 public class GearItem {
     private final String name;
@@ -23,8 +25,7 @@ public class GearItem {
     }
 
     public int getCost() {
-//TODO make this work        return BeanUtil.getBean(GearItemService.class).ownedLevel(this) == 0 ? 0 : config.getCost();
-        return config.getCost();
+        return BeanUtil.getBean(GearItemService.class).ownedLevel(this) - getLevel() >= 0 ? 0 : config.getCost();
     }
 
     public int getLevel() {

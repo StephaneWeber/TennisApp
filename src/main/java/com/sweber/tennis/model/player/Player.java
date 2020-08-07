@@ -2,6 +2,8 @@ package com.sweber.tennis.model.player;
 
 import com.sweber.tennis.model.config.Attributes;
 import com.sweber.tennis.model.config.Config;
+import com.sweber.tennis.service.BeanUtil;
+import com.sweber.tennis.service.PlayerService;
 
 public class Player {
     private final String name;
@@ -21,7 +23,7 @@ public class Player {
     }
 
     public int getCost() {
-        return config.getCost();
+        return BeanUtil.getBean(PlayerService.class).ownedLevel(this) - getLevel() >= 0 ? 0 : config.getCost();
     }
 
     public int getLevel() {

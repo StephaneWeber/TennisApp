@@ -90,7 +90,7 @@ public class PlayerService {
                 .collect(Collectors.toList());
     }
 
-    private int ownedLevel(Player player) {
+    public int ownedLevel(Player player) {
         String playerName = getPlayerGenericName(player.getName());
         return ownedPlayers.stream()
                 .filter(item -> item.getName().startsWith(playerName))

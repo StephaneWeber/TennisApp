@@ -181,7 +181,7 @@
                     <th>For</th>
                     <th>Bac</th>
                     <th>Total</th>
-                    <!--TODO Activate when data is right                    <th>Cost</th>-->
+                    <th>Cost</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -209,7 +209,7 @@
                     <td th:text="${gameConfig.attributes.backhand}"
                         th:classappend="${gameConfig.attributes.backhand >= maxAttributes.backhand ? 'maxAttribute' : ''}"></td>
                     <td th:text="${gameConfig.value}" style="font-weight:bold"></td>
-                    <!--TODO Activate when data is right                    <td th:text="${gameConfig.cost}"><b>Total</b></td>-->
+                    <td th:text="${gameConfig.cost}"><b>Total</b></td>
                 </tr>
                 </tbody>
             </table>

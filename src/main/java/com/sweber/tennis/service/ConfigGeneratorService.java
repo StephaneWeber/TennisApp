@@ -51,7 +51,7 @@ public class ConfigGeneratorService {
                     for (GearItem wristband : potentialGearItems(leveledGearItems, WRISTBAND)) {
                         for (GearItem nutrition : potentialGearItems(leveledGearItems, NUTRITION)) {
                             for (GearItem workout : potentialGearItems(leveledGearItems, WORKOUT)) {
-                                GameConfig gameConfig = new GameConfig(player, racket, grip, shoes, wristband, nutrition, workout);
+                                GameConfig gameConfig = new GameConfig(player, racket, grip, shoes, wristband, nutrition, workout, upgradesAllowed > 0);
                                 if (isSuitableConfig(minimumAttributes, minTotalValue, upgradesAllowed, gameConfig)) {
                                     results.add(gameConfig);
                                 }
