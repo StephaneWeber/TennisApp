@@ -99,7 +99,6 @@ public class ConfigGeneratorService {
         return items
                 .stream()
                 .filter(item -> item.getGearType() == gearType)
-                .filter(item -> item.getLevel() <= gearItemService.ownedLevel(item) + 1)
                 .collect(Collectors.toList());
     }
 }

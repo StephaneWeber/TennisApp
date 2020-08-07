@@ -40,6 +40,20 @@ class ConfigGeneratorServiceTest {
     }
 
     @Test
+    public void testSimpleUpgrades() {
+        Attributes minimumAttributes = new Attributes(20, 0, 20, 0, 20, 20);
+        List<GameConfig> gameConfigs = new ArrayList<>();
+
+        long start = System.currentTimeMillis();
+        gameConfigs = configGeneratorService.generateAllConfigs("JONAH_4", minimumAttributes, 170, 6, 1);
+        assertThat(gameConfigs).hasSize(262);
+        System.out.printf("Found %d configs%n", gameConfigs.size());
+        long end = System.currentTimeMillis();
+        System.out.printf("Found in %d ms%n", (end - start));
+        // 262 in 1341ms
+    }
+
+    @Test
     public void testUpgrades() {
         Attributes minimumAttributes = new Attributes(20, 0, 20, 0, 20, 20);
         List<GameConfig> gameConfigs = new ArrayList<>();
