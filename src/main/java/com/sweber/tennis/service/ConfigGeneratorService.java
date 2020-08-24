@@ -97,12 +97,10 @@ public class ConfigGeneratorService {
                 .count();
     }
 
-    private boolean isGearItemUpgrade(Map<GearItem, Boolean> itemUpgrades, GearItem gearItem) {
-        if (gearItem == null) {
-            return false;
-        }
-
-        return itemUpgrades.computeIfAbsent(gearItem, item -> item.getLevel() > gearItemService.ownedLevel(item));
+    private boolean isGearItemUpgrade(Map<GearItem, Boolean> itemUpgrades, GearItem gearItemNullable) {
+        return Optional.ofNullable(gearItemNullable)
+                .map(gearItem -> itemUpgrades.computeIfAbsent(gearItem, item -> item.getLevel() > gearItemService.ownedLevel(item)))
+                .orElse(false);
     }
 
     private boolean isSuitableConfig(Attributes minimumAttributes, int minTotalValue, int upgradesAllowed, GameConfig gameConfig) {
