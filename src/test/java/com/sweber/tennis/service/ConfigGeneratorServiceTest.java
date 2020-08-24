@@ -41,16 +41,16 @@ class ConfigGeneratorServiceTest {
 
     @Test
     void testSimpleUpgrades() {
-        Attributes minimumAttributes = new Attributes(20, 0, 20, 0, 20, 20);
+        Attributes minimumAttributes = new Attributes(20, 20, 20, 20, 20, 20);
         List<GameConfig> gameConfigs = new ArrayList<>();
 
         long start = System.currentTimeMillis();
-        gameConfigs = configGeneratorService.generateAllConfigs("JONAH_5", minimumAttributes, 170, 6, 1);
-        assertThat(gameConfigs).hasSize(1782);
+        gameConfigs = configGeneratorService.generateAllConfigs("JONAH_5", minimumAttributes, 185, 6, 1);
+        assertThat(gameConfigs).hasSize(29);
         System.out.printf("Found %d configs%n", gameConfigs.size());
         long end = System.currentTimeMillis();
         System.out.printf("Found in %d ms%n", (end - start));
-        // 1782 in 1213 ms
+        // 29 in 794 ms
     }
 
     @Test
@@ -82,6 +82,6 @@ class ConfigGeneratorServiceTest {
         assertThat(gameConfigs).hasSize(9273);
         long end = System.currentTimeMillis();
         System.out.printf("Found in %d ms%n", (end - start));
-        // in 6917 ms
+        // in 6145 ms
     }
 }
