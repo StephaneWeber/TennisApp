@@ -49,27 +49,27 @@ public class ConfigGeneratorService {
         List<GearItem> leveledGearItems = gearItemService.leveledGearItems(maxLevel, upgradesAllowed);
         Map<GearItem, Boolean> itemUpgrades = new HashMap<>();
         for (GearItem racket : potentialGearItems(leveledGearItems, RACKET)) {
-            if (tooManyUpdates(itemUpgrades, upgradesAllowed, racket, null, null, null, null, null)) {
+            if (numberOfUpgrades(itemUpgrades, racket, null, null, null, null, null) > upgradesAllowed) {
                 continue;
             }
             for (GearItem grip : potentialGearItems(leveledGearItems, GRIP)) {
-                if (tooManyUpdates(itemUpgrades, upgradesAllowed, racket, grip, null, null, null, null)) {
+                if (numberOfUpgrades(itemUpgrades, racket, grip, null, null, null, null) > upgradesAllowed) {
                     continue;
                 }
                 for (GearItem shoes : potentialGearItems(leveledGearItems, SHOES)) {
-                    if (tooManyUpdates(itemUpgrades, upgradesAllowed, racket, grip, shoes, null, null, null)) {
+                    if (numberOfUpgrades(itemUpgrades, racket, grip, shoes, null, null, null) > upgradesAllowed) {
                         continue;
                     }
                     for (GearItem wristband : potentialGearItems(leveledGearItems, WRISTBAND)) {
-                        if (tooManyUpdates(itemUpgrades, upgradesAllowed, racket, grip, shoes, wristband, null, null)) {
+                        if (numberOfUpgrades(itemUpgrades, racket, grip, shoes, wristband, null, null) > upgradesAllowed) {
                             continue;
                         }
                         for (GearItem nutrition : potentialGearItems(leveledGearItems, NUTRITION)) {
-                            if (tooManyUpdates(itemUpgrades, upgradesAllowed, racket, grip, shoes, wristband, nutrition, null)) {
+                            if (numberOfUpgrades(itemUpgrades, racket, grip, shoes, wristband, nutrition, null) > upgradesAllowed) {
                                 continue;
                             }
                             for (GearItem workout : potentialGearItems(leveledGearItems, WORKOUT)) {
-                                if (tooManyUpdates(itemUpgrades, upgradesAllowed, racket, grip, shoes, wristband, nutrition, workout)) {
+                                if (numberOfUpgrades(itemUpgrades, racket, grip, shoes, wristband, nutrition, workout) > upgradesAllowed) {
                                     continue;
                                 }
                                 GameConfig gameConfig = new GameConfig(player, racket, grip, shoes, wristband, nutrition, workout, upgradesAllowed > 0);
@@ -85,7 +85,7 @@ public class ConfigGeneratorService {
         return results.stream();
     }
 
-    private boolean tooManyUpdates(Map<GearItem, Boolean> itemUpgrades, int upgradesAllowed, GearItem racket, GearItem grip, GearItem shoes, GearItem wristband, GearItem nutrition, GearItem workout) {
+    private long numberOfUpgrades(Map<GearItem, Boolean> itemUpgrades, GearItem racket, GearItem grip, GearItem shoes, GearItem wristband, GearItem nutrition, GearItem workout) {
         boolean racketUpgrade = isGearItemUpgrade(itemUpgrades, racket);
         boolean gripUpgrade = isGearItemUpgrade(itemUpgrades, grip);
         boolean shoesUpgrade = isGearItemUpgrade(itemUpgrades, shoes);
@@ -94,8 +94,7 @@ public class ConfigGeneratorService {
         boolean workoutUpgrade = isGearItemUpgrade(itemUpgrades, workout);
         return Stream.of(racketUpgrade, gripUpgrade, shoesUpgrade, wristbandUpgrade, nutritionUpgrade, workoutUpgrade)
                 .filter(aBoolean -> aBoolean)
-                .count()
-                > upgradesAllowed;
+                .count();
     }
 
     private boolean isGearItemUpgrade(Map<GearItem, Boolean> itemUpgrades, GearItem gearItem) {
