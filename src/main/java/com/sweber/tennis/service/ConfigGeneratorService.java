@@ -45,70 +45,54 @@ public class ConfigGeneratorService {
     private Stream<GameConfig> generateAllConfigsForPlayer(Player player, Attributes minimumAttributes, int minTotalValue, int maxLevel, int upgradesAllowed) {
         List<GameConfig> results = new ArrayList<>();
         List<GearItem> leveledGearItems = gearItemService.leveledGearItems(maxLevel, upgradesAllowed);
-        int examinedConfigs = 0;
         for (GearItem racket : potentialGearItems(leveledGearItems, RACKET)) {
-            int upgrades = 0;
-            if (racket.getLevel() > gearItemService.ownedLevel(racket)) {
-                if (upgrades + 1 > upgradesAllowed) {
-                    continue;
-                } else {
-                    upgrades = upgrades + 1;
-                }
+            if (tooManyUpdates(upgradesAllowed, racket, null, null, null, null, null)) {
+                continue;
             }
             for (GearItem grip : potentialGearItems(leveledGearItems, GRIP)) {
-                if (grip.getLevel() > gearItemService.ownedLevel(grip)) {
-                    if (upgrades + 1 > upgradesAllowed) {
-                        continue;
-                    } else {
-                        upgrades = upgrades + 1;
-                    }
+                if (tooManyUpdates(upgradesAllowed, racket, grip, null, null, null, null)) {
+                    continue;
                 }
                 for (GearItem shoes : potentialGearItems(leveledGearItems, SHOES)) {
-                    if (shoes.getLevel() > gearItemService.ownedLevel(shoes)) {
-                        if (upgrades + 1 > upgradesAllowed) {
-                            continue;
-                        } else {
-                            upgrades = upgrades + 1;
-                        }
+                    if (tooManyUpdates(upgradesAllowed, racket, grip, shoes, null, null, null)) {
+                        continue;
                     }
                     for (GearItem wristband : potentialGearItems(leveledGearItems, WRISTBAND)) {
-                        if (wristband.getLevel() > gearItemService.ownedLevel(wristband)) {
-                            if (upgrades + 1 > upgradesAllowed) {
-                                continue;
-                            } else {
-                                upgrades = upgrades + 1;
-                            }
+                        if (tooManyUpdates(upgradesAllowed, racket, grip, shoes, wristband, null, null)) {
+                            continue;
                         }
                         for (GearItem nutrition : potentialGearItems(leveledGearItems, NUTRITION)) {
-                            if (nutrition.getLevel() > gearItemService.ownedLevel(nutrition)) {
-                                if (upgrades + 1 > upgradesAllowed) {
-                                    continue;
-                                } else {
-                                    upgrades = upgrades + 1;
-                                }
+                            if (tooManyUpdates(upgradesAllowed, racket, grip, shoes, wristband, nutrition, null)) {
+                                continue;
                             }
                             for (GearItem workout : potentialGearItems(leveledGearItems, WORKOUT)) {
-                                if (workout.getLevel() > gearItemService.ownedLevel(workout)) {
-                                    if (upgrades + 1 > upgradesAllowed) {
-                                        continue;
-                                    } else {
-                                        upgrades = upgrades + 1;
-                                    }
+                                if (tooManyUpdates(upgradesAllowed, racket, grip, shoes, wristband, nutrition, workout)) {
+                                    continue;
                                 }
                                 GameConfig gameConfig = new GameConfig(player, racket, grip, shoes, wristband, nutrition, workout, upgradesAllowed > 0);
-                                examinedConfigs++;
                                 if (isSuitableConfig(minimumAttributes, minTotalValue, upgradesAllowed, gameConfig)) {
                                     results.add(gameConfig);
                                 }
-                                upgrades = 0;
                             }
                         }
                     }
                 }
             }
         }
-        System.out.println("Examined " + examinedConfigs); //290304 - 526 - (1318) 1655 ms
         return results.stream();
+    }
+
+    private boolean tooManyUpdates(int upgradesAllowed, GearItem racket, GearItem grip, GearItem shoes, GearItem wristband, GearItem nutrition, GearItem workout) {
+        boolean racketUpgrade = gearItemService.isGearItemUpgrade(racket);
+        boolean gripUpgrade = gearItemService.isGearItemUpgrade(grip);
+        boolean shoesUpgrade = gearItemService.isGearItemUpgrade(shoes);
+        boolean wristbandUpgrade = gearItemService.isGearItemUpgrade(wristband);
+        boolean nutritionUpgrade = gearItemService.isGearItemUpgrade(nutrition);
+        boolean workoutUpgrade = gearItemService.isGearItemUpgrade(workout);
+        return Stream.of(racketUpgrade, gripUpgrade, shoesUpgrade, wristbandUpgrade, nutritionUpgrade, workoutUpgrade)
+                .filter(aBoolean -> aBoolean)
+                .count()
+                > upgradesAllowed;
     }
 
     private boolean isSuitableConfig(Attributes minimumAttributes, int minTotalValue, int upgradesAllowed, GameConfig gameConfig) {
