@@ -26,17 +26,17 @@ class ConfigGeneratorServiceTest {
         List<GameConfig> gameConfigs = configGeneratorService.generateAllConfigs("FLORENCE_4", minimumAttributes, 150, 6, 0);
         long end = System.currentTimeMillis();
         System.out.printf("Found %d configs in %d ms%n", gameConfigs.size(), (end - start));
-        // 99 - 47 ms
-        assertThat(gameConfigs).hasSize(99);
+        // 123 - 62 ms
+        assertThat(gameConfigs).hasSize(123);
         gameConfigs.forEach(gameConfig -> assertThat(gameConfig.getCost()).isZero());
     }
 
     @Test
     void testPlayerService() {
         List<Player> players = playerService.leveledPlayers(3);
-        assertThat(players).hasSize(4);
+        assertThat(players).hasSize(5);
         players = playerService.leveledPlayers(4);
-        assertThat(players).hasSize(4);
+        assertThat(players).hasSize(5);
     }
 
     @Test
@@ -45,12 +45,12 @@ class ConfigGeneratorServiceTest {
         List<GameConfig> gameConfigs = new ArrayList<>();
 
         long start = System.currentTimeMillis();
-        gameConfigs = configGeneratorService.generateAllConfigs("JONAH_4", minimumAttributes, 170, 6, 1);
-        assertThat(gameConfigs).hasSize(526);
+        gameConfigs = configGeneratorService.generateAllConfigs("JONAH_5", minimumAttributes, 170, 6, 1);
+        assertThat(gameConfigs).hasSize(1782);
         System.out.printf("Found %d configs%n", gameConfigs.size());
         long end = System.currentTimeMillis();
         System.out.printf("Found in %d ms%n", (end - start));
-        // 526 in 1318 ms
+        // 1782 in 1213 ms
     }
 
     @Test
@@ -59,29 +59,29 @@ class ConfigGeneratorServiceTest {
         List<GameConfig> gameConfigs = new ArrayList<>();
 
         long start = System.currentTimeMillis();
-        gameConfigs = configGeneratorService.generateAllConfigs("JONAH_4", minimumAttributes, 160, 6, 0);
+        gameConfigs = configGeneratorService.generateAllConfigs("JONAH_5", minimumAttributes, 160, 6, 0);
         System.out.printf("Found %d configs%n", gameConfigs.size());
 //        assertThat(gameConfigs).hasSize(288);
-        gameConfigs = configGeneratorService.generateAllConfigs("JONAH_4", minimumAttributes, 160, 6, 1);
+        gameConfigs = configGeneratorService.generateAllConfigs("JONAH_5", minimumAttributes, 160, 6, 1);
         System.out.printf("Found %d configs%n", gameConfigs.size());
 //        assertThat(gameConfigs).hasSize(1539);
-        gameConfigs = configGeneratorService.generateAllConfigs("JONAH_4", minimumAttributes, 160, 6, 2);
+        gameConfigs = configGeneratorService.generateAllConfigs("JONAH_5", minimumAttributes, 160, 6, 2);
         System.out.printf("Found %d configs%n", gameConfigs.size());
 //        assertThat(gameConfigs).hasSize(3648);
-        gameConfigs = configGeneratorService.generateAllConfigs("JONAH_4", minimumAttributes, 160, 6, 3);
+        gameConfigs = configGeneratorService.generateAllConfigs("JONAH_5", minimumAttributes, 160, 6, 3);
         System.out.printf("Found %d configs%n", gameConfigs.size());
 //        assertThat(gameConfigs).hasSize(5396);
-        gameConfigs = configGeneratorService.generateAllConfigs("JONAH_4", minimumAttributes, 160, 6, 4);
+        gameConfigs = configGeneratorService.generateAllConfigs("JONAH_5", minimumAttributes, 160, 6, 4);
         System.out.printf("Found %d configs%n", gameConfigs.size());
 //        assertThat(gameConfigs).hasSize(6103);
-        gameConfigs = configGeneratorService.generateAllConfigs("JONAH_4", minimumAttributes, 160, 6, 5);
+        gameConfigs = configGeneratorService.generateAllConfigs("JONAH_5", minimumAttributes, 160, 6, 5);
         System.out.printf("Found %d configs%n", gameConfigs.size());
 //        assertThat(gameConfigs).hasSize(6232);
-        gameConfigs = configGeneratorService.generateAllConfigs("JONAH_4", minimumAttributes, 160, 6, 6);
+        gameConfigs = configGeneratorService.generateAllConfigs("JONAH_5", minimumAttributes, 160, 6, 6);
         System.out.printf("Found %d configs%n", gameConfigs.size());
-        assertThat(gameConfigs).hasSize(6166);
+        assertThat(gameConfigs).hasSize(9273);
         long end = System.currentTimeMillis();
         System.out.printf("Found in %d ms%n", (end - start));
-        // in 6385 ms
+        // in 6917 ms
     }
 }
