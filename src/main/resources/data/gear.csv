@@ -1,3 +1,4 @@
+Name,Type,Agility,Endurance,Service,Volley,Forehand,Backhand,Cost,Level
 BASIC_RACKET_1,RACKET,0,0,0,0,3,0,0,1
 EAGLE_5,RACKET,3,0,0,0,13,0,2500,5
 EAGLE_6,RACKET,3,0,0,0,16,0,4600,6

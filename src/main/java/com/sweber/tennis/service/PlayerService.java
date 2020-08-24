@@ -36,6 +36,7 @@ public class PlayerService {
         List<Player> playersData = new ArrayList<>();
         File dataFile = new ClassPathResource(PLAYERS_CSV).getFile();
         try (BufferedReader br = new BufferedReader(new FileReader(dataFile))) {
+            String headerLine = br.readLine(); // Ignore header
             String line = br.readLine();
             while (line != null) {
                 String[] inputData = line.split(",");

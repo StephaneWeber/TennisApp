@@ -37,6 +37,7 @@ public class GearItemService {
         List<GearItem> gearItemsData = new ArrayList<>();
         File dataFile = new ClassPathResource(GEAR_CSV).getFile();
         try (BufferedReader br = new BufferedReader(new FileReader(dataFile))) {
+            String headerLine = br.readLine(); // Ignore header
             String line = br.readLine();
             while (line != null) {
                 String[] inputData = line.split(",");
