@@ -107,10 +107,6 @@ public class GearItemService {
                 .orElse(0);
     }
 
-    public boolean isGearItemUpgrade(GearItem gearItem) {
-        return gearItem != null && gearItem.getLevel() > ownedLevel(gearItem);
-    }
-
     private String getGearItemGenericName(String name) {
         int endIndex = name.indexOf('_');
         if (endIndex != -1) {
