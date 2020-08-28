@@ -28,7 +28,12 @@ public class GearItemService {
 
     public GearItemService() throws IOException {
         gearItems = loadGearItems();
-        LOGGER.info("Loaded {} gear items", gearItems.size());
+        long distinctGearItems = gearItems.stream()
+                .map(GearItem::getName)
+                .map(s -> s.substring(0, s.lastIndexOf("_")))
+                .distinct()
+                .count();
+        LOGGER.info("Loaded {} configurations for {} different gear items", gearItems.size(), distinctGearItems);
         ownedGearItems = loadOwnedGearItems();
         LOGGER.info("Loaded {} owned gear items", ownedGearItems.size());
     }

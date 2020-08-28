@@ -27,7 +27,12 @@ public class PlayerService {
 
     public PlayerService() throws IOException {
         players = loadPlayers();
-        LOGGER.info("Loaded {} players", players.size());
+        long distinctPlayers = players.stream()
+                .map(Player::getName)
+                .map(s -> s.substring(0, s.lastIndexOf("_")))
+                .distinct()
+                .count();
+        LOGGER.info("Loaded {} configurations for {} different players", players.size(), distinctPlayers);
         ownedPlayers = loadOwnedPlayers();
         LOGGER.info("Loaded {} owned players", ownedPlayers.size());
     }
