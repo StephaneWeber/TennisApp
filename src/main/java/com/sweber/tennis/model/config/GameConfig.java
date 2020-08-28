@@ -121,7 +121,7 @@ public class GameConfig {
         return Stream.of(player.getLevel(), racket.getLevel(), grip.getLevel(), shoes.getLevel(), wristband.getLevel(), nutrition.getLevel(), workout.getLevel())
                 .mapToInt(v -> v)
                 .max()
-                .orElse(11); // MaxLevel by default if we cannot compute one ...
+                .orElse(13); // MaxLevel by default if we cannot compute one ...
     }
 
     @Override
