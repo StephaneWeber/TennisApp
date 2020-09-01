@@ -26,8 +26,8 @@ class ConfigGeneratorServiceTest {
         List<GameConfig> gameConfigs = configGeneratorService.generateAllConfigs("FLORENCE_4", minimumAttributes, 150, 6, 0);
         long end = System.currentTimeMillis();
         System.out.printf("Found %d configs in %d ms%n", gameConfigs.size(), (end - start));
-        // 123 - 62 ms
-        assertThat(gameConfigs).hasSize(123);
+        // 127 - 118 ms
+        assertThat(gameConfigs).hasSize(127);
         gameConfigs.forEach(gameConfig -> assertThat(gameConfig.getCost()).isZero());
     }
 
@@ -64,9 +64,9 @@ class ConfigGeneratorServiceTest {
 //        assertThat(gameConfigs).hasSize(288);
         gameConfigs = configGeneratorService.generateAllConfigs("JONAH_5", minimumAttributes, 160, 9, 1);
         System.out.printf("Found %d configs%n", gameConfigs.size());
-        assertThat(gameConfigs).hasSize(7390);
+        assertThat(gameConfigs).hasSize(10271);
         long end = System.currentTimeMillis();
         System.out.printf("Found in %d ms%n", (end - start));
-        // 15324 in 1196 ms
+        // 10271 in 828 ms
     }
 }
