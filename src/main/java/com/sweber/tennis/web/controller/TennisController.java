@@ -60,9 +60,9 @@ public class TennisController {
         minAttributes.setForehand(30);
         minAttributes.setBackhand(20);
         configFilter.setMinAttributes(minAttributes);
-        configFilter.setMinTotal(150);
+        configFilter.setMinTotal(220);
         configFilter.setUpgradeAllowed(0);
-        configFilter.setMaxLevel(6);
+        configFilter.setMaxLevel(7);
         return configFilter;
     }
 
