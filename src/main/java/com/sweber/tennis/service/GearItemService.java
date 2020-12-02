@@ -15,6 +15,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
@@ -77,7 +78,7 @@ public class GearItemService {
         return gearItems.stream()
                 .filter(item -> item.getName().equals(gearItemName))
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(() -> new NoSuchElementException(gearItemName));
     }
 
     private GearItem getGearItem(String[] inputData) {
