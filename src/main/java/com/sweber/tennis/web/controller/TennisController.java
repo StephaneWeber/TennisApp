@@ -55,14 +55,14 @@ public class TennisController {
     private ConfigFilter setupInitialConfigFilter() {
         ConfigFilter configFilter = new ConfigFilter();
         Attributes minAttributes = new Attributes();
-        minAttributes.setAgility(20);
+        minAttributes.setAgility(40);
         minAttributes.setService(30);
         minAttributes.setForehand(30);
-        minAttributes.setBackhand(20);
+        minAttributes.setBackhand(30);
         configFilter.setMinAttributes(minAttributes);
-        configFilter.setMinTotal(220);
+        configFilter.setMinTotal(240);
         configFilter.setUpgradeAllowed(0);
-        configFilter.setMaxLevel(7);
+        configFilter.setMaxLevel(9);
         return configFilter;
     }
 
