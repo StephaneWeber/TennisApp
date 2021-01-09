@@ -4,6 +4,7 @@ Helping tweak profiles for the Tennis Clash game
 IN DEV
 
 TODO
+* Review data especially of players (game updates changed them ...)
 * Add data for gear not possessed yet
 * Add data for players not possessed yet
 * Input all costs for upgrades
