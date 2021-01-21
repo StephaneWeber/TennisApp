@@ -41,11 +41,11 @@ class ConfigGeneratorServiceTest {
 
         long start = System.currentTimeMillis();
         gameConfigs = configGeneratorService.generateAllConfigs("JONAH_7", minimumAttributes, 240, 9, 1);
-        assertThat(gameConfigs).hasSize(168);
+        assertThat(gameConfigs).hasSize(297);
         System.out.printf("Found %d configs%n", gameConfigs.size());
         long end = System.currentTimeMillis();
         System.out.printf("Found in %d ms%n", (end - start));
-        // 129 in 1877 ms
+        // 297 in 1623 ms
     }
 
     @Test
@@ -56,9 +56,9 @@ class ConfigGeneratorServiceTest {
         long start = System.currentTimeMillis();
         gameConfigs = configGeneratorService.generateAllConfigs("JONAH_7", minimumAttributes, 200, 9, 2);
         System.out.printf("Found %d configs%n", gameConfigs.size());
-        assertThat(gameConfigs).hasSize(4578);
+        assertThat(gameConfigs).hasSize(5438);
         long end = System.currentTimeMillis();
         System.out.printf("Found in %d ms%n", (end - start));
-        // 31860 in 3717 ms
+        // 5438 in 2994 ms
     }
 }
