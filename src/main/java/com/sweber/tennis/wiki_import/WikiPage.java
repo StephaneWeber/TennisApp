@@ -1,10 +1,11 @@
-package com.sweber.tennis.service;
+package com.sweber.tennis.wiki_import;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class WikiPage {
     List<String> levels = new ArrayList<>();
+    List<String> price = new ArrayList<>();
     List<List<String>> skills = new ArrayList<>();
 
     public List<String> getLevels() {
@@ -13,6 +14,14 @@ public class WikiPage {
 
     public void setLevels(List<String> levels) {
         this.levels = levels;
+    }
+
+    public List<String> getPrice() {
+        return price;
+    }
+
+    public void setPrice(List<String> price) {
+        this.price = price;
     }
 
     public List<List<String>> getSkills() {
