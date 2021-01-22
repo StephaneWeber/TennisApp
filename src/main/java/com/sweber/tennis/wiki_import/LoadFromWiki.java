@@ -10,70 +10,74 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LoadFromWiki {
-    public static void main(String... args) throws IOException {
-        String page = "http://tennis-clash.fandom.com/wiki/";
-        handlePage(page + "The_Eagle", "EAGLE", "RACKET");
-        handlePage(page + "The_Patriot", "PATRIOT", "RACKET");
-        handlePage(page + "The_Outback", "OUTBACK", "RACKET");
-        handlePage(page + "The_Panther", "PANTHER", "RACKET");
-        handlePage(page + "The_Samurai", "SAMURAI", "RACKET");
-        handlePage(page + "The_Hammer", "HAMMER", "RACKET");
-        handlePage(page + "The_Bullseye", "BULLS_EYE", "RACKET");
-        handlePage(page + "Zeus", "ZEUS", "RACKET");
 
+    public static final String PAGE = "http://tennis-clash.fandom.com/wiki/";
+    public static final String RACKET = "RACKET";
+    public static final String GRIP = "GRIP";
+
+    public static void main(String... args) throws IOException {
+        handleRackets();
+        handleGrips();
+    }
+
+    private static void handleRackets() throws IOException {
+        handlePage(PAGE + "The_Eagle", "EAGLE", RACKET);
+        handlePage(PAGE + "The_Patriot", "PATRIOT", RACKET);
+        handlePage(PAGE + "The_Outback", "OUTBACK", RACKET);
+        handlePage(PAGE + "The_Panther", "PANTHER", RACKET);
+        handlePage(PAGE + "The_Samurai", "SAMURAI", RACKET);
+        handlePage(PAGE + "The_Hammer", "HAMMER", RACKET);
+        handlePage(PAGE + "The_Bullseye", "BULLS_EYE", RACKET);
+        handlePage(PAGE + "Zeus", "ZEUS", RACKET);
+    }
+
+    private static void handleGrips() throws IOException {
+        handlePage(PAGE + "The_Warrior", "WARRIOR", GRIP);
+        handlePage(PAGE + "The_Talon", "TALON", GRIP);
+        handlePage(PAGE + "The_Machete", "MACHETE", GRIP);
+        handlePage(PAGE + "The_Cobra", "COBRA", GRIP);
+        handlePage(PAGE + "The_Katana", "KATANA", GRIP);
+        handlePage(PAGE + "The_Forge", "FORGE", GRIP);
+        handlePage(PAGE + "Tactical_Grip", "TACTICAL_GRIP", GRIP);
+        handlePage(PAGE + "The_Titan", "TITAN", GRIP);
     }
 
     private static void handlePage(String page, String itemName, String itemType) throws IOException {
         WikiPage wikiPage = new WikiPage(itemName, itemType);
         Document doc = Jsoup.connect(page).get();
-        Elements pagination = doc.select(".article-table");
+        Elements articleTables = doc.select(".article-table");
 
-        Element skillsTable = pagination.get(1);
-        Elements skills = skillsTable.select("tr");
-        Element cardsRow = skills.get(0);
-        Elements cardsCols = cardsRow.select("th");
+        Element skillsTable = articleTables.get(1);
+        Elements skillsRows = skillsTable.select("tr");
+        Element levelsRow = skillsRows.get(0);
+        Elements levelNames = levelsRow.select("th");
 
-        int firstLevel = 0;
-        int lastLevel = 0;
-        Element row = skills.get(1);
-        Elements cols = row.select("td");
-        for (int i1 = 0; i1 < cols.size(); i1++) {
-            String trim = cols.get(i1).text().trim();
-            if (i1 > 0 && firstLevel == 0 && !trim.isEmpty()) {
-                firstLevel = i1;
-            }
-            if (!trim.isEmpty()) {
-                lastLevel = i1;
-            }
-        }
+        Limits limits = determineLimits(skillsRows);
 
-        List<String> levels = new ArrayList<>();
-        int level = firstLevel;
-        for (int i2 = 0; i2 <= lastLevel - firstLevel; i2++) {
-            levels.add(cardsCols.get(level).text().trim());
-            level++;
-        }
-
+        List<String> levels = determineLevels(levelNames, limits);
         wikiPage.setLevels(levels);
-        for (int i1 = 1; i1 < skills.size(); i1++) {
-            row = skills.get(i1);
-            cols = row.select("td");
-            String skillName = cols.get(0).text().toUpperCase();
-            List<String> skill = new ArrayList<>();
-            for (int i2 = firstLevel; i2 <= lastLevel; i2++) {
-                skill.add(cols.get(i2).text().trim());
-            }
-            wikiPage.addSkill(skillName, skill);
+
+        for (int i1 = 1; i1 < skillsRows.size(); i1++) {
+            Element skillRow = skillsRows.get(i1);
+            determineSkills(wikiPage, skillRow, limits);
         }
 
-        Element priceTable = pagination.get(0);
-        Elements pricesRow = priceTable.select("tr");
-        Element prices = pricesRow.get(2);
-        Elements upgradeRow = prices.select("td");
+        List<String> price = determinePrices(articleTables, limits);
+        wikiPage.setPrices(price);
+
+        List<String> output = wikiPage.getOutput();
+        for (String outputLine : output) {
+            System.out.println(outputLine);
+        }
+    }
+
+    private static List<String> determinePrices(Elements articleTables, Limits limits) {
+        Element pricesRow = articleTables.get(0).select("tr").get(2);
+        Elements prices = pricesRow.select("td");
         List<String> price = new ArrayList<>();
-        level = firstLevel;
-        for (int i2 = 0; i2 <= lastLevel - firstLevel; i2++) {
-            String indPrice = upgradeRow.get(level++).text().trim();
+        int level = limits.getFirstLevel();
+        for (int i2 = 0; i2 < limits.getLastLevel() - limits.getFirstLevel(); i2++) {
+            String indPrice = prices.get(level++).text().trim();
             if (indPrice.isEmpty()) {
                 indPrice = "0";
             } else {
@@ -81,14 +85,43 @@ public class LoadFromWiki {
             }
             price.add(indPrice);
         }
-        wikiPage.setPrices(price);
+        return price;
+    }
 
-        wikiPage.generateOutput();
-
-        List<String> output = wikiPage.getOutput();
-        for (String s : output) {
-            System.out.println(s);
+    private static void determineSkills(WikiPage wikiPage, Element skillRow, Limits limits) {
+        Elements cols = skillRow.select("td");
+        String skillName = cols.get(0).text().toUpperCase();
+        List<String> skill = new ArrayList<>();
+        for (int i2 = limits.getFirstLevel(); i2 <= limits.getLastLevel(); i2++) {
+            skill.add(cols.get(i2).text().trim());
         }
+        wikiPage.addSkill(skillName, skill);
+    }
+
+    private static List<String> determineLevels(Elements levelsCols, Limits limits) {
+        List<String> levels = new ArrayList<>();
+        int level = limits.getFirstLevel();
+        for (int i2 = 0; i2 <= limits.getLastLevel() - limits.getFirstLevel(); i2++) {
+            levels.add(levelsCols.get(level).text().trim());
+            level++;
+        }
+        return levels;
+    }
+
+    private static Limits determineLimits(Elements skillsRows) {
+        Limits limits = new Limits(0, 0);
+        Element row = skillsRows.get(1);
+        Elements cols = row.select("td");
+        for (int i1 = 0; i1 < cols.size(); i1++) {
+            String trim = cols.get(i1).text().trim();
+            if (i1 > 0 && limits.getFirstLevel() == 0 && !trim.isEmpty()) {
+                limits.setFirstLevel(i1);
+            }
+            if (!trim.isEmpty()) {
+                limits.setLastLevel(i1);
+            }
+        }
+        return limits;
     }
 
     private static String formatPrice(String indPrice) {
@@ -102,5 +135,31 @@ public class LoadFromWiki {
             }
         }
         return indPrice;
+    }
+
+    static class Limits {
+        int firstLevel;
+        int lastLevel;
+
+        public Limits(int firstLevel, int lastLevel) {
+            this.firstLevel = firstLevel;
+            this.lastLevel = lastLevel;
+        }
+
+        public int getFirstLevel() {
+            return firstLevel;
+        }
+
+        public void setFirstLevel(int firstLevel) {
+            this.firstLevel = firstLevel;
+        }
+
+        public int getLastLevel() {
+            return lastLevel;
+        }
+
+        public void setLastLevel(int lastLevel) {
+            this.lastLevel = lastLevel;
+        }
     }
 }

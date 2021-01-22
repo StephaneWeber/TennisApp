@@ -6,31 +6,15 @@ import java.util.List;
 import java.util.Map;
 
 public class WikiPage {
-    String itemName;
-    String itemType;
-    List<String> levels = new ArrayList<>();
-    List<String> prices = new ArrayList<>();
-    Map<String, List<String>> skills = new HashMap<>();
-    List<String> output = new ArrayList<>();
+    private String itemName;
+    private String itemType;
+    private List<String> levels = new ArrayList<>();
+    private List<String> prices = new ArrayList<>();
+    private Map<String, List<String>> skills = new HashMap<>();
+    private List<String> output = new ArrayList<>();
 
     public WikiPage(String itemName, String itemType) {
         this.itemName = itemName;
-        this.itemType = itemType;
-    }
-
-    public String getItemName() {
-        return itemName;
-    }
-
-    public void setItemName(String itemName) {
-        this.itemName = itemName;
-    }
-
-    public String getItemType() {
-        return itemType;
-    }
-
-    public void setItemType(String itemType) {
         this.itemType = itemType;
     }
 
@@ -63,6 +47,7 @@ public class WikiPage {
     }
 
     public List<String> getOutput() {
+        generateOutput();
         return output;
     }
 
@@ -70,11 +55,7 @@ public class WikiPage {
         this.output = output;
     }
 
-    public void addOutputLine(String outputLine) {
-        this.output.add(outputLine);
-    }
-
-    public void generateOutput() {
+    private void generateOutput() {
         for (int i = 0; i < levels.size(); i++) {
             String outputLine = itemName + "_" + levels.get(i) + "," + itemType + ",";
             if (skills.containsKey("AGILITY")) {
@@ -108,7 +89,7 @@ public class WikiPage {
                 outputLine = outputLine + "0,";
             }
 
-            outputLine = outputLine + prices.get(i) + "," + levels.get(i);
+            outputLine = outputLine + ((i == 0) ? "0" : prices.get(i - 1)) + "," + levels.get(i);
             output.add(outputLine);
         }
     }
