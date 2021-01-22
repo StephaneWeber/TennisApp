@@ -4,10 +4,8 @@ Helping tweak profiles for the Tennis Clash game
 IN DEV
 
 TODO
-* Review data especially of players (game updates changed them ...)
-* Add data for gear not possessed yet
+* Review data especially of players (game updates changed them ...) -> Load from Wiki
 * Add data for players not possessed yet
-* Input all costs for upgrades
 * Refresh players list when updating maxLevel restriction
 * (Add a throbber while computing configs ? - quick enough now to forget that)
 
