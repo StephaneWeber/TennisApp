@@ -4,8 +4,6 @@ Helping tweak profiles for the Tennis Clash game
 IN DEV
 
 TODO
-* Review data especially of players (game updates changed them ...) -> Load from Wiki
-* Add data for players not possessed yet
 * Refresh players list when updating maxLevel restriction
 * (Add a throbber while computing configs ? - quick enough now to forget that)
 
