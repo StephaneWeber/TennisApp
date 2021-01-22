@@ -1,19 +1,30 @@
 package com.sweber.tennis.wiki_import;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class WikiPage {
+    private static final String PAGE = "http://tennis-clash.fandom.com/wiki/";
+
+    private String page;
     private String itemName;
     private String itemType;
     private List<String> levels = new ArrayList<>();
     private List<String> prices = new ArrayList<>();
     private Map<String, List<String>> skills = new HashMap<>();
     private List<String> output = new ArrayList<>();
+    private Limits limits;
 
-    public WikiPage(String itemName, String itemType) {
+    public WikiPage(String page, String itemName, String itemType) {
+        this.page = PAGE + page;
         this.itemName = itemName;
         this.itemType = itemType;
     }
@@ -91,6 +102,126 @@ public class WikiPage {
 
             outputLine = outputLine + prices.get(i) + "," + levels.get(i);
             output.add(outputLine);
+        }
+    }
+
+    public void processWikiPage() throws IOException {
+        Document doc = Jsoup.connect(page).get();
+        Elements articleTables = doc.select(".article-table");
+
+        Element skillsTable = articleTables.get(1);
+        Elements skillsRows = skillsTable.select("tr");
+        Element levelsRow = skillsRows.get(0);
+        Elements levelNames = levelsRow.select("th");
+
+        limits = determineLimits(skillsRows);
+
+        List<String> levels = determineLevels(levelNames);
+        setLevels(levels);
+
+        for (int i1 = 1; i1 < skillsRows.size(); i1++) {
+            Element skillRow = skillsRows.get(i1);
+            determineSkills(skillRow);
+        }
+
+        List<String> price = determinePrices(articleTables);
+        setPrices(price);
+
+        List<String> output = getOutput();
+        for (String outputLine : output) {
+            System.out.println(outputLine);
+        }
+    }
+
+    private List<String> determinePrices(Elements articleTables) {
+        Element pricesRow = articleTables.get(0).select("tr").get(2);
+        Elements prices = pricesRow.select("td");
+        List<String> price = new ArrayList<>();
+        int level = limits.getFirstLevel();
+        for (int i2 = 1; i2 <= limits.getLastLevel() - limits.getFirstLevel() + 1; i2++) {
+            String indPrice = prices.get(level++).text().trim();
+            if (indPrice.isEmpty()) {
+                indPrice = "0";
+            } else {
+                indPrice = formatPrice(indPrice);
+            }
+            price.add(indPrice);
+        }
+        return price;
+    }
+
+    private void determineSkills(Element skillRow) {
+        Elements cols = skillRow.select("td");
+        String skillName = cols.get(0).text().toUpperCase();
+        List<String> skill = new ArrayList<>();
+        for (int i2 = limits.getFirstLevel(); i2 <= limits.getLastLevel(); i2++) {
+            skill.add(cols.get(i2).text().trim());
+        }
+        addSkill(skillName, skill);
+    }
+
+    private List<String> determineLevels(Elements levelsCols) {
+        List<String> levels = new ArrayList<>();
+        int level = limits.getFirstLevel();
+        for (int i2 = 0; i2 <= limits.getLastLevel() - limits.getFirstLevel(); i2++) {
+            levels.add(levelsCols.get(level).text().trim());
+            level++;
+        }
+        return levels;
+    }
+
+    private Limits determineLimits(Elements skillsRows) {
+        Limits limits = new Limits(0, 0);
+        Element row = skillsRows.get(1);
+        Elements cols = row.select("td");
+        for (int i1 = 0; i1 < cols.size(); i1++) {
+            String trim = cols.get(i1).text().trim();
+            if (i1 > 0 && limits.getFirstLevel() == 0 && !trim.isEmpty()) {
+                limits.setFirstLevel(i1);
+            }
+            if (!trim.isEmpty()) {
+                limits.setLastLevel(i1);
+            }
+        }
+        return limits;
+    }
+
+    private String formatPrice(String indPrice) {
+        indPrice = indPrice.toUpperCase();
+        if (indPrice.endsWith("K")) {
+            if (indPrice.contains(".")) {
+                indPrice = indPrice.replaceAll("K", "00");
+                indPrice = indPrice.replaceAll("\\.", "");
+            } else {
+                indPrice = indPrice.replaceAll("K", "000");
+            }
+        }
+        return indPrice;
+    }
+
+    class Limits {
+        int firstLevel;
+        int lastLevel;
+
+        public Limits(int firstLevel, int lastLevel) {
+            this.firstLevel = firstLevel;
+            this.lastLevel = lastLevel;
+        }
+
+        public int getFirstLevel() {
+            return firstLevel;
+        }
+
+        public void setFirstLevel(int firstLevel) {
+            this.firstLevel = firstLevel;
+        }
+
+        public int getLastLevel() {
+            return lastLevel;
+        }
+
+        public void setLastLevel(int lastLevel) {
+            this.lastLevel = lastLevel;
         }
     }
 }
