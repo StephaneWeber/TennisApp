@@ -6,11 +6,13 @@ public class LoadFromWiki {
     public static final String RACKET = "RACKET";
     public static final String GRIP = "GRIP";
     public static final String SHOES = "SHOES";
+    public static final String WRISTBAND = "WRISTBAND";
 
     public static void main(String... args) throws IOException {
         importRackets();
         importGrips();
         importShoes();
+        importWristbands();
     }
 
     private static void importRackets() {
@@ -44,6 +46,17 @@ public class LoadFromWiki {
         processWikiPage("The_Anvil", "ANVIL", SHOES);
         processWikiPage("The_Ballistic", "BALLISTIC", SHOES);
         processWikiPage("The_Hades_Treads", "HADES_TREADS", SHOES);
+    }
+
+    private static void importWristbands() {
+        processWikiPage("The_Tomahawk", "TOMAHAWK", WRISTBAND);
+        processWikiPage("The_Rocket", "MISSILE", WRISTBAND);
+        processWikiPage("Jolly_Roger", "PIRATE", WRISTBAND);
+        processWikiPage("The_Macaw", "ARA", WRISTBAND);
+        processWikiPage("The_Koi", "KOI", WRISTBAND);
+        processWikiPage("The_Kodiak", "KODIAK", WRISTBAND);
+        processWikiPage("The_Gladiator", "GLADIATOR", WRISTBAND);
+        processWikiPage("The_Shield", "SHIELD", WRISTBAND);
     }
 
     private static void processWikiPage(String page, String itemName, String itemType) {
