@@ -8,15 +8,25 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
 
 public class LoadFromWiki {
     public static void main(String... args) throws IOException {
-        String page = "http://tennis-clash.fandom.com/wiki/The_Patriot";
-        WikiPage wikiPage = new WikiPage();
+        String page = "http://tennis-clash.fandom.com/wiki/";
+        handlePage(page + "The_Eagle", "EAGLE", "RACKET");
+        handlePage(page + "The_Patriot", "PATRIOT", "RACKET");
+        handlePage(page + "The_Outback", "OUTBACK", "RACKET");
+        handlePage(page + "The_Panther", "PANTHER", "RACKET");
+        handlePage(page + "The_Samurai", "SAMURAI", "RACKET");
+        handlePage(page + "The_Hammer", "HAMMER", "RACKET");
+        handlePage(page + "The_Bullseye", "BULLS_EYE", "RACKET");
+        handlePage(page + "Zeus", "ZEUS", "RACKET");
+
+    }
+
+    private static void handlePage(String page, String itemName, String itemType) throws IOException {
+        WikiPage wikiPage = new WikiPage(itemName, itemType);
         Document doc = Jsoup.connect(page).get();
         Elements pagination = doc.select(".article-table");
-
 
         Element skillsTable = pagination.get(1);
         Elements skills = skillsTable.select("tr");
@@ -38,7 +48,6 @@ public class LoadFromWiki {
         }
 
         List<String> levels = new ArrayList<>();
-        levels.add("Level");
         int level = firstLevel;
         for (int i2 = 0; i2 <= lastLevel - firstLevel; i2++) {
             levels.add(cardsCols.get(level).text().trim());
@@ -49,29 +58,49 @@ public class LoadFromWiki {
         for (int i1 = 1; i1 < skills.size(); i1++) {
             row = skills.get(i1);
             cols = row.select("td");
-            String skillName = cols.get(0).text();
+            String skillName = cols.get(0).text().toUpperCase();
             List<String> skill = new ArrayList<>();
-            skill.add(skillName);
             for (int i2 = firstLevel; i2 <= lastLevel; i2++) {
                 skill.add(cols.get(i2).text().trim());
             }
-            wikiPage.addSkill(skill);
+            wikiPage.addSkill(skillName, skill);
         }
-
 
         Element priceTable = pagination.get(0);
         Elements pricesRow = priceTable.select("tr");
         Element prices = pricesRow.get(2);
         Elements upgradeRow = prices.select("td");
         List<String> price = new ArrayList<>();
-        price.add("Price");
         level = firstLevel;
-        IntStream.range(0,lastLevel - firstLevel).forEach(() -> price.add(upgradeRow.get(level++).text().trim()));
         for (int i2 = 0; i2 <= lastLevel - firstLevel; i2++) {
-            price.add(upgradeRow.get(level++).text().trim());
+            String indPrice = upgradeRow.get(level++).text().trim();
+            if (indPrice.isEmpty()) {
+                indPrice = "0";
+            } else {
+                indPrice = formatPrice(indPrice);
+            }
+            price.add(indPrice);
         }
-        wikiPage.setPrice(price);
+        wikiPage.setPrices(price);
 
-        System.out.println(wikiPage);
+        wikiPage.generateOutput();
+
+        List<String> output = wikiPage.getOutput();
+        for (String s : output) {
+            System.out.println(s);
+        }
+    }
+
+    private static String formatPrice(String indPrice) {
+        indPrice = indPrice.toUpperCase();
+        if (indPrice.endsWith("K")) {
+            if (indPrice.contains(".")) {
+                indPrice = indPrice.replaceAll("K", "00");
+                indPrice = indPrice.replaceAll("\\.", "");
+            } else {
+                indPrice = indPrice.replaceAll("K", "000");
+            }
+        }
+        return indPrice;
     }
 }
