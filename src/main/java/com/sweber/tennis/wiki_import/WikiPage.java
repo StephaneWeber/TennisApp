@@ -31,7 +31,10 @@ public class WikiPage {
 
     private void generateOutput() {
         for (int i = 0; i < levels.size(); i++) {
-            String outputLine = itemName + "_" + levels.get(i) + "," + itemType + ",";
+            String outputLine = itemName + "_" + levels.get(i) + ",";
+            if (itemType != null) {
+                outputLine = outputLine + itemType + ",";
+            }
             if (skills.containsKey("AGILITY")) {
                 outputLine = outputLine + skills.get("AGILITY").get(i) + ",";
             } else {

@@ -11,12 +11,25 @@ public class LoadFromWiki {
     public static final String WORKOUT = "WORKOUT";
 
     public static void main(String... args) throws IOException {
+        importPlayers();
         importRackets();
         importGrips();
         importShoes();
         importWristbands();
         importNutritions();
         importWorkouts();
+    }
+
+    private static void importPlayers() {
+        processWikiPage("Jonah", "JONAH", null);
+        processWikiPage("Hope", "HOPE", null);
+        processWikiPage("Florence", "FLORENCE", null);
+        processWikiPage("Leo", "LEO", null);
+        processWikiPage("Kaito", "KAITO", null);
+        processWikiPage("Viktoria", "VIKTORIA", null);
+        processWikiPage("Diana", "DIANA", null);
+        processWikiPage("Mei-Li", "MEILI", null);
+        processWikiPage("Luc", "LUC", null);
     }
 
     private static void importRackets() {
