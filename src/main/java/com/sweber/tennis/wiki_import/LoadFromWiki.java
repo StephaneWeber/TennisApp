@@ -7,12 +7,16 @@ public class LoadFromWiki {
     public static final String GRIP = "GRIP";
     public static final String SHOES = "SHOES";
     public static final String WRISTBAND = "WRISTBAND";
+    public static final String NUTRITION = "NUTRITION";
+    public static final String WORKOUT = "WORKOUT";
 
     public static void main(String... args) throws IOException {
-        importRackets();
-        importGrips();
-        importShoes();
-        importWristbands();
+//        importRackets();
+//        importGrips();
+//        importShoes();
+//        importWristbands();
+ //       importNutritions();
+ //       importWorkouts();
     }
 
     private static void importRackets() {
@@ -57,6 +61,17 @@ public class LoadFromWiki {
         processWikiPage("The_Kodiak", "KODIAK", WRISTBAND);
         processWikiPage("The_Gladiator", "GLADIATOR", WRISTBAND);
         processWikiPage("The_Shield", "SHIELD", WRISTBAND);
+    }
+
+    private static void importNutritions() {
+        processWikiPage("Lean_Protein", "PROTEIN", NUTRITION);
+        processWikiPage("Increased_Hydration", "HYDRATION", NUTRITION);
+        processWikiPage("Macrobiotic", "MACROBIOTICS", NUTRITION);
+        processWikiPage("Vegan_Diet", "VEGAN", NUTRITION);
+        processWikiPage("Keto_Sourcing", "KETO_SOURCE", NUTRITION);
+        processWikiPage("Antioxidants", "ANTIOXIDANTS", NUTRITION);
+        processWikiPage("Carboload", "CARBO_LOAD", NUTRITION);
+        processWikiPage("Neutral_Energy", "NEUTRAL_ENERGY", NUTRITION);
     }
 
     private static void processWikiPage(String page, String itemName, String itemType) {
