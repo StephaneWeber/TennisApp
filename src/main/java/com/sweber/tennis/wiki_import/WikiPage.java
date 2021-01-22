@@ -37,13 +37,13 @@ public class WikiPage {
             } else {
                 outputLine = outputLine + "0,";
             }
-            if (skills.containsKey("ENDURANCE")) {
-                outputLine = outputLine + skills.get("ENDURANCE").get(i) + ",";
+            if (skills.containsKey("STAMINA")) {
+                outputLine = outputLine + skills.get("STAMINA").get(i) + ",";
             } else {
                 outputLine = outputLine + "0,";
             }
-            if (skills.containsKey("SERVICE")) {
-                outputLine = outputLine + skills.get("SERVICE").get(i) + ",";
+            if (skills.containsKey("SERVE")) {
+                outputLine = outputLine + skills.get("SERVE").get(i) + ",";
             } else {
                 outputLine = outputLine + "0,";
             }
@@ -155,6 +155,9 @@ public class WikiPage {
                 indPrice = indPrice.replaceAll("\\.", "");
             } else {
                 indPrice = indPrice.replaceAll("K", "000");
+            }
+            if (indPrice.startsWith("0")) {
+                indPrice = indPrice.substring(1);
             }
         }
         return indPrice;

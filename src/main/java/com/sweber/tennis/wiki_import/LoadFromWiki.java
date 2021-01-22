@@ -3,17 +3,17 @@ package com.sweber.tennis.wiki_import;
 import java.io.IOException;
 
 public class LoadFromWiki {
-
     public static final String RACKET = "RACKET";
     public static final String GRIP = "GRIP";
+    public static final String SHOES = "SHOES";
 
     public static void main(String... args) throws IOException {
-        importRackets();
-        importGrips();
-//        importShoes();
+//        importRackets();
+//        importGrips();
+        importShoes();
     }
 
-    private static void importRackets() throws IOException {
+    private static void importRackets() {
         processWikiPage("The_Eagle", "EAGLE", RACKET);
         processWikiPage("The_Patriot", "PATRIOT", RACKET);
         processWikiPage("The_Outback", "OUTBACK", RACKET);
@@ -24,7 +24,7 @@ public class LoadFromWiki {
         processWikiPage("Zeus", "ZEUS", RACKET);
     }
 
-    private static void importGrips() throws IOException {
+    private static void importGrips() {
         processWikiPage("The_Warrior", "WARRIOR", GRIP);
         processWikiPage("The_Talon", "TALON", GRIP);
         processWikiPage("The_Machete", "MACHETE", GRIP);
@@ -35,8 +35,23 @@ public class LoadFromWiki {
         processWikiPage("The_Titan", "TITAN", GRIP);
     }
 
-    private static void processWikiPage(String page, String itemName, String itemType) throws IOException {
-        WikiPage wikiPage = new WikiPage(page, itemName, itemType);
-        wikiPage.processWikiPage();
+    private static void importShoes() {
+       // processWikiPage("The_Feather", "FEATHER", SHOES);
+        processWikiPage("The_Raptor", "RAPTOR", SHOES);
+        processWikiPage("The_Hunter", "HUNTER", SHOES);
+        processWikiPage("The_Piranha", "PIRANHA", SHOES);
+        processWikiPage("The_Shuriken", "SHURIKEN", SHOES);
+        processWikiPage("The_Anvil", "ANVIL", SHOES);
+        processWikiPage("The_Ballistic", "BALLISTIC", SHOES);
+        processWikiPage("The_Hades_Treads", "HADES_TREADS", SHOES);
+    }
+
+    private static void processWikiPage(String page, String itemName, String itemType) {
+        try {
+            WikiPage wikiPage = new WikiPage(page, itemName, itemType);
+            wikiPage.processWikiPage();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
