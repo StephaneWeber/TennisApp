@@ -89,7 +89,7 @@ public class WikiPage {
                 outputLine = outputLine + "0,";
             }
 
-            outputLine = outputLine + ((i == 0) ? "0" : prices.get(i - 1)) + "," + levels.get(i);
+            outputLine = outputLine + prices.get(i) + "," + levels.get(i);
             output.add(outputLine);
         }
     }
