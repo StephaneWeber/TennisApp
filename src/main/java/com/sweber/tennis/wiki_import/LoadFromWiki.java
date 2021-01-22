@@ -21,25 +21,25 @@ public class LoadFromWiki {
     }
 
     private static void handleRackets() throws IOException {
-//        handlePage(PAGE + "The_Eagle", "EAGLE", RACKET);
-//        handlePage(PAGE + "The_Patriot", "PATRIOT", RACKET);
-//        handlePage(PAGE + "The_Outback", "OUTBACK", RACKET);
-//        handlePage(PAGE + "The_Panther", "PANTHER", RACKET);
-//        handlePage(PAGE + "The_Samurai", "SAMURAI", RACKET);
-//        handlePage(PAGE + "The_Hammer", "HAMMER", RACKET);
-//        handlePage(PAGE + "The_Bullseye", "BULLS_EYE", RACKET);
-//        handlePage(PAGE + "Zeus", "ZEUS", RACKET);
+        handlePage(PAGE + "The_Eagle", "EAGLE", RACKET);
+        handlePage(PAGE + "The_Patriot", "PATRIOT", RACKET);
+        handlePage(PAGE + "The_Outback", "OUTBACK", RACKET);
+        handlePage(PAGE + "The_Panther", "PANTHER", RACKET);
+        handlePage(PAGE + "The_Samurai", "SAMURAI", RACKET);
+        handlePage(PAGE + "The_Hammer", "HAMMER", RACKET);
+        handlePage(PAGE + "The_Bullseye", "BULLS_EYE", RACKET);
+        handlePage(PAGE + "Zeus", "ZEUS", RACKET);
     }
 
     private static void handleGrips() throws IOException {
-//        handlePage(PAGE + "The_Warrior", "WARRIOR", GRIP);
-//        handlePage(PAGE + "The_Talon", "TALON", GRIP);
-//        handlePage(PAGE + "The_Machete", "MACHETE", GRIP);
-//        handlePage(PAGE + "The_Cobra", "COBRA", GRIP);
-//        handlePage(PAGE + "The_Katana", "KATANA", GRIP);
-//        handlePage(PAGE + "The_Forge", "FORGE", GRIP);
+        handlePage(PAGE + "The_Warrior", "WARRIOR", GRIP);
+        handlePage(PAGE + "The_Talon", "TALON", GRIP);
+        handlePage(PAGE + "The_Machete", "MACHETE", GRIP);
+        handlePage(PAGE + "The_Cobra", "COBRA", GRIP);
+        handlePage(PAGE + "The_Katana", "KATANA", GRIP);
+        handlePage(PAGE + "The_Forge", "FORGE", GRIP);
         handlePage(PAGE + "Tactical_Grip", "TACTICAL_GRIP", GRIP);
-//        handlePage(PAGE + "The_Titan", "TITAN", GRIP);
+        handlePage(PAGE + "The_Titan", "TITAN", GRIP);
     }
 
     private static void handlePage(String page, String itemName, String itemType) throws IOException {
