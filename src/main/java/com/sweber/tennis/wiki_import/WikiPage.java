@@ -14,47 +14,19 @@ import java.util.Map;
 public class WikiPage {
     private static final String PAGE = "http://tennis-clash.fandom.com/wiki/";
 
-    private String page;
-    private String itemName;
-    private String itemType;
+    private final String pageSuffix;
+    private final String itemName;
+    private final String itemType;
+    private final List<String> output = new ArrayList<>();
+    private final Map<String, List<String>> skills = new HashMap<>();
     private List<String> levels = new ArrayList<>();
     private List<String> prices = new ArrayList<>();
-    private Map<String, List<String>> skills = new HashMap<>();
-    private List<String> output = new ArrayList<>();
     private Limits limits;
 
-    public WikiPage(String page, String itemName, String itemType) {
-        this.page = PAGE + page;
+    public WikiPage(String pageSuffix, String itemName, String itemType) {
+        this.pageSuffix = PAGE + pageSuffix;
         this.itemName = itemName;
         this.itemType = itemType;
-    }
-
-    public List<String> getLevels() {
-        return levels;
-    }
-
-    public void setLevels(List<String> levels) {
-        this.levels = levels;
-    }
-
-    public List<String> getPrices() {
-        return prices;
-    }
-
-    public void setPrices(List<String> prices) {
-        this.prices = prices;
-    }
-
-    public Map<String, List<String>> getSkills() {
-        return skills;
-    }
-
-    public void setSkills(Map<String, List<String>> skills) {
-        this.skills = skills;
-    }
-
-    public void addSkill(String skillName, List<String> skill) {
-        skills.put(skillName, skill);
     }
 
     private void generateOutput() {
@@ -97,7 +69,7 @@ public class WikiPage {
     }
 
     public void processWikiPage() throws IOException {
-        Document doc = Jsoup.connect(page).get();
+        Document doc = Jsoup.connect(pageSuffix).get();
         Elements articleTables = doc.select(".article-table");
 
         Element skillsTable = articleTables.get(1);
@@ -146,7 +118,7 @@ public class WikiPage {
         for (int i2 = limits.getFirstLevel(); i2 <= limits.getLastLevel(); i2++) {
             skill.add(cols.get(i2).text().trim());
         }
-        addSkill(skillName, skill);
+        skills.put(skillName, skill);
     }
 
     private void determineLevels(Elements levelsCols) {
