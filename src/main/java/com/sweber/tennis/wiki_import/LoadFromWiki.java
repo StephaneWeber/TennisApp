@@ -8,8 +8,8 @@ public class LoadFromWiki {
     public static final String SHOES = "SHOES";
 
     public static void main(String... args) throws IOException {
-//        importRackets();
-//        importGrips();
+        importRackets();
+        importGrips();
         importShoes();
     }
 
@@ -36,7 +36,7 @@ public class LoadFromWiki {
     }
 
     private static void importShoes() {
-       // processWikiPage("The_Feather", "FEATHER", SHOES);
+        processWikiPage("The_Feather", "FEATHER", SHOES);
         processWikiPage("The_Raptor", "RAPTOR", SHOES);
         processWikiPage("The_Hunter", "HUNTER", SHOES);
         processWikiPage("The_Piranha", "PIRANHA", SHOES);
