@@ -11,12 +11,12 @@ public class LoadFromWiki {
     public static final String WORKOUT = "WORKOUT";
 
     public static void main(String... args) throws IOException {
-//        importRackets();
-//        importGrips();
-//        importShoes();
-//        importWristbands();
- //       importNutritions();
- //       importWorkouts();
+        importRackets();
+        importGrips();
+        importShoes();
+        importWristbands();
+        importNutritions();
+        importWorkouts();
     }
 
     private static void importRackets() {
@@ -72,6 +72,17 @@ public class LoadFromWiki {
         processWikiPage("Antioxidants", "ANTIOXIDANTS", NUTRITION);
         processWikiPage("Carboload", "CARBO_LOAD", NUTRITION);
         processWikiPage("Neutral_Energy", "NEUTRAL_ENERGY", NUTRITION);
+    }
+
+    private static void importWorkouts() {
+        processWikiPage("Endurance", "ENDURANCE", WORKOUT);
+        processWikiPage("Sprint", "SPRINT", WORKOUT);
+        processWikiPage("Plyometrics", "PLYOMETRICS", WORKOUT);
+        processWikiPage("Powerlifting", "POWERLIFTING", WORKOUT);
+        processWikiPage("Weight_lifting", "WEIGHTLIFTING", WORKOUT);
+        processWikiPage("Resistance_Band", "RESISTANCE_BAND", WORKOUT);
+        processWikiPage("Mountain_Climber", "MOUNTAIN_CLIMBER", WORKOUT);
+        processWikiPage("Lunges", "LUNGES", WORKOUT);
     }
 
     private static void processWikiPage(String page, String itemName, String itemType) {
