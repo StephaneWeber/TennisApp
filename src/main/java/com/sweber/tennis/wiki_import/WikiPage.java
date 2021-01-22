@@ -57,15 +57,6 @@ public class WikiPage {
         skills.put(skillName, skill);
     }
 
-    public List<String> getOutput() {
-        generateOutput();
-        return output;
-    }
-
-    public void setOutput(List<String> output) {
-        this.output = output;
-    }
-
     private void generateOutput() {
         for (int i = 0; i < levels.size(); i++) {
             String outputLine = itemName + "_" + levels.get(i) + "," + itemType + ",";
@@ -114,26 +105,24 @@ public class WikiPage {
         Element levelsRow = skillsRows.get(0);
         Elements levelNames = levelsRow.select("th");
 
-        limits = determineLimits(skillsRows);
+        determineLimits(skillsRows);
 
-        List<String> levels = determineLevels(levelNames);
-        setLevels(levels);
+        determineLevels(levelNames);
 
         for (int i1 = 1; i1 < skillsRows.size(); i1++) {
             Element skillRow = skillsRows.get(i1);
             determineSkills(skillRow);
         }
 
-        List<String> price = determinePrices(articleTables);
-        setPrices(price);
+        determinePrices(articleTables);
 
-        List<String> output = getOutput();
+        generateOutput();
         for (String outputLine : output) {
             System.out.println(outputLine);
         }
     }
 
-    private List<String> determinePrices(Elements articleTables) {
+    private void determinePrices(Elements articleTables) {
         Element pricesRow = articleTables.get(0).select("tr").get(2);
         Elements prices = pricesRow.select("td");
         List<String> price = new ArrayList<>();
@@ -147,7 +136,7 @@ public class WikiPage {
             }
             price.add(indPrice);
         }
-        return price;
+        this.prices = price;
     }
 
     private void determineSkills(Element skillRow) {
@@ -160,17 +149,17 @@ public class WikiPage {
         addSkill(skillName, skill);
     }
 
-    private List<String> determineLevels(Elements levelsCols) {
+    private void determineLevels(Elements levelsCols) {
         List<String> levels = new ArrayList<>();
         int level = limits.getFirstLevel();
         for (int i2 = 0; i2 <= limits.getLastLevel() - limits.getFirstLevel(); i2++) {
             levels.add(levelsCols.get(level).text().trim());
             level++;
         }
-        return levels;
+        this.levels = levels;
     }
 
-    private Limits determineLimits(Elements skillsRows) {
+    private void determineLimits(Elements skillsRows) {
         Limits limits = new Limits(0, 0);
         Element row = skillsRows.get(1);
         Elements cols = row.select("td");
@@ -183,7 +172,7 @@ public class WikiPage {
                 limits.setLastLevel(i1);
             }
         }
-        return limits;
+        this.limits = limits;
     }
 
     private String formatPrice(String indPrice) {
