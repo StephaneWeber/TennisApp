@@ -71,7 +71,7 @@ public class WikiPage {
         }
     }
 
-    public void processWikiPage() throws IOException {
+    public StringBuffer processWikiPage() throws IOException {
         Document doc = Jsoup.connect(pageSuffix).get();
         Elements articleTables = doc.select(".article-table");
 
@@ -92,9 +92,11 @@ public class WikiPage {
         determinePrices(articleTables);
 
         generateOutput();
+        StringBuffer stringBuffer = new StringBuffer();
         for (String outputLine : output) {
-            System.out.println(outputLine);
+            stringBuffer.append(outputLine + "\n");
         }
+        return stringBuffer;
     }
 
     private void determinePrices(Elements articleTables) {
