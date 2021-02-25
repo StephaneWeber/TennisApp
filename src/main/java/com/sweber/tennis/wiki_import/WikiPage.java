@@ -106,7 +106,7 @@ public class WikiPage {
         int level = limits.getFirstLevel();
         for (int i2 = 1; i2 <= limits.getLastLevel() - limits.getFirstLevel() + 1; i2++) {
             String indPrice = prices.get(level++).text().trim();
-            if (indPrice.isEmpty()) {
+            if (indPrice.isEmpty() || indPrice.equals("/")) {
                 indPrice = "0";
             } else {
                 indPrice = formatPrice(indPrice);

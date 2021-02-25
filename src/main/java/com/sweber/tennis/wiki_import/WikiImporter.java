@@ -19,26 +19,20 @@ public class WikiImporter {
     private static BufferedWriter bufferedWriter;
 
     public void importPlayersData() throws IOException {
+        System.out.println("Starting importing players data");
         bufferedWriter = new BufferedWriter(new FileWriter(PLAYER_FILENAME));
         bufferedWriter.write("Player,Agility,Endurance,Service,Volley,Forehand,Backhand,Cost,Level\n");
-
         importPlayers();
-
-        //flush the stream
         bufferedWriter.flush();
-
-        //close the stream
         bufferedWriter.close();
-
         removeLastEmptyline(PLAYER_FILENAME);
-
-        System.out.println("Imported players to File.");
+        System.out.println("Imported players data to " + PLAYER_FILENAME);
     }
 
     public void importGearData() throws IOException {
+        System.out.println("Starting importing gear data");
         bufferedWriter = new BufferedWriter(new FileWriter(GEAR_FILENAME));
         bufferedWriter.write("Name,Type,Agility,Endurance,Service,Volley,Forehand,Backhand,Cost,Level\n");
-
         bufferedWriter.write("BASIC_RACKET_1,RACKET,0,0,0,0,3,0,0,1\n");
         importRackets();
         bufferedWriter.write("BASIC_GRIP_1,GRIP,0,0,0,5,0,3,0,1\n");
@@ -51,22 +45,15 @@ public class WikiImporter {
         importNutritions();
         bufferedWriter.write("BASIC_TRAINING_1,WORKOUT,0,0,1,0,0,0,0,1\n");
         importWorkouts();
-
-        //flush the stream
         bufferedWriter.flush();
-
-        //close the stream
         bufferedWriter.close();
-
         removeLastEmptyline(GEAR_FILENAME);
-
-        System.out.println("Imported gear to File.");
+        System.out.println("Imported gear data to " + GEAR_FILENAME);
     }
 
     private void removeLastEmptyline(String fileName) throws IOException {
         RandomAccessFile f = new RandomAccessFile(fileName, "rw");
-        long length = f.length() - 1;
-        length -= 1;
+        long length = f.length() - 2;
         f.seek(length);
         f.readByte();
         f.setLength(length+1);
