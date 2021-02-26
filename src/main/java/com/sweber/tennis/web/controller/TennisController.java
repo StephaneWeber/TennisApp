@@ -24,7 +24,8 @@ import java.util.Optional;
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 @Controller
 public class TennisController {
-    public static final String HOME_PAGE = "home";
+    private static final String HOME_PAGE = "home";
+    private static final int PAGE_SIZE = 100;
 
     private final ConfigGeneratorService configGeneratorService;
     private final PlayerService playerService;
@@ -46,36 +47,27 @@ public class TennisController {
         configFilter = setupInitialConfigFilter();
         gameConfigs = configGeneratorService.generateConfigs(configFilter);
         maxAttributes = computeMaxAttributes(gameConfigs);
-        initModel(configFilter, model, Optional.empty(), Optional.empty());
+        initModel(model, Optional.empty());
         return HOME_PAGE;
     }
 
     @GetMapping("/config")
-    public String getPage(Model model,
-                          @RequestParam("page") Optional<Integer> page,
-                          @RequestParam("size") Optional<Integer> size) {
-        initModel(configFilter, model, page, size);
+    public String getPage(Model model, @RequestParam("page") Optional<Integer> page) {
+        initModel(model, page);
         return HOME_PAGE;
     }
 
     @PostMapping("/config")
-    public String applyConfigFilter(ConfigFilter configFilter, Model model,
-                                    @RequestParam("page") Optional<Integer> page,
-                                    @RequestParam("size") Optional<Integer> size) {
-        this.configFilter = configFilter;
+    public String updateConfigFilter(ConfigFilter newConfigFilter, Model model) {
+        this.configFilter = newConfigFilter;
         gameConfigs = configGeneratorService.generateConfigs(configFilter);
         maxAttributes = computeMaxAttributes(gameConfigs);
-        initModel(configFilter, model, page, size);
+        initModel(model, Optional.empty());
         return HOME_PAGE;
     }
 
-    private void initModel(ConfigFilter configFilter, Model model,
-                            Optional<Integer> page,
-                             Optional<Integer> size) {
-        int currentPage = page.orElse(1);
-        int pageSize = size.orElse(100);
-
-        Page<GameConfig> configPage = findPaginated(PageRequest.of(currentPage - 1, pageSize));
+    private void initModel(Model model, Optional<Integer> page) {
+        Page<GameConfig> configPage = getConfigPage(page);
         model.addAttribute("page", configPage);
         model.addAttribute("resultsCount", gameConfigs.size());
         model.addAttribute("appName", appName);
@@ -84,7 +76,8 @@ public class TennisController {
         model.addAttribute("maxAttributes", maxAttributes);
     }
 
-    private Page<GameConfig> findPaginated(Pageable pageable) {
+    private Page<GameConfig> getConfigPage(Optional<Integer> page) {
+        Pageable pageable = PageRequest.of(page.orElse(1) - 1, PAGE_SIZE);
         int pageSize = pageable.getPageSize();
         int currentPage = pageable.getPageNumber();
         int startItem = currentPage * pageSize;
