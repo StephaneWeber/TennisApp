@@ -6,12 +6,20 @@ import com.sweber.tennis.service.ConfigGeneratorService;
 import com.sweber.tennis.service.PlayerService;
 import com.sweber.tennis.web.model.ConfigFilter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class TennisController {
@@ -19,6 +27,8 @@ public class TennisController {
 
     private final ConfigGeneratorService configGeneratorService;
     private final PlayerService playerService;
+
+    List<GameConfig> gameConfigs = new ArrayList<>();
 
     @Value("${spring.application.name}")
     String appName;
@@ -29,38 +39,66 @@ public class TennisController {
     }
 
     @GetMapping("/")
-    public String homePage(Model model) {
+    public String homePage(Model model,
+                           @RequestParam("page") Optional<Integer> page,
+                           @RequestParam("size") Optional<Integer> size) {
         ConfigFilter configFilter = setupInitialConfigFilter();
-        initModel(configFilter, model);
+        initModel(configFilter, model, page, size);
         return HOME_PAGE;
     }
 
     @PostMapping("/")
-    public String postVerification(ConfigFilter configFilter, Model model) {
-        initModel(configFilter, model);
+    public String postVerification(ConfigFilter configFilter, Model model,
+                                   @RequestParam("page") Optional<Integer> page,
+                                   @RequestParam("size") Optional<Integer> size) {
+        initModel(configFilter, model, page, size);
         return HOME_PAGE;
     }
 
-    private void initModel(ConfigFilter configFilter, Model model) {
-        List<GameConfig> gameConfigs = generateConfigs(configFilter);
+    private void initModel(ConfigFilter configFilter, Model model,
+                           Optional<Integer> page,
+                           Optional<Integer> size) {
+        gameConfigs = generateConfigs(configFilter);
         Attributes maxAttributes = computeMaxAttributes(gameConfigs);
 
+        int currentPage = page.orElse(1);
+        int pageSize = size.orElse(100);
+
+        Page<GameConfig> configPage = findPaginated(PageRequest.of(currentPage - 1, pageSize));
+        model.addAttribute("page", configPage);
+        model.addAttribute("resultsCount", gameConfigs.size());
         model.addAttribute("appName", appName);
-        model.addAttribute("list", gameConfigs);
         model.addAttribute("playerList", playerService.leveledPlayers(configFilter.getMaxLevel()));
         model.addAttribute("configFilter", configFilter);
         model.addAttribute("maxAttributes", maxAttributes);
+    }
+
+    private Page<GameConfig> findPaginated(Pageable pageable) {
+        int pageSize = pageable.getPageSize();
+        int currentPage = pageable.getPageNumber();
+        int startItem = currentPage * pageSize;
+        List<GameConfig> list;
+
+        if (gameConfigs.size() < startItem) {
+            list = Collections.emptyList();
+        } else {
+            int toIndex = Math.min(startItem + pageSize, gameConfigs.size());
+            list = gameConfigs.subList(startItem, toIndex);
+        }
+
+        return new PageImpl<>(list, PageRequest.of(currentPage, pageSize), gameConfigs.size());
     }
 
     private ConfigFilter setupInitialConfigFilter() {
         ConfigFilter configFilter = new ConfigFilter();
         Attributes minAttributes = new Attributes();
         minAttributes.setAgility(40);
-        minAttributes.setService(30);
-        minAttributes.setForehand(30);
-        minAttributes.setBackhand(30);
+        minAttributes.setEndurance(30);
+        minAttributes.setService(40);
+        minAttributes.setForehand(35);
+        minAttributes.setBackhand(35);
         configFilter.setMinAttributes(minAttributes);
-        configFilter.setMinTotal(240);
+        configFilter.setMinTotal(260);
         configFilter.setUpgradeAllowed(0);
         configFilter.setMaxLevel(9);
         return configFilter;

@@ -126,7 +126,7 @@
                                    th:value="Reset"/>
                             <br>
                             <br>
-                            <span th:text="${#lists.size(list)}"></span> results found
+                            <span th:text="${resultsCount}"></span> results found
                         </div>
                     </div>
                 </form>
@@ -169,7 +169,7 @@
         </div>
     </div>
     <div class="col-lg-6 container-fluid">
-        <div class="tableFixHead" th:if="${list != null}">
+        <div class="tableFixHead" th:if="${page != null and page.content != null}">
             <table id="configTable" class="table table-primary tableFixHead">
                 <thead>
                 <tr>
@@ -185,7 +185,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="gameConfig : ${list}"
+                <tr th:each="gameConfig : ${page.content}"
                     th:data-player="${gameConfig.playerName}"
                     th:data-racket="${gameConfig.racketName}"
                     th:data-grip="${gameConfig.gripName}"
@@ -214,6 +214,33 @@
                 </tbody>
             </table>
         </div>
+        <!-- customers pagination -->
+        <nav aria-label="Pagination" th:if="${page.totalPages gt 0}">
+            <ul class="pagination justify-content-center font-weight-medium">
+                <li class="page-item" th:classappend="${page.number eq 0} ? 'disabled'">
+                    <a class="page-link svg-icon"
+                       th:href="@{/?page={id}(id=${page.number lt 2 ? 1 : page.number})}"
+                       aria-label="Previous"
+                       title="Previous Page" rel="tooltip">Previous
+                    </a>
+                </li>
+                <li class="page-item" th:classappend="${i eq page.number + 1} ? 'active'"
+                    th:each="i : ${#numbers.sequence( page.number + 1, page.totalPages > 10 + page.number ? page.number + 10 : page.totalPages, 1)}">
+                    <a class="page-link" th:href="@{/?page={id}(id=${i})}" th:text="${i}"
+                       th:title="${'Page '+ i}"
+                       rel="tooltip"></a>
+                </li>
+                <li class="page-item disabled" th:if="${page.number + 10 < page.totalPages}">
+                    <a class="page-link svg-icon" href="#">...</a>
+                </li>
+                <li class="page-item" th:classappend="${page.number + 1 eq page.totalPages} ? 'disabled'">
+                    <a class="page-link svg-icon" th:href="@{/?page={id}(id=${page.number + 2})}"
+                       aria-label="Next"
+                       title="Next Page" rel="tooltip">Next
+                    </a>
+                </li>
+            </ul>
+        </nav>
     </div>
 </div>
 </body>
