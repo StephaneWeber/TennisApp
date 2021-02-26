@@ -46,32 +46,33 @@ public class TennisController {
 
     @GetMapping("/")
     public String homePage(Model model) {
-        configFilter = setupInitialConfigFilter();
-        gameConfigs = configGeneratorService.generateConfigs(configFilter);
-        playerList = playerService.leveledPlayers(configFilter.getMaxLevel());
-        maxAttributes = computeMaxAttributes(gameConfigs);
+        loadGameConfigs(setupInitialConfigFilter());
         populateModelWithPage(model, Optional.empty());
         return HOME_PAGE;
     }
 
     @GetMapping("/config")
-    public String getPage(Model model, @RequestParam("page") Optional<Integer> page) {
-        populateModelWithPage(model, page);
+    public String goToPage(Model model, @RequestParam("page") Optional<Integer> pageNumber) {
+        populateModelWithPage(model, pageNumber);
         return HOME_PAGE;
     }
 
     @PostMapping("/config")
-    public String updateConfigFilter(ConfigFilter newConfigFilter, Model model) {
-        this.configFilter = newConfigFilter;
-        gameConfigs = configGeneratorService.generateConfigs(configFilter);
-        playerList = playerService.leveledPlayers(configFilter.getMaxLevel());
-        maxAttributes = computeMaxAttributes(gameConfigs);
+    public String applyConfigFilter(ConfigFilter newConfigFilter, Model model) {
+        loadGameConfigs(newConfigFilter);
         populateModelWithPage(model, Optional.empty());
         return HOME_PAGE;
     }
 
-    private void populateModelWithPage(Model model, Optional<Integer> page) {
-        Page<GameConfig> configPage = getConfigPage(page);
+    private void loadGameConfigs(ConfigFilter configFilter) {
+        this.configFilter = configFilter;
+        this.gameConfigs = configGeneratorService.generateConfigs(configFilter);
+        this.playerList = playerService.leveledPlayers(configFilter.getMaxLevel());
+        this.maxAttributes = computeMaxAttributes(gameConfigs);
+    }
+
+    private void populateModelWithPage(Model model, Optional<Integer> pageNumber) {
+        Page<GameConfig> configPage = getConfigPage(pageNumber);
         model.addAttribute("page", configPage);
         model.addAttribute("resultsCount", gameConfigs.size());
         model.addAttribute("appName", appName);
