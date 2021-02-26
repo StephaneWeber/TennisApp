@@ -2,6 +2,7 @@ package com.sweber.tennis.web.controller;
 
 import com.sweber.tennis.model.config.Attributes;
 import com.sweber.tennis.model.config.GameConfig;
+import com.sweber.tennis.model.player.Player;
 import com.sweber.tennis.service.ConfigGeneratorService;
 import com.sweber.tennis.service.PlayerService;
 import com.sweber.tennis.web.model.ConfigFilter;
@@ -33,6 +34,7 @@ public class TennisController {
     private ConfigFilter configFilter;
     private Attributes maxAttributes;
     private List<GameConfig> gameConfigs = new ArrayList<>();
+    private List<Player> playerList = new ArrayList<>();
 
     @Value("${spring.application.name}")
     String appName;
@@ -46,14 +48,15 @@ public class TennisController {
     public String homePage(Model model) {
         configFilter = setupInitialConfigFilter();
         gameConfigs = configGeneratorService.generateConfigs(configFilter);
+        playerList = playerService.leveledPlayers(configFilter.getMaxLevel());
         maxAttributes = computeMaxAttributes(gameConfigs);
-        initModel(model, Optional.empty());
+        populateModelWithPage(model, Optional.empty());
         return HOME_PAGE;
     }
 
     @GetMapping("/config")
     public String getPage(Model model, @RequestParam("page") Optional<Integer> page) {
-        initModel(model, page);
+        populateModelWithPage(model, page);
         return HOME_PAGE;
     }
 
@@ -61,35 +64,34 @@ public class TennisController {
     public String updateConfigFilter(ConfigFilter newConfigFilter, Model model) {
         this.configFilter = newConfigFilter;
         gameConfigs = configGeneratorService.generateConfigs(configFilter);
+        playerList = playerService.leveledPlayers(configFilter.getMaxLevel());
         maxAttributes = computeMaxAttributes(gameConfigs);
-        initModel(model, Optional.empty());
+        populateModelWithPage(model, Optional.empty());
         return HOME_PAGE;
     }
 
-    private void initModel(Model model, Optional<Integer> page) {
+    private void populateModelWithPage(Model model, Optional<Integer> page) {
         Page<GameConfig> configPage = getConfigPage(page);
         model.addAttribute("page", configPage);
         model.addAttribute("resultsCount", gameConfigs.size());
         model.addAttribute("appName", appName);
-        model.addAttribute("playerList", playerService.leveledPlayers(configFilter.getMaxLevel()));
+        model.addAttribute("playerList", playerList);
         model.addAttribute("configFilter", configFilter);
         model.addAttribute("maxAttributes", maxAttributes);
     }
 
-    private Page<GameConfig> getConfigPage(Optional<Integer> page) {
-        Pageable pageable = PageRequest.of(page.orElse(1) - 1, PAGE_SIZE);
+    private Page<GameConfig> getConfigPage(Optional<Integer> pageNumber) {
+        Pageable pageable = PageRequest.of(pageNumber.orElse(1) - 1, PAGE_SIZE);
         int pageSize = pageable.getPageSize();
         int currentPage = pageable.getPageNumber();
         int startItem = currentPage * pageSize;
         List<GameConfig> list;
-
         if (gameConfigs.size() < startItem) {
             list = Collections.emptyList();
         } else {
             int toIndex = Math.min(startItem + pageSize, gameConfigs.size());
             list = gameConfigs.subList(startItem, toIndex);
         }
-
         return new PageImpl<>(list, PageRequest.of(currentPage, pageSize), gameConfigs.size());
     }
 
