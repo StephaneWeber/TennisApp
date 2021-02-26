@@ -33,7 +33,7 @@ public class ConfigGeneratorService {
         return generateAllConfigs(player, minAttributes, minTotal, maxLevel, upgradeAllowed);
     }
 
-    protected List<GameConfig> generateAllConfigs(String playerName, Attributes minimumAttributes, int minTotalValue, int maxLevel, int upgradesAllowed) {
+    private List<GameConfig> generateAllConfigs(String playerName, Attributes minimumAttributes, int minTotalValue, int maxLevel, int upgradesAllowed) {
         return Optional.ofNullable(playerService.getPlayer(playerName))
                 .map(Collections::singletonList)
                 .orElse(playerService.leveledPlayers(maxLevel))
