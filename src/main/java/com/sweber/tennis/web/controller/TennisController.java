@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 @Controller
 public class TennisController {
     public static final String HOME_PAGE = "home";
@@ -28,7 +29,9 @@ public class TennisController {
     private final ConfigGeneratorService configGeneratorService;
     private final PlayerService playerService;
 
-    List<GameConfig> gameConfigs = new ArrayList<>();
+    private ConfigFilter configFilter;
+    private Attributes maxAttributes;
+    private List<GameConfig> gameConfigs = new ArrayList<>();
 
     @Value("${spring.application.name}")
     String appName;
@@ -39,28 +42,36 @@ public class TennisController {
     }
 
     @GetMapping("/")
-    public String homePage(Model model,
-                           @RequestParam("page") Optional<Integer> page,
-                           @RequestParam("size") Optional<Integer> size) {
-        ConfigFilter configFilter = setupInitialConfigFilter();
+    public String homePage(Model model) {
+        configFilter = setupInitialConfigFilter();
+        gameConfigs = configGeneratorService.generateConfigs(configFilter);
+        maxAttributes = computeMaxAttributes(gameConfigs);
+        initModel(configFilter, model, Optional.empty(), Optional.empty());
+        return HOME_PAGE;
+    }
+
+    @GetMapping("/config")
+    public String getPage(Model model,
+                          @RequestParam("page") Optional<Integer> page,
+                          @RequestParam("size") Optional<Integer> size) {
         initModel(configFilter, model, page, size);
         return HOME_PAGE;
     }
 
-    @PostMapping("/")
-    public String postVerification(ConfigFilter configFilter, Model model,
-                                   @RequestParam("page") Optional<Integer> page,
-                                   @RequestParam("size") Optional<Integer> size) {
+    @PostMapping("/config")
+    public String applyConfigFilter(ConfigFilter configFilter, Model model,
+                                    @RequestParam("page") Optional<Integer> page,
+                                    @RequestParam("size") Optional<Integer> size) {
+        this.configFilter = configFilter;
+        gameConfigs = configGeneratorService.generateConfigs(configFilter);
+        maxAttributes = computeMaxAttributes(gameConfigs);
         initModel(configFilter, model, page, size);
         return HOME_PAGE;
     }
 
     private void initModel(ConfigFilter configFilter, Model model,
-                           Optional<Integer> page,
-                           Optional<Integer> size) {
-        gameConfigs = generateConfigs(configFilter);
-        Attributes maxAttributes = computeMaxAttributes(gameConfigs);
-
+                            Optional<Integer> page,
+                             Optional<Integer> size) {
         int currentPage = page.orElse(1);
         int pageSize = size.orElse(100);
 
@@ -130,14 +141,5 @@ public class TennisController {
         if (gameConfigAttributes.getBackhand() >= attributes.getBackhand()) {
             attributes.setBackhand(gameConfigAttributes.getBackhand());
         }
-    }
-
-    private List<GameConfig> generateConfigs(ConfigFilter configFilter) {
-        String player = configFilter.getSelectedPlayer();
-        Attributes minAttributes = configFilter.getMinAttributes();
-        int minTotal = configFilter.getMinTotal();
-        int upgradeAllowed = configFilter.getUpgradeAllowed();
-        int maxLevel = configFilter.getMaxLevel();
-        return configGeneratorService.generateAllConfigs(player, minAttributes, minTotal, maxLevel, upgradeAllowed);
     }
 }

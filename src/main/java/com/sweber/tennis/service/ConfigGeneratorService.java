@@ -5,24 +5,14 @@ import com.sweber.tennis.model.config.GameConfig;
 import com.sweber.tennis.model.gear.GearItem;
 import com.sweber.tennis.model.gear.GearType;
 import com.sweber.tennis.model.player.Player;
+import com.sweber.tennis.web.model.ConfigFilter;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.sweber.tennis.model.gear.GearType.GRIP;
-import static com.sweber.tennis.model.gear.GearType.NUTRITION;
-import static com.sweber.tennis.model.gear.GearType.RACKET;
-import static com.sweber.tennis.model.gear.GearType.SHOES;
-import static com.sweber.tennis.model.gear.GearType.WORKOUT;
-import static com.sweber.tennis.model.gear.GearType.WRISTBAND;
+import static com.sweber.tennis.model.gear.GearType.*;
 
 @Component
 public class ConfigGeneratorService {
@@ -34,7 +24,16 @@ public class ConfigGeneratorService {
         this.playerService = playerService;
     }
 
-    public List<GameConfig> generateAllConfigs(String playerName, Attributes minimumAttributes, int minTotalValue, int maxLevel, int upgradesAllowed) {
+    public List<GameConfig> generateConfigs(ConfigFilter configFilter) {
+        String player = configFilter.getSelectedPlayer();
+        Attributes minAttributes = configFilter.getMinAttributes();
+        int minTotal = configFilter.getMinTotal();
+        int upgradeAllowed = configFilter.getUpgradeAllowed();
+        int maxLevel = configFilter.getMaxLevel();
+        return generateAllConfigs(player, minAttributes, minTotal, maxLevel, upgradeAllowed);
+    }
+
+    protected List<GameConfig> generateAllConfigs(String playerName, Attributes minimumAttributes, int minTotalValue, int maxLevel, int upgradesAllowed) {
         return Optional.ofNullable(playerService.getPlayer(playerName))
                 .map(Collections::singletonList)
                 .orElse(playerService.leveledPlayers(maxLevel))
