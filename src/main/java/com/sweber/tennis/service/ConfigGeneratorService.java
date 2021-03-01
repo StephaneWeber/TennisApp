@@ -5,6 +5,7 @@ import com.sweber.tennis.model.config.GameConfig;
 import com.sweber.tennis.model.gear.GearItem;
 import com.sweber.tennis.model.gear.GearType;
 import com.sweber.tennis.model.player.Player;
+import com.sweber.tennis.web.model.ConfigFilter;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -34,17 +35,26 @@ public class ConfigGeneratorService {
         this.playerService = playerService;
     }
 
-    public List<GameConfig> generateAllConfigs(String playerName, Attributes minimumAttributes, int minTotalValue, int maxLevel, int upgradesAllowed) {
+    public List<GameConfig> generateGameConfigs(ConfigFilter configFilter) {
+        String player = configFilter.getSelectedPlayer();
+        Attributes minAttributes = configFilter.getMinAttributes();
+        int minTotal = configFilter.getMinTotal();
+        int upgradeAllowed = configFilter.getUpgradeAllowed();
+        int maxLevel = configFilter.getMaxLevel();
+        return generateGameConfigs(player, minAttributes, minTotal, maxLevel, upgradeAllowed);
+    }
+
+    private List<GameConfig> generateGameConfigs(String playerName, Attributes minimumAttributes, int minTotalValue, int maxLevel, int upgradesAllowed) {
         return Optional.ofNullable(playerService.getPlayer(playerName))
                 .map(Collections::singletonList)
                 .orElse(playerService.leveledPlayers(maxLevel))
                 .stream()
-                .flatMap(player -> generateAllConfigsForPlayer(player, minimumAttributes, minTotalValue, maxLevel, upgradesAllowed))
+                .flatMap(player -> generateGameConfigsForPlayer(player, minimumAttributes, minTotalValue, maxLevel, upgradesAllowed))
                 .sorted(Comparator.comparingInt(GameConfig::getValue).reversed())
                 .collect(Collectors.toList());
     }
 
-    private Stream<GameConfig> generateAllConfigsForPlayer(Player player, Attributes minimumAttributes, int minTotalValue, int maxLevel, int upgradesAllowed) {
+    private Stream<GameConfig> generateGameConfigsForPlayer(Player player, Attributes minimumAttributes, int minTotalValue, int maxLevel, int upgradesAllowed) {
         List<GameConfig> results = new ArrayList<>();
         List<GearItem> leveledGearItems = gearItemService.leveledGearItems(maxLevel, upgradesAllowed);
         Map<GearItem, Boolean> itemUpgrades = new HashMap<>();
