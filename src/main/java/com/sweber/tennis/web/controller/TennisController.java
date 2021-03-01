@@ -46,7 +46,8 @@ public class TennisController {
 
     @GetMapping("/")
     public String homePage(Model model) {
-        loadGameConfigs(setupInitialConfigFilter());
+        setupInitialConfigFilter();
+        generateGameConfigs();
         populateModelWithPage(model, Optional.empty());
         return HOME_PAGE;
     }
@@ -59,14 +60,14 @@ public class TennisController {
 
     @PostMapping("/config")
     public String applyConfigFilter(ConfigFilter newConfigFilter, Model model) {
-        loadGameConfigs(newConfigFilter);
+        this.configFilter = newConfigFilter;
+        generateGameConfigs();
         populateModelWithPage(model, Optional.empty());
         return HOME_PAGE;
     }
 
-    private void loadGameConfigs(ConfigFilter configFilter) {
-        this.configFilter = configFilter;
-        this.gameConfigs = configGeneratorService.generateConfigs(configFilter);
+    private void generateGameConfigs() {
+        this.gameConfigs = configGeneratorService.generateGameConfigs(configFilter);
         this.playerList = playerService.leveledPlayers(configFilter.getMaxLevel());
         this.maxAttributes = computeMaxAttributes(gameConfigs);
     }
@@ -96,8 +97,8 @@ public class TennisController {
         return new PageImpl<>(list, PageRequest.of(currentPage, pageSize), gameConfigs.size());
     }
 
-    private ConfigFilter setupInitialConfigFilter() {
-        ConfigFilter configFilter = new ConfigFilter();
+    private void setupInitialConfigFilter() {
+        configFilter = new ConfigFilter();
         Attributes minAttributes = new Attributes();
         minAttributes.setAgility(40);
         minAttributes.setEndurance(30);
@@ -108,7 +109,6 @@ public class TennisController {
         configFilter.setMinTotal(260);
         configFilter.setUpgradeAllowed(0);
         configFilter.setMaxLevel(9);
-        return configFilter;
     }
 
     private Attributes computeMaxAttributes(List<GameConfig> gameConfigs) {

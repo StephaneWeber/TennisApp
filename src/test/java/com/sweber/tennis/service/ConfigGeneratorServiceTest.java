@@ -35,7 +35,7 @@ class ConfigGeneratorServiceTest {
         configFilter.setMinAttributes(minimumAttributes);
         configFilter.setMinTotal(150);
         configFilter.setMaxLevel(6);
-        List<GameConfig> gameConfigs = configGeneratorService.generateConfigs(configFilter);
+        List<GameConfig> gameConfigs = configGeneratorService.generateGameConfigs(configFilter);
         gameConfigs.forEach(gameConfig -> assertThat(gameConfig.getCost()).isZero());
     }
 
@@ -50,7 +50,7 @@ class ConfigGeneratorServiceTest {
         configFilter.setUpgradeAllowed(1);
 
         long start = System.currentTimeMillis();
-        List<GameConfig> gameConfigs = configGeneratorService.generateConfigs(configFilter);
+        List<GameConfig> gameConfigs = configGeneratorService.generateGameConfigs(configFilter);
         assertThat(gameConfigs).hasSize(1699);
         System.out.printf("Found %d configs%n", gameConfigs.size());
         long end = System.currentTimeMillis();
@@ -71,7 +71,7 @@ class ConfigGeneratorServiceTest {
         List<GameConfig> gameConfigs;
 
         long start = System.currentTimeMillis();
-        gameConfigs = configGeneratorService.generateConfigs(configFilter);
+        gameConfigs = configGeneratorService.generateGameConfigs(configFilter);
         System.out.printf("Found %d configs%n", gameConfigs.size());
         assertThat(gameConfigs).hasSize(15636);
         long end = System.currentTimeMillis();
