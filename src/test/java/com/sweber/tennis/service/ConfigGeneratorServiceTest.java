@@ -3,49 +3,79 @@ package com.sweber.tennis.service;
 import com.sweber.tennis.model.config.Attributes;
 import com.sweber.tennis.model.config.GameConfig;
 import com.sweber.tennis.model.player.Player;
+import com.sweber.tennis.web.model.ConfigFilter;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@SpringBootTest
 class ConfigGeneratorServiceTest {
+    @Autowired
+    private ConfigGeneratorService configGeneratorService;
+    @Autowired
+    private PlayerService playerService;
+
     @Test
-    public void test() {
-        long start = System.currentTimeMillis();
-        ConfigGeneratorService configGeneratorService = new ConfigGeneratorService();
-        Attributes minimumAttributes = new Attributes(20, 0, 20, 0, 20, 20);
-        List<GameConfig> gameConfigs = configGeneratorService.generateAllConfigs(Player.JONAH, minimumAttributes, 140, 6, 0);
-        long end = System.currentTimeMillis();
-        System.out.println(String.format("Found %d configs in %d ms", gameConfigs.size(), (end - start)));
-        // 247 - 329
-        assertThat(gameConfigs).hasSize(247);
+    void testPlayerService() {
+        List<Player> players = playerService.leveledPlayers(3);
+        assertThat(players).hasSize(7);
+        players = playerService.leveledPlayers(6);
+        assertThat(players).hasSize(7);
     }
 
     @Test
-    public void testUpgrades() {
-        ConfigGeneratorService configGeneratorService = new ConfigGeneratorService();
-        Attributes minimumAttributes = new Attributes(20, 0, 20, 0, 20, 20);
-        List<GameConfig> gameConfigs = new ArrayList<>();
+    void testCostsAreNullForOwned() {
+        Attributes minimumAttributes = new Attributes(20, 0, 30, 0, 30, 20);
+        ConfigFilter configFilter = new ConfigFilter();
+        configFilter.setSelectedPlayer("FLORENCE_4");
+        configFilter.setMinAttributes(minimumAttributes);
+        configFilter.setMinTotal(150);
+        configFilter.setMaxLevel(6);
+        List<GameConfig> gameConfigs = configGeneratorService.generateGameConfigs(configFilter);
+        gameConfigs.forEach(gameConfig -> assertThat(gameConfig.getCost()).isZero());
+    }
+
+    @Test
+    void testSimpleUpgrades() {
+        Attributes minimumAttributes = new Attributes(40, 30, 40, 15, 40, 40);
+        ConfigFilter configFilter = new ConfigFilter();
+        configFilter.setSelectedPlayer("JONAH_7");
+        configFilter.setMinAttributes(minimumAttributes);
+        configFilter.setMinTotal(240);
+        configFilter.setMaxLevel(9);
+        configFilter.setUpgradeAllowed(1);
 
         long start = System.currentTimeMillis();
-        gameConfigs = configGeneratorService.generateAllConfigs(Player.JONAH, minimumAttributes, 160, 6, 0);
-        System.out.println(String.format("Found %d configs", gameConfigs.size()));
-        gameConfigs = configGeneratorService.generateAllConfigs(Player.JONAH, minimumAttributes, 160, 6, 1);
-        System.out.println(String.format("Found %d configs", gameConfigs.size()));
-        gameConfigs = configGeneratorService.generateAllConfigs(Player.JONAH, minimumAttributes, 160, 6, 2);
-        System.out.println(String.format("Found %d configs", gameConfigs.size()));
-        gameConfigs = configGeneratorService.generateAllConfigs(Player.JONAH, minimumAttributes, 160, 6, 3);
-        System.out.println(String.format("Found %d configs", gameConfigs.size()));
-        gameConfigs = configGeneratorService.generateAllConfigs(Player.JONAH, minimumAttributes, 160, 6, 4);
-        System.out.println(String.format("Found %d configs", gameConfigs.size()));
-        gameConfigs = configGeneratorService.generateAllConfigs(Player.JONAH, minimumAttributes, 160, 6, 5);
-        System.out.println(String.format("Found %d configs", gameConfigs.size()));
-        gameConfigs = configGeneratorService.generateAllConfigs(Player.JONAH, minimumAttributes, 160, 6, 6);
-        System.out.println(String.format("Found %d configs", gameConfigs.size()));
+        List<GameConfig> gameConfigs = configGeneratorService.generateGameConfigs(configFilter);
+        assertThat(gameConfigs).hasSize(1699);
+        System.out.printf("Found %d configs%n", gameConfigs.size());
         long end = System.currentTimeMillis();
-        System.out.println(String.format("Found in %d ms", (end - start)));
-        // 23-147-408-684-820-852-858 in 844ms
+        System.out.printf("Found in %d ms%n", (end - start));
+        // 1699 in 2848 ms
+    }
+
+    @Test
+    void testUpgrades() {
+        Attributes minimumAttributes = new Attributes(40, 30, 40, 15, 40, 30);
+        ConfigFilter configFilter = new ConfigFilter();
+        configFilter.setSelectedPlayer("JONAH_7");
+        configFilter.setMinAttributes(minimumAttributes);
+        configFilter.setMinTotal(200);
+        configFilter.setMaxLevel(9);
+        configFilter.setUpgradeAllowed(2);
+
+        List<GameConfig> gameConfigs;
+
+        long start = System.currentTimeMillis();
+        gameConfigs = configGeneratorService.generateGameConfigs(configFilter);
+        System.out.printf("Found %d configs%n", gameConfigs.size());
+        assertThat(gameConfigs).hasSize(15636);
+        long end = System.currentTimeMillis();
+        System.out.printf("Found in %d ms%n", (end - start));
+        // 15636 in 4860 ms
     }
 }

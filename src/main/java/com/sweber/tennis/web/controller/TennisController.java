@@ -4,65 +4,111 @@ import com.sweber.tennis.model.config.Attributes;
 import com.sweber.tennis.model.config.GameConfig;
 import com.sweber.tennis.model.player.Player;
 import com.sweber.tennis.service.ConfigGeneratorService;
+import com.sweber.tennis.service.PlayerService;
 import com.sweber.tennis.web.model.ConfigFilter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.thymeleaf.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
+@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 @Controller
 public class TennisController {
-    public static final String HOME_PAGE = "home";
+    private static final String HOME_PAGE = "home";
+    private static final int PAGE_SIZE = 100;
 
     private final ConfigGeneratorService configGeneratorService;
+    private final PlayerService playerService;
+
+    private ConfigFilter configFilter;
+    private Attributes maxAttributes;
+    private List<GameConfig> gameConfigs = new ArrayList<>();
+    private List<Player> playerList = new ArrayList<>();
 
     @Value("${spring.application.name}")
     String appName;
 
-    public TennisController(ConfigGeneratorService configGeneratorService) {
+    public TennisController(ConfigGeneratorService configGeneratorService, PlayerService playerService) {
         this.configGeneratorService = configGeneratorService;
+        this.playerService = playerService;
     }
 
     @GetMapping("/")
     public String homePage(Model model) {
-        ConfigFilter configFilter = setupInitialConfigFilter();
-        initModel(configFilter, model);
+        setupInitialConfigFilter();
+        generateGameConfigs();
+        populateModelWithPage(model, Optional.empty());
         return HOME_PAGE;
     }
 
-    @PostMapping("/")
-    public String postVerification(ConfigFilter configFilter, Model model) {
-        initModel(configFilter, model);
+    @GetMapping("/config")
+    public String goToPage(Model model, @RequestParam("page") Optional<Integer> pageNumber) {
+        populateModelWithPage(model, pageNumber);
         return HOME_PAGE;
     }
 
-    private void initModel(ConfigFilter configFilter, Model model) {
-        List<GameConfig> gameConfigs = generateConfigs(configFilter);
-        Attributes maxAttributes = computeMaxAttributes(gameConfigs);
+    @PostMapping("/config")
+    public String applyConfigFilter(ConfigFilter newConfigFilter, Model model) {
+        this.configFilter = newConfigFilter;
+        generateGameConfigs();
+        populateModelWithPage(model, Optional.empty());
+        return HOME_PAGE;
+    }
 
+    private void generateGameConfigs() {
+        this.gameConfigs = configGeneratorService.generateGameConfigs(configFilter);
+        this.playerList = playerService.leveledPlayers(configFilter.getMaxLevel());
+        this.maxAttributes = computeMaxAttributes(gameConfigs);
+    }
+
+    private void populateModelWithPage(Model model, Optional<Integer> pageNumber) {
+        Page<GameConfig> configPage = getConfigPage(pageNumber);
+        model.addAttribute("page", configPage);
+        model.addAttribute("resultsCount", gameConfigs.size());
         model.addAttribute("appName", appName);
-        model.addAttribute("list", gameConfigs);
-        model.addAttribute("playerList", Player.values());
+        model.addAttribute("playerList", playerList);
         model.addAttribute("configFilter", configFilter);
         model.addAttribute("maxAttributes", maxAttributes);
     }
 
-    private ConfigFilter setupInitialConfigFilter() {
-        ConfigFilter configFilter = new ConfigFilter();
+    private Page<GameConfig> getConfigPage(Optional<Integer> pageNumber) {
+        Pageable pageable = PageRequest.of(pageNumber.orElse(1) - 1, PAGE_SIZE);
+        int pageSize = pageable.getPageSize();
+        int currentPage = pageable.getPageNumber();
+        int startItem = currentPage * pageSize;
+        List<GameConfig> list;
+        if (gameConfigs.size() < startItem) {
+            list = Collections.emptyList();
+        } else {
+            int toIndex = Math.min(startItem + pageSize, gameConfigs.size());
+            list = gameConfigs.subList(startItem, toIndex);
+        }
+        return new PageImpl<>(list, PageRequest.of(currentPage, pageSize), gameConfigs.size());
+    }
+
+    private void setupInitialConfigFilter() {
+        configFilter = new ConfigFilter();
         Attributes minAttributes = new Attributes();
-        minAttributes.setAgility(20);
-        minAttributes.setService(30);
-        minAttributes.setForehand(30);
-        minAttributes.setBackhand(20);
+        minAttributes.setAgility(40);
+        minAttributes.setEndurance(30);
+        minAttributes.setService(40);
+        minAttributes.setForehand(35);
+        minAttributes.setBackhand(35);
         configFilter.setMinAttributes(minAttributes);
-        configFilter.setMinTotal(150);
+        configFilter.setMinTotal(260);
         configFilter.setUpgradeAllowed(0);
-        configFilter.setMaxLevel(6);
-        return configFilter;
+        configFilter.setMaxLevel(9);
     }
 
     private Attributes computeMaxAttributes(List<GameConfig> gameConfigs) {
@@ -91,13 +137,5 @@ public class TennisController {
         if (gameConfigAttributes.getBackhand() >= attributes.getBackhand()) {
             attributes.setBackhand(gameConfigAttributes.getBackhand());
         }
-    }
-
-    private List<GameConfig> generateConfigs(ConfigFilter configFilter) {
-        String player = configFilter.getSelectedPlayer();
-        int minTotal = configFilter.getMinTotal();
-        int upgradeAllowed = configFilter.getUpgradeAllowed();
-        int maxLevel = configFilter.getMaxLevel();
-        return configGeneratorService.generateAllConfigs(StringUtils.isEmpty(player) ? null : Player.valueOf(player), configFilter.getMinAttributes(), minTotal, maxLevel, upgradeAllowed);
     }
 }

@@ -20,21 +20,21 @@
                 <h2>Filters:</h2>
                 <br>
                 <form id="resetFiltersForm" th:action="@{/}" th:object="${configFilter}" th:method="get"></form>
-                <form id="filtersForm" th:action="@{/}" th:object="${configFilter}" th:method="post">
+                <form id="filtersForm" th:action="@{/config}" th:object="${configFilter}" th:method="post">
                     <div class="row">
                         <div class="col-lg-5">
                             <table class="table-borderless">
                                 <tr>
-                                    <td>Player</td>
+                                    <th>Player</th>
                                     <td><select name="player" th:field="*{selectedPlayer}">
                                         <option value="">ALL</option>
-                                        <option th:value="${playerOpt.name()}"
-                                                th:each="playerOpt : ${T(com.sweber.tennis.model.player.Player).values()}"
-                                                th:text="${playerOpt.name()}"></option>
+                                        <option th:value="${playerOpt.name}"
+                                                th:each="playerOpt : ${playerList}"
+                                                th:text="${playerOpt.name}"></option>
                                     </select></td>
                                 </tr>
                                 <tr>
-                                    <td>Upgrades allowed</td>
+                                    <th>Upgrades allowed</th>
                                     <td>
                                         <input id="upgradeAllowed" type="range" name="upgradeAllowed" min="0" max="6"
                                                th:field="*{upgradeAllowed}">
@@ -43,7 +43,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>Max level</td>
+                                    <th>Max level</th>
                                     <td>
                                         <input id="maxLevel" type="range" name="maxLevel" min="5" max="13"
                                                th:field="*{maxLevel}">
@@ -52,7 +52,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>Min total</td>
+                                    <th>Min total</th>
                                     <td><input id="minTotal" type="number" th:field="*{minTotal}"
                                                class="form-control midWidth"/>
                                     </td>
@@ -62,55 +62,55 @@
                         <div class="col-lg-5">
                             <table class="table-borderless">
                                 <tr>
-                                    <td>Agility</td>
+                                    <th>Agility</th>
                                     <td>
-                                        <input id="minAgility" type="range" name="minAgility" min="0" max="50"
+                                        <input id="minAgility" type="range" name="minAgility" min="0" max="72"
                                                th:field="*{minAttributes.agility}">
                                         <span class="font-weight-bold text-primary ml-2 mt-1"
                                               id="minAgilityVal">0</span>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>Endurance</td>
+                                    <th>Endurance</th>
                                     <td>
                                         <input id="minEndurance" type="range" name="minEndurance" min="0"
-                                               max="50"
+                                               max="72"
                                                th:field="*{minAttributes.endurance}">
                                         <span class="font-weight-bold text-primary ml-2 mt-1"
                                               id="minEnduranceVal">0</span>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>Service</td>
+                                    <th>Service</th>
                                     <td>
-                                        <input id="minService" type="range" name="minService" min="0" max="50"
+                                        <input id="minService" type="range" name="minService" min="0" max="72"
                                                th:field="*{minAttributes.service}">
                                         <span class="font-weight-bold text-primary ml-2 mt-1"
                                               id="minServiceVal">0</span>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>Volley</td>
+                                    <th>Volley</th>
                                     <td>
-                                        <input id="minVolley" type="range" name="minVolley" min="0" max="50"
+                                        <input id="minVolley" type="range" name="minVolley" min="0" max="72"
                                                th:field="*{minAttributes.volley}">
                                         <span class="font-weight-bold text-primary ml-2 mt-1"
                                               id="minVolleyVal">0</span>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>Forehand</td>
+                                    <th>Forehand</th>
                                     <td>
-                                        <input id="minForehand" type="range" name="minForehand" min="0" max="50"
+                                        <input id="minForehand" type="range" name="minForehand" min="0" max="72"
                                                th:field="*{minAttributes.forehand}">
                                         <span class="font-weight-bold text-primary ml-2 mt-1"
                                               id="minForehandVal">0</span>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>Backhand</td>
+                                    <th>Backhand</th>
                                     <td>
-                                        <input id="minBackhand" type="range" name="minBackhand" min="0" max="50"
+                                        <input id="minBackhand" type="range" name="minBackhand" min="0" max="72"
                                                th:field="*{minAttributes.backhand}">
                                         <span class="font-weight-bold text-primary ml-2 mt-1"
                                               id="minBackhandVal">0</span>
@@ -126,7 +126,7 @@
                                    th:value="Reset"/>
                             <br>
                             <br>
-                            <span th:text="${#lists.size(list)}"></span> results found
+                            <span th:text="${resultsCount}"></span> results found
                         </div>
                     </div>
                 </form>
@@ -136,6 +136,10 @@
             <div class="col-lg-6">
                 <h2>Selected configuration:</h2>
                 <table class="table table-secondary align-content-center">
+                    <tr>
+                        <td>Player</td>
+                        <td id="selPlayer"></td>
+                    </tr>
                     <tr>
                         <td>Racket</td>
                         <td id="selRacket"></td>
@@ -165,7 +169,7 @@
         </div>
     </div>
     <div class="col-lg-6 container-fluid">
-        <div class="tableFixHead" th:if="${list != null}">
+        <div class="tableFixHead" th:if="${page != null and page.content != null}">
             <table id="configTable" class="table table-primary tableFixHead">
                 <thead>
                 <tr>
@@ -177,20 +181,21 @@
                     <th>For</th>
                     <th>Bac</th>
                     <th>Total</th>
-                    <!--TODO Activate when data is right                    <th>Cost</th>-->
+                    <th>Cost</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="gameConfig : ${list}"
-                    th:data-racket="${gameConfig.racket}"
-                    th:data-grip="${gameConfig.grip}"
-                    th:data-shoes="${gameConfig.shoes}"
-                    th:data-wristband="${gameConfig.wristband}"
-                    th:data-nutrition="${gameConfig.nutrition}"
-                    th:data-workout="${gameConfig.workout}"
-                    th:onclick="|selectConfig(this.getAttribute('data-racket'), this.getAttribute('data-grip'), this.getAttribute('data-shoes'), this.getAttribute('data-wristband'), this.getAttribute('data-nutrition'), this.getAttribute('data-workout'))|"
+                <tr th:each="gameConfig : ${page.content}"
+                    th:data-player="${gameConfig.playerName}"
+                    th:data-racket="${gameConfig.racketName}"
+                    th:data-grip="${gameConfig.gripName}"
+                    th:data-shoes="${gameConfig.shoesName}"
+                    th:data-wristband="${gameConfig.wristbandName}"
+                    th:data-nutrition="${gameConfig.nutritionName}"
+                    th:data-workout="${gameConfig.workoutName}"
+                    th:onclick="|selectConfig(this.getAttribute('data-player'), this.getAttribute('data-racket'), this.getAttribute('data-grip'), this.getAttribute('data-shoes'), this.getAttribute('data-wristband'), this.getAttribute('data-nutrition'), this.getAttribute('data-workout'))|"
                 >
-                    <td th:text="${gameConfig.player}"></td>
+                    <td th:text="${gameConfig.player.name}"></td>
                     <td th:text="${gameConfig.attributes.agility}"
                         th:classappend="${gameConfig.attributes.agility >= maxAttributes.agility ? 'maxAttribute' : ''}"></td>
                     <td th:text="${gameConfig.attributes.endurance}"
@@ -204,11 +209,38 @@
                     <td th:text="${gameConfig.attributes.backhand}"
                         th:classappend="${gameConfig.attributes.backhand >= maxAttributes.backhand ? 'maxAttribute' : ''}"></td>
                     <td th:text="${gameConfig.value}" style="font-weight:bold"></td>
-                    <!--TODO Activate when data is right                    <td th:text="${gameConfig.cost}"><b>Total</b></td>-->
+                    <td th:text="${gameConfig.cost}"><b>Total</b></td>
                 </tr>
                 </tbody>
             </table>
         </div>
+        <!-- customers pagination -->
+        <nav aria-label="Pagination" th:if="${page.totalPages gt 0}">
+            <ul class="pagination justify-content-center font-weight-medium">
+                <li class="page-item" th:classappend="${page.number eq 0} ? 'disabled'">
+                    <a class="page-link svg-icon"
+                       th:href="@{/config?page={id}(id=${page.number lt 2 ? 1 : page.number})}"
+                       aria-label="Previous"
+                       title="Previous Page" rel="tooltip">Previous
+                    </a>
+                </li>
+                <li class="page-item" th:classappend="${i eq page.number + 1} ? 'active'"
+                    th:each="i : ${#numbers.sequence( page.number + 1, page.totalPages > 10 + page.number ? page.number + 10 : page.totalPages, 1)}">
+                    <a class="page-link" th:href="@{/config?page={id}(id=${i})}" th:text="${i}"
+                       th:title="${'Page '+ i}"
+                       rel="tooltip"></a>
+                </li>
+                <li class="page-item disabled" th:if="${page.number + 10 < page.totalPages}">
+                    <a class="page-link svg-icon" href="#">...</a>
+                </li>
+                <li class="page-item" th:classappend="${page.number + 1 eq page.totalPages} ? 'disabled'">
+                    <a class="page-link svg-icon" th:href="@{/config?page={id}(id=${page.number + 2})}"
+                       aria-label="Next"
+                       title="Next Page" rel="tooltip">Next
+                    </a>
+                </li>
+            </ul>
+        </nav>
     </div>
 </div>
 </body>
@@ -266,8 +298,9 @@
         }
     });
 
-    function selectConfig(racket, grip, shoes, wristband, nutrition, workout) {
+    function selectConfig(player, racket, grip, shoes, wristband, nutrition, workout) {
         jQuery(document).ready(function ($) {
+            $("#selPlayer").html(player);
             $("#selRacket").html(racket);
             $("#selGrip").html(grip);
             $("#selShoes").html(shoes);
@@ -286,5 +319,4 @@
         });
     });
 </script>
-</body>
 </html>

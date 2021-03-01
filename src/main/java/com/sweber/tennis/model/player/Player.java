@@ -2,28 +2,20 @@ package com.sweber.tennis.model.player;
 
 import com.sweber.tennis.model.config.Attributes;
 import com.sweber.tennis.model.config.Config;
+import com.sweber.tennis.service.BeanUtil;
+import com.sweber.tennis.service.PlayerService;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
-public enum Player {
-    //TODO Maintain versions from level 5 for handling cap at low levels. Not needed until level 5 is obtained.
-    //No concept of update.
-    JONAH(new Config(new Attributes(6, 4, 6, 4, 8, 6), 0, 4)),
-    HOPE(new Config(new Attributes(7, 4, 4, 5, 5, 5), 0, 3)),
-    FLORENCE(new Config(new Attributes(10, 9, 2, 3, 4, 4), 0, 3));
-
+public class Player {
+    private final String name;
     private final Config config;
 
-    Player(Config config) {
+    public Player(String name, Config config) {
+        this.name = name;
         this.config = config;
     }
 
-    public static List<Player> maxLevel(int maxLevel) {
-        return Arrays.stream(Player.values())
-                .filter(item -> item.getLevel() <= maxLevel)
-                .collect(Collectors.toList());
+    public String getName() {
+        return name;
     }
 
     public Attributes getAttributes() {
@@ -31,7 +23,7 @@ public enum Player {
     }
 
     public int getCost() {
-        return config.getCost();
+        return BeanUtil.getBean(PlayerService.class).ownedLevel(this) - getLevel() >= 0 ? 0 : config.getCost();
     }
 
     public int getLevel() {
@@ -41,7 +33,8 @@ public enum Player {
     @Override
     public String toString() {
         return "Player{" +
-                "config=" + config +
+                "name=" + name +
+                ",config=" + config +
                 '}';
     }
 }
