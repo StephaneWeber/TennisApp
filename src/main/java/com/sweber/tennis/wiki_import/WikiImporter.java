@@ -1,9 +1,6 @@
 package com.sweber.tennis.wiki_import;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.util.Arrays;
 
 public class WikiImporter {
@@ -14,19 +11,47 @@ public class WikiImporter {
     private static final String NUTRITION = "NUTRITION";
     private static final String WORKOUT = "WORKOUT";
 
-    private static final String GEAR_FILENAME = "src/main/resources/data/imported_gear.csv";
-    private static final String PLAYER_FILENAME = "src/main/resources/data/imported_players.csv";
+    private static final String GEAR_FILENAME = "src/main/resources/data/gear.csv";
+    private static final String IMPORTED_GEAR_FILENAME = "src/main/resources/data/imported_gear.csv";
+    private static final String DELTA_GEAR_FILENAME = "src/main/resources/data/changed_gear.csv";
+    private static final String PLAYER_FILENAME = "src/main/resources/data/players.csv";
+    private static final String IMPORTED_PLAYER_FILENAME = "src/main/resources/data/imported_players.csv";
+    private static final String DELTA_PLAYER_FILENAME = "src/main/resources/data/changed_players.csv";
 
     private static BufferedWriter bufferedWriter;
 
     public void importPlayersData() throws IOException {
         System.out.println("Starting importing players data");
-        bufferedWriter = new BufferedWriter(new FileWriter(PLAYER_FILENAME));
+        bufferedWriter = new BufferedWriter(new FileWriter(IMPORTED_PLAYER_FILENAME));
         importPlayers();
         bufferedWriter.flush();
         bufferedWriter.close();
-        removeLastEmptyline(PLAYER_FILENAME);
-        System.out.println("Imported players data to " + PLAYER_FILENAME);
+        removeLastEmptyline(IMPORTED_PLAYER_FILENAME);
+        System.out.println("Imported players data to " + IMPORTED_PLAYER_FILENAME);
+
+        System.out.println("Saving changes into " + DELTA_PLAYER_FILENAME);
+        bufferedWriter = new BufferedWriter(new FileWriter(DELTA_PLAYER_FILENAME));
+
+        BufferedReader bufferedReader = new BufferedReader(new FileReader(PLAYER_FILENAME));
+        BufferedReader bufferedReaderImported = new BufferedReader(new FileReader(IMPORTED_PLAYER_FILENAME));
+        bufferedReader.lines()
+                .forEach(line -> compareLine(bufferedWriter, bufferedReaderImported, line));
+        bufferedWriter.flush();
+        bufferedWriter.close();
+    }
+
+    private void compareLine(BufferedWriter bufferedWriter, BufferedReader bufferedReader, String line) {
+        String importedLine = null;
+        try {
+            importedLine = bufferedReader.readLine();
+            if (!importedLine.equals(line)) {
+                bufferedWriter.write(line + "\n");
+                bufferedWriter.write(importedLine + "\n");
+                bufferedWriter.write("=====\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void importGearData() throws IOException {
@@ -43,6 +68,16 @@ public class WikiImporter {
         bufferedWriter.close();
         removeLastEmptyline(GEAR_FILENAME);
         System.out.println("Imported gear data to " + GEAR_FILENAME);
+
+        System.out.println("Saving changes into " + DELTA_GEAR_FILENAME);
+        bufferedWriter = new BufferedWriter(new FileWriter(DELTA_GEAR_FILENAME));
+
+        BufferedReader bufferedReader = new BufferedReader(new FileReader(GEAR_FILENAME));
+        BufferedReader bufferedReaderImported = new BufferedReader(new FileReader(IMPORTED_GEAR_FILENAME));
+        bufferedReader.lines()
+                .forEach(line -> compareLine(bufferedWriter, bufferedReaderImported, line));
+        bufferedWriter.flush();
+        bufferedWriter.close();
     }
 
     private void removeLastEmptyline(String fileName) throws IOException {

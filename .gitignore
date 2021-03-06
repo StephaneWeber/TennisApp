@@ -4,3 +4,5 @@
 *.iml
 .jar
 target/
+/src/main/resources/data/changed_gear.csv
+/src/main/resources/data/changed_players.csv
