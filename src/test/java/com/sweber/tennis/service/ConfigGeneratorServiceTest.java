@@ -45,13 +45,13 @@ class ConfigGeneratorServiceTest {
         ConfigFilter configFilter = new ConfigFilter();
         configFilter.setSelectedPlayer("JONAH_7");
         configFilter.setMinAttributes(minimumAttributes);
-        configFilter.setMinTotal(240);
-        configFilter.setMaxLevel(9);
+        configFilter.setMinTotal(280);
+        configFilter.setMaxLevel(11);
         configFilter.setUpgradeAllowed(1);
 
         long start = System.currentTimeMillis();
         List<GameConfig> gameConfigs = configGeneratorService.generateGameConfigs(configFilter);
-        assertThat(gameConfigs).hasSize(1699);
+        assertThat(gameConfigs).hasSize(843);
         System.out.printf("Found %d configs%n", gameConfigs.size());
         long end = System.currentTimeMillis();
         System.out.printf("Found in %d ms%n", (end - start));
@@ -64,8 +64,8 @@ class ConfigGeneratorServiceTest {
         ConfigFilter configFilter = new ConfigFilter();
         configFilter.setSelectedPlayer("JONAH_7");
         configFilter.setMinAttributes(minimumAttributes);
-        configFilter.setMinTotal(200);
-        configFilter.setMaxLevel(9);
+        configFilter.setMinTotal(280);
+        configFilter.setMaxLevel(11);
         configFilter.setUpgradeAllowed(2);
 
         List<GameConfig> gameConfigs;
@@ -73,7 +73,7 @@ class ConfigGeneratorServiceTest {
         long start = System.currentTimeMillis();
         gameConfigs = configGeneratorService.generateGameConfigs(configFilter);
         System.out.printf("Found %d configs%n", gameConfigs.size());
-        assertThat(gameConfigs).hasSize(15636);
+        assertThat(gameConfigs).hasSize(1526);
         long end = System.currentTimeMillis();
         System.out.printf("Found in %d ms%n", (end - start));
         // 15636 in 4860 ms

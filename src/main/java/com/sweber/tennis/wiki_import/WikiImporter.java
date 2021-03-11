@@ -152,8 +152,8 @@ public class WikiImporter {
         }
     }
 
-    public void cleanupFiles() {
-        System.out.println("Cleaning up import files");
+    public void replaceDatasetWithImport() {
+        System.out.println("Updating data with import files");
         try {
             Files.move(Paths.get(IMPORTED_PLAYER_FILENAME), Paths.get(PLAYER_FILENAME), StandardCopyOption.REPLACE_EXISTING);
             Files.move(Paths.get(IMPORTED_GEAR_FILENAME), Paths.get(GEAR_FILENAME), StandardCopyOption.REPLACE_EXISTING);

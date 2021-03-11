@@ -19,8 +19,8 @@ public class WikiPage {
     private final String itemType;
     private final List<String> output = new ArrayList<>();
     private final Map<String, List<String>> skills = new HashMap<>();
-    private List<String> levels = new ArrayList<>();
-    private List<String> prices = new ArrayList<>();
+    private final List<String> levels = new ArrayList<>();
+    private final List<String> prices = new ArrayList<>();
     private Limits limits;
 
     public WikiPage(String pageSuffix, String itemName, String itemType) {
@@ -102,7 +102,6 @@ public class WikiPage {
     private void determinePrices(Elements articleTables) {
         Element pricesRow = articleTables.get(0).select("tr").get(2);
         Elements pricesColumns = pricesRow.select("td");
-        List<String> price = new ArrayList<>();
         int level = limits.getFirstLevel();
         for (int i2 = 1; i2 <= limits.getLastLevel() - limits.getFirstLevel() + 1; i2++) {
             String indPrice = pricesColumns.get(level++).text().trim();
@@ -111,9 +110,8 @@ public class WikiPage {
             } else {
                 indPrice = formatPrice(indPrice);
             }
-            price.add(indPrice);
+            prices.add(indPrice);
         }
-        this.prices = price;
     }
 
     private void determineSkills(Element skillRow) {
@@ -127,13 +125,11 @@ public class WikiPage {
     }
 
     private void determineLevels(Elements levelsCols) {
-        List<String> levelColumns = new ArrayList<>();
         int level = limits.getFirstLevel();
         for (int i2 = 0; i2 <= limits.getLastLevel() - limits.getFirstLevel(); i2++) {
-            levelColumns.add(levelsCols.get(level).text().trim());
+            levels.add(levelsCols.get(level).text().trim());
             level++;
         }
-        this.levels = levelColumns;
     }
 
     private void determineLimits(Elements skillsRows) {

@@ -7,6 +7,6 @@ public class LoadDataFromWiki {
         WikiImporter wikiImporter = new WikiImporter();
         wikiImporter.importPlayersData();
         wikiImporter.importGearData();
-        wikiImporter.cleanupFiles();
+        wikiImporter.replaceDatasetWithImport();
     }
 }
