@@ -71,7 +71,7 @@ public class WikiPage {
         }
     }
 
-    public StringBuffer processWikiPage() throws IOException {
+    public StringBuilder processWikiPage() throws IOException {
         Document doc = Jsoup.connect(pageSuffix).get();
         Elements articleTables = doc.select(".article-table");
 
@@ -92,20 +92,20 @@ public class WikiPage {
         determinePrices(articleTables);
 
         generateOutput();
-        StringBuffer stringBuffer = new StringBuffer();
+        StringBuilder stringBuilder = new StringBuilder();
         for (String outputLine : output) {
-            stringBuffer.append(outputLine + "\n");
+            stringBuilder.append(outputLine).append("\n");
         }
-        return stringBuffer;
+        return stringBuilder;
     }
 
     private void determinePrices(Elements articleTables) {
         Element pricesRow = articleTables.get(0).select("tr").get(2);
-        Elements prices = pricesRow.select("td");
+        Elements pricesColumns = pricesRow.select("td");
         List<String> price = new ArrayList<>();
         int level = limits.getFirstLevel();
         for (int i2 = 1; i2 <= limits.getLastLevel() - limits.getFirstLevel() + 1; i2++) {
-            String indPrice = prices.get(level++).text().trim();
+            String indPrice = pricesColumns.get(level++).text().trim();
             if (indPrice.isEmpty() || indPrice.equals("/")) {
                 indPrice = "0";
             } else {
@@ -127,39 +127,39 @@ public class WikiPage {
     }
 
     private void determineLevels(Elements levelsCols) {
-        List<String> levels = new ArrayList<>();
+        List<String> levelColumns = new ArrayList<>();
         int level = limits.getFirstLevel();
         for (int i2 = 0; i2 <= limits.getLastLevel() - limits.getFirstLevel(); i2++) {
-            levels.add(levelsCols.get(level).text().trim());
+            levelColumns.add(levelsCols.get(level).text().trim());
             level++;
         }
-        this.levels = levels;
+        this.levels = levelColumns;
     }
 
     private void determineLimits(Elements skillsRows) {
-        Limits limits = new Limits(0, 0);
+        Limits limitColumns = new Limits(0, 0);
         Element row = skillsRows.get(1);
         Elements cols = row.select("td");
         for (int i1 = 0; i1 < cols.size(); i1++) {
             String trim = cols.get(i1).text().trim();
-            if (i1 > 0 && limits.getFirstLevel() == 0 && !trim.isEmpty()) {
-                limits.setFirstLevel(i1);
+            if (i1 > 0 && limitColumns.getFirstLevel() == 0 && !trim.isEmpty()) {
+                limitColumns.setFirstLevel(i1);
             }
             if (!trim.isEmpty()) {
-                limits.setLastLevel(i1);
+                limitColumns.setLastLevel(i1);
             }
         }
-        this.limits = limits;
+        this.limits = limitColumns;
     }
 
     private String formatPrice(String indPrice) {
         indPrice = indPrice.toUpperCase();
         if (indPrice.endsWith("K")) {
             if (indPrice.contains(".")) {
-                indPrice = indPrice.replaceAll("K", "00");
-                indPrice = indPrice.replaceAll("\\.", "");
+                indPrice = indPrice.replace("K", "00");
+                indPrice = indPrice.replace(".", "");
             } else {
-                indPrice = indPrice.replaceAll("K", "000");
+                indPrice = indPrice.replace("K", "000");
             }
             if (indPrice.startsWith("0")) {
                 indPrice = indPrice.substring(1);
@@ -168,7 +168,7 @@ public class WikiPage {
         return indPrice;
     }
 
-    class Limits {
+    static class Limits {
         int firstLevel;
         int lastLevel;
 

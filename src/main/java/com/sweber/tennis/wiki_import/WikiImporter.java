@@ -1,6 +1,14 @@
 package com.sweber.tennis.wiki_import;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 
 public class WikiImporter {
@@ -18,7 +26,7 @@ public class WikiImporter {
     private static final String IMPORTED_PLAYER_FILENAME = "src/main/resources/data/imported_players.csv";
     private static final String DELTA_PLAYER_FILENAME = "src/main/resources/data/changed_players.csv";
 
-    private static BufferedWriter bufferedWriter;
+    private BufferedWriter bufferedWriter;
 
     public void importPlayersData() throws IOException {
         System.out.println("Starting importing players data");
@@ -32,12 +40,13 @@ public class WikiImporter {
         System.out.println("Saving changes into " + DELTA_PLAYER_FILENAME);
         bufferedWriter = new BufferedWriter(new FileWriter(DELTA_PLAYER_FILENAME));
 
-        BufferedReader bufferedReader = new BufferedReader(new FileReader(PLAYER_FILENAME));
-        BufferedReader bufferedReaderImported = new BufferedReader(new FileReader(IMPORTED_PLAYER_FILENAME));
-        bufferedReader.lines()
-                .forEach(line -> compareLine(bufferedWriter, bufferedReaderImported, line));
-        bufferedWriter.flush();
-        bufferedWriter.close();
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(PLAYER_FILENAME));
+             BufferedReader bufferedReaderImported = new BufferedReader(new FileReader(IMPORTED_PLAYER_FILENAME))) {
+            bufferedReader.lines()
+                    .forEach(line -> compareLine(bufferedWriter, bufferedReaderImported, line));
+            bufferedWriter.flush();
+            bufferedWriter.close();
+        }
     }
 
     private void compareLine(BufferedWriter bufferedWriter, BufferedReader bufferedReader, String line) {
@@ -56,7 +65,7 @@ public class WikiImporter {
 
     public void importGearData() throws IOException {
         System.out.println("Starting importing gear data");
-        bufferedWriter = new BufferedWriter(new FileWriter(GEAR_FILENAME));
+        bufferedWriter = new BufferedWriter(new FileWriter(IMPORTED_GEAR_FILENAME));
         bufferedWriter.write("Name,Type,Agility,Endurance,Service,Volley,Forehand,Backhand,Cost,Level\n");
         importRackets();
         importGrips();
@@ -66,27 +75,28 @@ public class WikiImporter {
         importWorkouts();
         bufferedWriter.flush();
         bufferedWriter.close();
-        removeLastEmptyline(GEAR_FILENAME);
-        System.out.println("Imported gear data to " + GEAR_FILENAME);
+        removeLastEmptyline(IMPORTED_GEAR_FILENAME);
+        System.out.println("Imported gear data to " + IMPORTED_GEAR_FILENAME);
 
         System.out.println("Saving changes into " + DELTA_GEAR_FILENAME);
         bufferedWriter = new BufferedWriter(new FileWriter(DELTA_GEAR_FILENAME));
 
-        BufferedReader bufferedReader = new BufferedReader(new FileReader(GEAR_FILENAME));
-        BufferedReader bufferedReaderImported = new BufferedReader(new FileReader(IMPORTED_GEAR_FILENAME));
-        bufferedReader.lines()
-                .forEach(line -> compareLine(bufferedWriter, bufferedReaderImported, line));
-        bufferedWriter.flush();
-        bufferedWriter.close();
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(GEAR_FILENAME));
+             BufferedReader bufferedReaderImported = new BufferedReader(new FileReader(IMPORTED_GEAR_FILENAME))) {
+            bufferedReader.lines()
+                    .forEach(line -> compareLine(bufferedWriter, bufferedReaderImported, line));
+            bufferedWriter.flush();
+            bufferedWriter.close();
+        }
     }
 
     private void removeLastEmptyline(String fileName) throws IOException {
-        RandomAccessFile f = new RandomAccessFile(fileName, "rw");
-        long length = f.length() - 2;
-        f.seek(length);
-        f.readByte();
-        f.setLength(length + 1);
-        f.close();
+        try (RandomAccessFile f = new RandomAccessFile(fileName, "rw")) {
+            long length = f.length() - 2;
+            f.seek(length);
+            f.readByte();
+            f.setLength(length + 1);
+        }
     }
 
     private void importPlayers() throws IOException {
@@ -134,9 +144,19 @@ public class WikiImporter {
     private void processWikiPage(String page, String itemName, String itemType) {
         try {
             WikiPage wikiPage = new WikiPage(page, itemName, itemType);
-            StringBuffer stringBuffer = wikiPage.processWikiPage();
+            StringBuilder stringBuffer = wikiPage.processWikiPage();
             //write contents of StringBuffer to a file
             bufferedWriter.write(stringBuffer.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void cleanupFiles() {
+        System.out.println("Cleaning up import files");
+        try {
+            Files.move(Paths.get(IMPORTED_PLAYER_FILENAME), Paths.get(PLAYER_FILENAME), StandardCopyOption.REPLACE_EXISTING);
+            Files.move(Paths.get(IMPORTED_GEAR_FILENAME), Paths.get(GEAR_FILENAME), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             e.printStackTrace();
         }
