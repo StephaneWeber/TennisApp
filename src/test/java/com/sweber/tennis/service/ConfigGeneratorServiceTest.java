@@ -43,28 +43,28 @@ class ConfigGeneratorServiceTest {
     void testSimpleUpgrades() {
         Attributes minimumAttributes = new Attributes(40, 30, 40, 15, 40, 40);
         ConfigFilter configFilter = new ConfigFilter();
-        configFilter.setSelectedPlayer("JONAH_7");
+        configFilter.setSelectedPlayer("JONAH_8");
         configFilter.setMinAttributes(minimumAttributes);
-        configFilter.setMinTotal(280);
+        configFilter.setMinTotal(290);
         configFilter.setMaxLevel(11);
         configFilter.setUpgradeAllowed(1);
 
         long start = System.currentTimeMillis();
         List<GameConfig> gameConfigs = configGeneratorService.generateGameConfigs(configFilter);
-        assertThat(gameConfigs).hasSize(1062);
+        assertThat(gameConfigs).hasSize(420);
         System.out.printf("Found %d configs%n", gameConfigs.size());
         long end = System.currentTimeMillis();
         System.out.printf("Found in %d ms%n", (end - start));
-        // 1062 in 2714 ms
+        // 420 in 5426 ms
     }
 
     @Test
     void testUpgrades() {
         Attributes minimumAttributes = new Attributes(40, 30, 40, 15, 40, 30);
         ConfigFilter configFilter = new ConfigFilter();
-        configFilter.setSelectedPlayer("JONAH_7");
+        configFilter.setSelectedPlayer("JONAH_8");
         configFilter.setMinAttributes(minimumAttributes);
-        configFilter.setMinTotal(280);
+        configFilter.setMinTotal(290);
         configFilter.setMaxLevel(11);
         configFilter.setUpgradeAllowed(2);
 
@@ -73,9 +73,9 @@ class ConfigGeneratorServiceTest {
         long start = System.currentTimeMillis();
         gameConfigs = configGeneratorService.generateGameConfigs(configFilter);
         System.out.printf("Found %d configs%n", gameConfigs.size());
-        assertThat(gameConfigs).hasSize(2108);
+        assertThat(gameConfigs).hasSize(668);
         long end = System.currentTimeMillis();
         System.out.printf("Found in %d ms%n", (end - start));
-        // 2108 in 5439 ms
+        // 668 in 10984 ms
     }
 }
