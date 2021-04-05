@@ -41,30 +41,30 @@ class ConfigGeneratorServiceTest {
 
     @Test
     void testSimpleUpgrades() {
-        Attributes minimumAttributes = new Attributes(40, 30, 40, 15, 40, 40);
+        Attributes minimumAttributes = new Attributes(40, 30, 55, 15, 40, 40);
         ConfigFilter configFilter = new ConfigFilter();
-        configFilter.setSelectedPlayer("JONAH_8");
+        configFilter.setSelectedPlayer("LEO_8");
         configFilter.setMinAttributes(minimumAttributes);
-        configFilter.setMinTotal(290);
+        configFilter.setMinTotal(300);
         configFilter.setMaxLevel(11);
         configFilter.setUpgradeAllowed(1);
 
         long start = System.currentTimeMillis();
         List<GameConfig> gameConfigs = configGeneratorService.generateGameConfigs(configFilter);
-        assertThat(gameConfigs).hasSize(420);
+        assertThat(gameConfigs).hasSize(23);
         System.out.printf("Found %d configs%n", gameConfigs.size());
         long end = System.currentTimeMillis();
         System.out.printf("Found in %d ms%n", (end - start));
-        // 420 in 5426 ms
+        // 23 in 7160 ms
     }
 
     @Test
     void testUpgrades() {
         Attributes minimumAttributes = new Attributes(40, 30, 40, 15, 40, 30);
         ConfigFilter configFilter = new ConfigFilter();
-        configFilter.setSelectedPlayer("JONAH_8");
+        configFilter.setSelectedPlayer("LEO_8");
         configFilter.setMinAttributes(minimumAttributes);
-        configFilter.setMinTotal(290);
+        configFilter.setMinTotal(300);
         configFilter.setMaxLevel(11);
         configFilter.setUpgradeAllowed(2);
 
@@ -73,9 +73,9 @@ class ConfigGeneratorServiceTest {
         long start = System.currentTimeMillis();
         gameConfigs = configGeneratorService.generateGameConfigs(configFilter);
         System.out.printf("Found %d configs%n", gameConfigs.size());
-        assertThat(gameConfigs).hasSize(668);
+        assertThat(gameConfigs).hasSize(68);
         long end = System.currentTimeMillis();
         System.out.printf("Found in %d ms%n", (end - start));
-        // 668 in 10984 ms
+        // 68 in 14551 ms
     }
 }
