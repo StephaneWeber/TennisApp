@@ -55,7 +55,7 @@ class ConfigGeneratorServiceTest {
         System.out.printf("Found %d configs%n", gameConfigs.size());
         long end = System.currentTimeMillis();
         System.out.printf("Found in %d ms%n", (end - start));
-        // 23 in 7160 ms
+        // 23 in 5594 ms
     }
 
     @Test
@@ -76,6 +76,6 @@ class ConfigGeneratorServiceTest {
         assertThat(gameConfigs).hasSize(68);
         long end = System.currentTimeMillis();
         System.out.printf("Found in %d ms%n", (end - start));
-        // 68 in 14551 ms
+        // 68 in 11228 ms
     }
 }
