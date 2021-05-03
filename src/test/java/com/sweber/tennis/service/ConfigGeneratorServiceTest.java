@@ -24,7 +24,7 @@ class ConfigGeneratorServiceTest {
         List<Player> players = playerService.leveledPlayers(3);
         assertThat(players).hasSize(8);
         players = playerService.leveledPlayers(6);
-        assertThat(players).hasSize(7);
+        assertThat(players).hasSize(8);
     }
 
     @Test
