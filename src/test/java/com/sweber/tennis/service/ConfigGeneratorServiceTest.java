@@ -41,9 +41,9 @@ class ConfigGeneratorServiceTest {
 
     @Test
     void testSimpleUpgrades() {
-        Attributes minimumAttributes = new Attributes(40, 30, 55, 15, 40, 40);
+        Attributes minimumAttributes = new Attributes(45, 30, 55, 15, 55, 40);
         ConfigFilter configFilter = new ConfigFilter();
-        configFilter.setSelectedPlayer("LEO_8");
+        configFilter.setSelectedPlayer("LEO_9");
         configFilter.setMinAttributes(minimumAttributes);
         configFilter.setMinTotal(300);
         configFilter.setMaxLevel(11);
@@ -51,11 +51,11 @@ class ConfigGeneratorServiceTest {
 
         long start = System.currentTimeMillis();
         List<GameConfig> gameConfigs = configGeneratorService.generateGameConfigs(configFilter);
-        assertThat(gameConfigs).hasSize(23);
+        assertThat(gameConfigs).hasSize(167);
         System.out.printf("Found %d configs%n", gameConfigs.size());
         long end = System.currentTimeMillis();
         System.out.printf("Found in %d ms%n", (end - start));
-        // 23 in 5594 ms
+        // 167 in 5594 ms
     }
 
     @Test
@@ -64,7 +64,7 @@ class ConfigGeneratorServiceTest {
         ConfigFilter configFilter = new ConfigFilter();
         configFilter.setSelectedPlayer("LEO_8");
         configFilter.setMinAttributes(minimumAttributes);
-        configFilter.setMinTotal(300);
+        configFilter.setMinTotal(320);
         configFilter.setMaxLevel(11);
         configFilter.setUpgradeAllowed(2);
 
