@@ -55,16 +55,16 @@ class ConfigGeneratorServiceTest {
         System.out.printf("Found %d configs%n", gameConfigs.size());
         long end = System.currentTimeMillis();
         System.out.printf("Found in %d ms%n", (end - start));
-        // 167 in 5594 ms
+        // 167 in 17896 ms
     }
 
     @Test
     void testUpgrades() {
-        Attributes minimumAttributes = new Attributes(40, 30, 40, 15, 40, 30);
+        Attributes minimumAttributes = new Attributes(45, 30, 55, 15, 55, 40);
         ConfigFilter configFilter = new ConfigFilter();
-        configFilter.setSelectedPlayer("LEO_8");
+        configFilter.setSelectedPlayer("LEO_9");
         configFilter.setMinAttributes(minimumAttributes);
-        configFilter.setMinTotal(320);
+        configFilter.setMinTotal(300);
         configFilter.setMaxLevel(11);
         configFilter.setUpgradeAllowed(2);
 
@@ -73,7 +73,7 @@ class ConfigGeneratorServiceTest {
         long start = System.currentTimeMillis();
         gameConfigs = configGeneratorService.generateGameConfigs(configFilter);
         System.out.printf("Found %d configs%n", gameConfigs.size());
-        assertThat(gameConfigs).hasSize(91);
+        assertThat(gameConfigs).hasSize(247);
         long end = System.currentTimeMillis();
         System.out.printf("Found in %d ms%n", (end - start));
         // 68 in 11228 ms
