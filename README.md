@@ -2,10 +2,9 @@
 Helping tweak profiles for the Tennis Clash game
 
 IN DEV
-Importing from Wiki - generating change list
+*
 
 TODO
-* Replace data when importing form wiki and show changes
 * Refresh players list when updating maxLevel restriction
 
 Resources:
