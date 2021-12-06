@@ -41,10 +41,10 @@ class ConfigGeneratorServiceTest {
         assertThat(count).isEqualTo(10);
         int minLevel2 = 9;
         count = players.stream().map(playerService::ownedLevel).filter(ownedLevel -> ownedLevel >= minLevel2).count();
-        assertThat(count).isEqualTo(6);
+        assertThat(count).isEqualTo(7);
         int minLevel3 = 10;
         count = players.stream().map(playerService::ownedLevel).filter(ownedLevel -> ownedLevel >= minLevel3).count();
-        assertThat(count).isEqualTo(1);
+        assertThat(count).isEqualTo(4);
     }
 
     @Test
@@ -62,8 +62,8 @@ class ConfigGeneratorServiceTest {
         long end = System.currentTimeMillis();
         System.out.printf("Found %d configs%n", gameConfigs.size());
         System.out.printf("Found in %d ms%n", (end - start));
-        assertThat(gameConfigs).hasSize(807);
-        // 807 in 13638 ms
+        assertThat(gameConfigs).hasSize(3812);
+        // 3812 in 10591 ms
     }
 
     @Test
@@ -83,7 +83,7 @@ class ConfigGeneratorServiceTest {
         long end = System.currentTimeMillis();
         System.out.printf("Found %d configs%n", gameConfigs.size());
         System.out.printf("Found in %d ms%n", (end - start));
-        assertThat(gameConfigs).hasSize(539);
-        // 539 in 29343 ms
+        assertThat(gameConfigs).hasSize(4073);
+        // 4073 in 19620 ms
     }
 }
