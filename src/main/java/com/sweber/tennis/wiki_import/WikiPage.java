@@ -161,6 +161,20 @@ public class WikiPage {
                 indPrice = indPrice.substring(1);
             }
         }
+        if (indPrice.endsWith("M")) {
+            if (indPrice.contains(".") && (indPrice.indexOf("M") == indPrice.indexOf(".") + 2)) {
+                indPrice = indPrice.replace("M", "00000");
+                indPrice = indPrice.replace(".", "");
+            } else if (indPrice.contains(".")) {
+                indPrice = indPrice.replace("M", "0000");
+                indPrice = indPrice.replace(".", "");
+            } else {
+                indPrice = indPrice.replace("M", "000000");
+            }
+            if (indPrice.startsWith("0")) {
+                indPrice = indPrice.substring(1);
+            }
+        }
         return indPrice;
     }
 
