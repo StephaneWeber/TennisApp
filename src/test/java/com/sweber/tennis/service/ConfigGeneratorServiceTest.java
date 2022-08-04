@@ -23,9 +23,9 @@ class ConfigGeneratorServiceTest {
     void testCostsAreNullForOwned() {
         Attributes minimumAttributes = new Attributes(20, 0, 30, 0, 30, 20);
         ConfigFilter configFilter = new ConfigFilter();
-        configFilter.setSelectedPlayer("FLORENCE_4");
+        configFilter.setSelectedPlayer("FLORENCE_11");
         configFilter.setMinAttributes(minimumAttributes);
-        configFilter.setMinTotal(150);
+        configFilter.setMinTotal(230);
         configFilter.setMaxLevel(6);
         List<GameConfig> gameConfigs = configGeneratorService.generateGameConfigs(configFilter);
         gameConfigs.forEach(gameConfig -> assertThat(gameConfig.getCost()).isZero());
@@ -34,27 +34,27 @@ class ConfigGeneratorServiceTest {
     @Test
     void testPlayerService() {
         List<Player> players = playerService.leveledPlayers(10);
-        assertThat(players).hasSize(10);
+        assertThat(players).hasSize(11);
 
-        int minLevel = 1;
+        int minLevel = 6;
         long count = players.stream().map(playerService::ownedLevel).filter(ownedLevel -> ownedLevel >= minLevel).count();
-        assertThat(count).isEqualTo(10);
-        int minLevel2 = 9;
+        assertThat(count).isEqualTo(11);
+        int minLevel2 = 8;
         count = players.stream().map(playerService::ownedLevel).filter(ownedLevel -> ownedLevel >= minLevel2).count();
-        assertThat(count).isEqualTo(7);
-        int minLevel3 = 10;
+        assertThat(count).isEqualTo(10);
+        int minLevel3 = 11;
         count = players.stream().map(playerService::ownedLevel).filter(ownedLevel -> ownedLevel >= minLevel3).count();
-        assertThat(count).isEqualTo(4);
+        assertThat(count).isEqualTo(7);
     }
 
     @Test
     void testSingleUpgrade() {
-        Attributes minimumAttributes = new Attributes(45, 30, 55, 15, 55, 40);
+        Attributes minimumAttributes = new Attributes(60, 30, 25, 25, 65, 65);
         ConfigFilter configFilter = new ConfigFilter();
-        configFilter.setSelectedPlayer("LEO_9");
+        configFilter.setSelectedPlayer("KAITO_11");
         configFilter.setMinAttributes(minimumAttributes);
-        configFilter.setMinTotal(300);
-        configFilter.setMaxLevel(11);
+        configFilter.setMinTotal(320);
+        configFilter.setMaxLevel(12);
         configFilter.setUpgradeAllowed(1);
 
         long start = System.currentTimeMillis();
@@ -62,17 +62,17 @@ class ConfigGeneratorServiceTest {
         long end = System.currentTimeMillis();
         System.out.printf("Found %d configs%n", gameConfigs.size());
         System.out.printf("Found in %d ms%n", (end - start));
-        assertThat(gameConfigs).hasSize(3812);
-        // 3812 in 10591 ms
+        assertThat(gameConfigs).hasSize(3235);
+        // 3235 in 9741 ms
     }
 
     @Test
     void testMultipleUpgrades() {
-        Attributes minimumAttributes = new Attributes(45, 30, 60, 15, 60, 40);
+        Attributes minimumAttributes = new Attributes(60, 30, 25, 25, 65, 65);
         ConfigFilter configFilter = new ConfigFilter();
-        configFilter.setSelectedPlayer("LEO_9");
+        configFilter.setSelectedPlayer("KAITO_11");
         configFilter.setMinAttributes(minimumAttributes);
-        configFilter.setMinTotal(300);
+        configFilter.setMinTotal(320);
         configFilter.setMaxLevel(11);
         configFilter.setUpgradeAllowed(2);
 
@@ -83,7 +83,7 @@ class ConfigGeneratorServiceTest {
         long end = System.currentTimeMillis();
         System.out.printf("Found %d configs%n", gameConfigs.size());
         System.out.printf("Found in %d ms%n", (end - start));
-        assertThat(gameConfigs).hasSize(4073);
-        // 4073 in 19620 ms
+        assertThat(gameConfigs).hasSize(640);
+        // 640 in 12956 ms
     }
 }
