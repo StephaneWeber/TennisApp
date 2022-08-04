@@ -89,7 +89,7 @@ public class WikiPage {
             determineSkills(skillRow);
         }
 
-        determinePrices(articleTables);
+        determinePrices(articleTables, pageSuffix);
 
         generateOutput();
         StringBuilder stringBuilder = new StringBuilder();
@@ -99,12 +99,18 @@ public class WikiPage {
         return stringBuilder;
     }
 
-    private void determinePrices(Elements articleTables) {
+    private void determinePrices(Elements articleTables, String pageSuffix) {
         Element pricesRow = articleTables.get(0).select("tr").get(2);
         Elements pricesColumns = pricesRow.select("td");
         int level = limits.getFirstLevel();
         for (int i2 = 1; i2 <= limits.getLastLevel() - limits.getFirstLevel() + 1; i2++) {
-            String indPrice = pricesColumns.get(level++).text().trim();
+            String indPrice = null;
+            try {
+                indPrice = pricesColumns.get(level++).text().trim();
+            } catch (Exception e) {
+                String message = String.format("Error determining price for %s", pageSuffix);
+                throw new IllegalStateException(message);
+            }
             if (indPrice.isEmpty() || indPrice.equals("/")) {
                 indPrice = "0";
             } else {
@@ -156,6 +162,20 @@ public class WikiPage {
                 indPrice = indPrice.replace(".", "");
             } else {
                 indPrice = indPrice.replace("K", "000");
+            }
+            if (indPrice.startsWith("0")) {
+                indPrice = indPrice.substring(1);
+            }
+        }
+        if (indPrice.endsWith("M")) {
+            if (indPrice.contains(".") && (indPrice.indexOf("M") == indPrice.indexOf(".") + 2)) {
+                indPrice = indPrice.replace("M", "00000");
+                indPrice = indPrice.replace(".", "");
+            } else if (indPrice.contains(".")) {
+                indPrice = indPrice.replace("M", "0000");
+                indPrice = indPrice.replace(".", "");
+            } else {
+                indPrice = indPrice.replace("M", "000000");
             }
             if (indPrice.startsWith("0")) {
                 indPrice = indPrice.substring(1);

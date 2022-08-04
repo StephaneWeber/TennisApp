@@ -9,6 +9,7 @@ public enum Players {
     VIKTORIA("Viktoria"),
     OMAR("Omar"),
     DIANA("Diana"),
+    ABEKE("Abeke"),
     MEILI("Mei-Li"),
     LUC("Luc");
 

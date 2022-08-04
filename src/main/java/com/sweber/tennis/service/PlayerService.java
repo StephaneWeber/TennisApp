@@ -74,7 +74,14 @@ public class PlayerService {
 
     private Player getPlayer(String[] inputData) {
         String playerName = inputData[0].trim();
-        Attributes attributes = new Attributes(Integer.parseInt(inputData[1].trim()), Integer.parseInt(inputData[2].trim()), Integer.parseInt(inputData[3].trim()), Integer.parseInt(inputData[4].trim()), Integer.parseInt(inputData[5].trim()), Integer.parseInt(inputData[6].trim()));
+        Attributes attributes = null;
+        try {
+            attributes = new Attributes(Integer.parseInt(inputData[1].trim()), Integer.parseInt(inputData[2].trim()), Integer.parseInt(inputData[3].trim()), Integer.parseInt(inputData[4].trim()), Integer.parseInt(inputData[5].trim()), Integer.parseInt(inputData[6].trim()));
+        } catch (NumberFormatException e) {
+            String message = String.format("Error parsing Player %s - %s", playerName, inputData);
+            LOGGER.error(message);
+            throw new IllegalStateException(message);
+        }
         int cost = Integer.parseInt(inputData[7].trim());
         int level = Integer.parseInt(inputData[8].trim());
         Config config = new Config(attributes, cost, level);

@@ -84,7 +84,14 @@ public class GearItemService {
     private GearItem getGearItem(String[] inputData) {
         String gearItemName = inputData[0].trim();
         GearType gearItemType = GearType.valueOf(inputData[1].trim());
-        Attributes gearItemAttributes = new Attributes(Integer.parseInt(inputData[2].trim()), Integer.parseInt(inputData[3].trim()), Integer.parseInt(inputData[4].trim()), Integer.parseInt(inputData[5].trim()), Integer.parseInt(inputData[6].trim()), Integer.parseInt(inputData[7].trim()));
+        Attributes gearItemAttributes = null;
+        try {
+            gearItemAttributes = new Attributes(Integer.parseInt(inputData[2].trim()), Integer.parseInt(inputData[3].trim()), Integer.parseInt(inputData[4].trim()), Integer.parseInt(inputData[5].trim()), Integer.parseInt(inputData[6].trim()), Integer.parseInt(inputData[7].trim()));
+        } catch (NumberFormatException e) {
+            String message = String.format("Error parsing GearItem %s of type %s - %s", gearItemName, gearItemType, inputData);
+            LOGGER.error(message);
+            throw new IllegalStateException(message);
+        }
         int cost = Integer.parseInt(inputData[8].trim());
         int level = Integer.parseInt(inputData[9].trim());
         Config gearItemConfig = new Config(gearItemAttributes, cost, level);
