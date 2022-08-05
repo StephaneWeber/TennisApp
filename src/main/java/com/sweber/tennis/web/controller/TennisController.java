@@ -6,6 +6,8 @@ import com.sweber.tennis.model.player.Player;
 import com.sweber.tennis.service.ConfigGeneratorService;
 import com.sweber.tennis.service.PlayerService;
 import com.sweber.tennis.web.model.ConfigFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -25,6 +27,7 @@ import java.util.Optional;
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 @Controller
 public class TennisController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TennisController.class);
     private static final String HOME_PAGE = "home";
     private static final int PAGE_SIZE = 100;
 
@@ -67,7 +70,10 @@ public class TennisController {
     }
 
     private void generateGameConfigs() {
+        long before = System.currentTimeMillis();
         this.gameConfigs = configGeneratorService.generateGameConfigs(configFilter);
+        long after = System.currentTimeMillis();
+        LOGGER.info("Generating the {} possible gameConfigs took {} ms", gameConfigs.size(), after-before);
         this.playerList = playerService.leveledPlayers(configFilter.getMaxLevel());
         this.maxAttributes = computeMaxAttributes(gameConfigs);
     }
@@ -100,15 +106,15 @@ public class TennisController {
     private void setupInitialConfigFilter() {
         configFilter = new ConfigFilter();
         Attributes minAttributes = new Attributes();
-        minAttributes.setAgility(40);
-        minAttributes.setEndurance(30);
-        minAttributes.setService(40);
-        minAttributes.setForehand(35);
-        minAttributes.setBackhand(35);
+        minAttributes.setAgility(70);
+        minAttributes.setEndurance(40);
+        minAttributes.setService(25);
+        minAttributes.setForehand(70);
+        minAttributes.setBackhand(70);
         configFilter.setMinAttributes(minAttributes);
-        configFilter.setMinTotal(260);
+        configFilter.setMinTotal(300);
         configFilter.setUpgradeAllowed(0);
-        configFilter.setMaxLevel(9);
+        configFilter.setMaxLevel(12);
     }
 
     private Attributes computeMaxAttributes(List<GameConfig> gameConfigs) {
