@@ -27,7 +27,7 @@ class ConfigGeneratorServiceTest {
         configFilter.setMinAttributes(minimumAttributes);
         configFilter.setMinTotal(230);
         configFilter.setMaxLevel(6);
-        List<GameConfig> gameConfigs = configGeneratorService.generateGameConfigs(configFilter);
+        List<GameConfig> gameConfigs = configGeneratorService.generateFilteredGameConfigs(configFilter);
         gameConfigs.forEach(gameConfig -> assertThat(gameConfig.getCost()).isZero());
     }
 
@@ -58,7 +58,7 @@ class ConfigGeneratorServiceTest {
         configFilter.setUpgradeAllowed(1);
 
         long start = System.currentTimeMillis();
-        List<GameConfig> gameConfigs = configGeneratorService.generateGameConfigs(configFilter);
+        List<GameConfig> gameConfigs = configGeneratorService.generateFilteredGameConfigs(configFilter);
         long end = System.currentTimeMillis();
         System.out.printf("Found %d configs%n", gameConfigs.size());
         System.out.printf("Found in %d ms%n", (end - start));
@@ -79,7 +79,7 @@ class ConfigGeneratorServiceTest {
         List<GameConfig> gameConfigs;
 
         long start = System.currentTimeMillis();
-        gameConfigs = configGeneratorService.generateGameConfigs(configFilter);
+        gameConfigs = configGeneratorService.generateFilteredGameConfigs(configFilter);
         long end = System.currentTimeMillis();
         System.out.printf("Found %d configs%n", gameConfigs.size());
         System.out.printf("Found in %d ms%n", (end - start));

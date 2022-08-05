@@ -71,7 +71,7 @@ public class TennisController {
 
     private void generateGameConfigs() {
         long before = System.currentTimeMillis();
-        this.gameConfigs = configGeneratorService.generateGameConfigs(configFilter);
+        this.gameConfigs = configGeneratorService.generateFilteredGameConfigs(configFilter);
         long after = System.currentTimeMillis();
         LOGGER.info("Generating the {} possible gameConfigs took {} ms", gameConfigs.size(), after-before);
         this.playerList = playerService.leveledPlayers(configFilter.getMaxLevel());
