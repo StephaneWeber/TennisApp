@@ -1,6 +1,7 @@
 package com.sweber.tennis.service;
 
 import com.sweber.tennis.model.config.Attributes;
+import com.sweber.tennis.model.config.Config;
 import com.sweber.tennis.model.config.GameConfig;
 import com.sweber.tennis.model.gear.GearItem;
 import com.sweber.tennis.model.gear.GearType;
@@ -17,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -50,15 +52,35 @@ public class ConfigGeneratorService {
         return generateGameConfigs(players, minAttributes, minTotal, maxLevel, upgradeAllowed);
     }
 
+    private Player createMaxPlayer(List<Player> players) {
+        int minAgility = getMaxForProperty(players, Attributes::getAgility);
+        int minEndurance = getMaxForProperty(players, Attributes::getEndurance);
+        int minServe = getMaxForProperty(players, Attributes::getService);
+        int minVolley = getMaxForProperty(players, Attributes::getVolley);
+        int minForehand = getMaxForProperty(players, Attributes::getForehand);
+        int minBackhand = getMaxForProperty(players, Attributes::getBackhand);
+        return Player.dummy(Config.dummy(minAgility, minEndurance, minServe, minVolley, minForehand, minBackhand));
+    }
+
+    private int getMaxForProperty(List<Player> players, Function<Attributes, Integer> getProperty) {
+        return players.stream()
+                .map(Player::getAttributes)
+                .max(Comparator.comparing(getProperty))
+                .map(getProperty)
+                .orElse(0);
+    }
+
     private List<GameConfig> generateGameConfigs(List<Player> players, Attributes minimumAttributes, int minTotalValue, int maxLevel, int upgradesAllowed) {
+        Player maxPlayer = createMaxPlayer(players);
+        List<GameConfig> configs = generateReducedGameConfigs(maxPlayer, minimumAttributes, minTotalValue, maxLevel, upgradesAllowed);
         return players
                 .stream()
-                .flatMap(player -> generateGameConfigsForPlayer(player, minimumAttributes, minTotalValue, maxLevel, upgradesAllowed))
+                .flatMap(player -> generateGameConfigsForPlayer(player, configs, minimumAttributes, minTotalValue, upgradesAllowed))
                 .sorted(Comparator.comparingInt(GameConfig::getValue).reversed())
                 .collect(Collectors.toList());
     }
 
-    private Stream<GameConfig> generateGameConfigsForPlayer(Player player, Attributes minimumAttributes, int minTotalValue, int maxLevel, int upgradesAllowed) {
+    private List<GameConfig> generateReducedGameConfigs(Player maxPlayer, Attributes minimumAttributes, int minTotalValue, int maxLevel, int upgradesAllowed) {
         int gameConfigs = 0;
         List<GameConfig> results = new ArrayList<>();
         List<GearItem> leveledGearItems = gearItemService.leveledGearItems(maxLevel, upgradesAllowed);
@@ -69,6 +91,7 @@ public class ConfigGeneratorService {
         List<GearItem> potentialWristbands = potentialGearItems(leveledGearItems, WRISTBAND);
         List<GearItem> potentialNutritions = potentialGearItems(leveledGearItems, NUTRITION);
         List<GearItem> potentialWorkouts = potentialGearItems(leveledGearItems, WORKOUT);
+
         for (GearItem racket : potentialRackets) {
             if (numberOfUpgrades(itemUpgrades, racket, null, null, null, null, null) > upgradesAllowed) {
                 continue;
@@ -93,7 +116,7 @@ public class ConfigGeneratorService {
                                 if (numberOfUpgrades(itemUpgrades, racket, grip, shoes, wristband, nutrition, workout) > upgradesAllowed) {
                                     continue;
                                 }
-                                GameConfig gameConfig = new GameConfig(player, racket, grip, shoes, wristband, nutrition, workout, upgradesAllowed > 0);
+                                GameConfig gameConfig = new GameConfig(maxPlayer, racket, grip, shoes, wristband, nutrition, workout, upgradesAllowed > 0);
                                 gameConfigs++;
                                 if (isSuitableConfig(minimumAttributes, minTotalValue, upgradesAllowed, gameConfig)) {
                                     results.add(gameConfig);
@@ -104,9 +127,29 @@ public class ConfigGeneratorService {
                 }
             }
         }
-        String message = String.format("%d possible configurations for %s, filtered only %d", gameConfigs, player.getName(), results.size());
+        String message = String.format("%d possible configurations, filtered only %d", gameConfigs, results.size());
         LOGGER.info(message);
+        return results;
+    }
+
+    private Stream<GameConfig> generateGameConfigsForPlayer(Player player, List<GameConfig> configs, Attributes minimumAttributes, int minTotalValue, int upgradesAllowed) {
+        List<GameConfig> results = new ArrayList<>();
+        configs.forEach(config ->
+                validateForPlayer(player, minimumAttributes, minTotalValue, upgradesAllowed, results, config)
+        );
+        if (!results.isEmpty()) {
+            String message = String.format("%d configurations found for %s", results.size(), player.getName());
+            LOGGER.info(message);
+        }
         return results.stream();
+    }
+
+    private void validateForPlayer(Player player, Attributes minimumAttributes, int minTotalValue, int upgradesAllowed, List<GameConfig> results, GameConfig config) {
+        config.updatePlayer(player);
+        GameConfig newConfig = config.cloneConfig();
+        if (isSuitableConfig(minimumAttributes, minTotalValue, upgradesAllowed, newConfig)) {
+            results.add(newConfig);
+        }
     }
 
     private long numberOfUpgrades(Map<GearItem, Boolean> itemUpgrades, GearItem racket, GearItem grip, GearItem shoes, GearItem wristband, GearItem nutrition, GearItem workout) {
@@ -127,7 +170,7 @@ public class ConfigGeneratorService {
                 .orElse(false);
     }
 
-    private boolean isSuitableConfig(Attributes minimumAttributes, int minTotalValue, int upgradesAllowed, GameConfig gameConfig) {
+    boolean isSuitableConfig(Attributes minimumAttributes, int minTotalValue, int upgradesAllowed, GameConfig gameConfig) {
         return gameConfig.getValue() >= minTotalValue
                 && matchingAttributes(gameConfig, minimumAttributes)
                 && upgradeAllowed(gameConfig, upgradesAllowed);

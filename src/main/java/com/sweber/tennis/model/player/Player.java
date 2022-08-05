@@ -14,6 +14,10 @@ public class Player {
         this.config = config;
     }
 
+    public static Player dummy(Config config) {
+        return new Player("DUMMY", config);
+    }
+
     public String getName() {
         return name;
     }

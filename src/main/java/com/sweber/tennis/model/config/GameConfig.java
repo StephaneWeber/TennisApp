@@ -15,6 +15,7 @@ public class GameConfig {
     protected GearItem workout;
     protected Config config;
     protected int value;
+    protected boolean upgradesAllowed;
 
     public GameConfig(Player player, GearItem racket, GearItem grip, GearItem shoes, GearItem wristband, GearItem nutrition, GearItem workout, boolean upgradesAllowed) {
         this.player = player;
@@ -24,7 +25,18 @@ public class GameConfig {
         this.wristband = wristband;
         this.nutrition = nutrition;
         this.workout = workout;
-        computeConfig(upgradesAllowed);
+        this.upgradesAllowed = upgradesAllowed;
+        computeConfig();
+    }
+
+
+    public GameConfig cloneConfig() {
+        return new GameConfig(player, racket, grip, shoes, wristband, nutrition, workout, upgradesAllowed);
+    }
+
+    public void updatePlayer(Player player) {
+        this.player = player;
+        computeConfig();
     }
 
     public Player getPlayer() {
@@ -99,18 +111,18 @@ public class GameConfig {
         return config.getLevel();
     }
 
-    private void computeConfig(boolean upgradesAllowed) {
+    private void computeConfig() {
         int agility = player.getAttributes().getAgility() + racket.getAttributes().getAgility() + grip.getAttributes().getAgility() + shoes.getAttributes().getAgility() + wristband.getAttributes().getAgility() + nutrition.getAttributes().getAgility() + workout.getAttributes().getAgility();
         int endurance = player.getAttributes().getEndurance() + racket.getAttributes().getEndurance() + grip.getAttributes().getEndurance() + shoes.getAttributes().getEndurance() + wristband.getAttributes().getEndurance() + nutrition.getAttributes().getEndurance() + workout.getAttributes().getEndurance();
         int service = player.getAttributes().getService() + racket.getAttributes().getService() + grip.getAttributes().getService() + shoes.getAttributes().getService() + wristband.getAttributes().getService() + nutrition.getAttributes().getService() + workout.getAttributes().getService();
         int volley = player.getAttributes().getVolley() + racket.getAttributes().getVolley() + grip.getAttributes().getVolley() + shoes.getAttributes().getVolley() + wristband.getAttributes().getVolley() + nutrition.getAttributes().getVolley() + workout.getAttributes().getVolley();
         int forehand = player.getAttributes().getForehand() + racket.getAttributes().getForehand() + grip.getAttributes().getForehand() + shoes.getAttributes().getForehand() + wristband.getAttributes().getForehand() + nutrition.getAttributes().getForehand() + workout.getAttributes().getForehand();
         int backhand = player.getAttributes().getBackhand() + racket.getAttributes().getBackhand() + grip.getAttributes().getBackhand() + shoes.getAttributes().getBackhand() + wristband.getAttributes().getBackhand() + nutrition.getAttributes().getBackhand() + workout.getAttributes().getBackhand();
-        config = new Config(new Attributes(agility, endurance, service, volley, forehand, backhand), computeCost(upgradesAllowed), computeMaxLevel());
+        config = new Config(new Attributes(agility, endurance, service, volley, forehand, backhand), computeCost(), computeMaxLevel());
         value = agility + endurance + service + volley + forehand + backhand;
     }
 
-    private int computeCost(boolean upgradesAllowed) {
+    private int computeCost() {
         if (!upgradesAllowed) {
             return 0;
         }
@@ -134,8 +146,10 @@ public class GameConfig {
                 ", wristband=" + wristband.getName() +
                 ", nutrition=" + nutrition.getName() +
                 ", workout=" + workout.getName() +
+                ", upgradesAllowed=" + upgradesAllowed +
                 ", config=" + config +
                 ", value=" + value +
                 '}';
     }
+
 }

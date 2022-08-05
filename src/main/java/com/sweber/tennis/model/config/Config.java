@@ -11,6 +11,10 @@ public class Config {
         this.level = level;
     }
 
+    public static Config dummy(int minAgility, int minEndurance, int minServe, int minVolley, int minForehand, int minBackhand) {
+        return new Config(new Attributes(minAgility, minEndurance, minServe, minVolley, minForehand, minBackhand), 0, 0);
+    }
+
     public Attributes getAttributes() {
         return attributes;
     }
