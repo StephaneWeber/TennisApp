@@ -3,6 +3,7 @@ package com.sweber.tennis.service;
 import com.sweber.tennis.model.config.Attributes;
 import com.sweber.tennis.model.config.Config;
 import com.sweber.tennis.model.config.GameConfig;
+import com.sweber.tennis.model.config.GearConfig;
 import com.sweber.tennis.model.gear.GearItem;
 import com.sweber.tennis.model.gear.GearType;
 import com.sweber.tennis.model.player.Player;
@@ -116,7 +117,9 @@ public class ConfigGeneratorService {
                                 if (numberOfUpgrades(itemUpgrades, racket, grip, shoes, wristband, nutrition, workout) > upgradesAllowed) {
                                     continue;
                                 }
-                                GameConfig gameConfig = new GameConfig(maxPlayer, racket, grip, shoes, wristband, nutrition, workout, upgradesAllowed > 0);
+
+                                GearConfig gearConfig = GearConfig.of(racket, grip, shoes, wristband, nutrition, workout);
+                                GameConfig gameConfig = new GameConfig(maxPlayer, gearConfig, upgradesAllowed > 0);
                                 gameConfigs++;
                                 if (isSuitableConfig(minimumAttributes, minTotalValue, upgradesAllowed, gameConfig)) {
                                     results.add(gameConfig);
@@ -154,7 +157,7 @@ public class ConfigGeneratorService {
 
     private long numberOfUpgrades(Map<GearItem, Boolean> itemUpgrades, GearItem racket, GearItem grip, GearItem shoes, GearItem wristband, GearItem nutrition, GearItem workout) {
         boolean racketUpgrade = isGearItemUpgrade(itemUpgrades, racket);
-        boolean gripUpgrade = isGearItemUpgrade(itemUpgrades, grip);
+        boolean gripUpgrade = isGearItemUpgrade(itemUpgrades,grip);
         boolean shoesUpgrade = isGearItemUpgrade(itemUpgrades, shoes);
         boolean wristbandUpgrade = isGearItemUpgrade(itemUpgrades, wristband);
         boolean nutritionUpgrade = isGearItemUpgrade(itemUpgrades, nutrition);

@@ -6,6 +6,7 @@ IN DEV
 
 TODO
 * Refresh players list when updating maxLevel restriction
+* Take into account players as possible items to upgrade
 
 Resources:
 * https://tennis-clash.fandom.com/wiki/Tennis_Clash_Wiki
