@@ -84,7 +84,12 @@ public class GearConfig {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         GearConfig that = (GearConfig) o;
-        return Objects.equals(racket.getName(), that.racket.getName()) && Objects.equals(grip.getName(), that.grip.getName()) && Objects.equals(shoes.getName(), that.shoes.getName()) && Objects.equals(wristband.getName(), that.wristband.getName()) && Objects.equals(nutrition.getName(), that.nutrition.getName()) && Objects.equals(workout.getName(), that.workout.getName());
+        return Objects.equals(racket.getName(), that.racket.getName())
+                && Objects.equals(grip.getName(), that.grip.getName())
+                && Objects.equals(shoes.getName(), that.shoes.getName())
+                && Objects.equals(wristband.getName(), that.wristband.getName())
+                && Objects.equals(nutrition.getName(), that.nutrition.getName())
+                && Objects.equals(workout.getName(), that.workout.getName());
     }
 
     @Override
