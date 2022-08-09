@@ -2,6 +2,8 @@ package com.sweber.tennis.model.config;
 
 import com.sweber.tennis.model.gear.GearItem;
 
+import java.util.Objects;
+
 public class GearConfig {
     protected GearItem racket;
     protected GearItem grip;
@@ -75,5 +77,18 @@ public class GearConfig {
 
     public int getCost() {
         return racket.getCost() + grip.getCost() + shoes.getCost() + wristband.getCost() + nutrition.getCost() + workout.getCost();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GearConfig that = (GearConfig) o;
+        return Objects.equals(racket.getName(), that.racket.getName()) && Objects.equals(grip.getName(), that.grip.getName()) && Objects.equals(shoes.getName(), that.shoes.getName()) && Objects.equals(wristband.getName(), that.wristband.getName()) && Objects.equals(nutrition.getName(), that.nutrition.getName()) && Objects.equals(workout.getName(), that.workout.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(racket, grip, shoes, wristband, nutrition, workout);
     }
 }
