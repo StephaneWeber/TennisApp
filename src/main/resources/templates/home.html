@@ -20,7 +20,7 @@
                 <h2>Filters:</h2>
                 <br>
                 <form id="resetFiltersForm" th:action="@{/}" th:object="${configFilter}" th:method="get"></form>
-                <form id="filtersForm" th:action="@{/configValues}" th:object="${configFilter}" th:method="post">
+                <form id="filtersForm" th:action="@{/config}" th:object="${configFilter}" th:method="post">
                     <div class="row">
                         <div class="col-lg-5">
                             <table class="table-borderless">
@@ -219,14 +219,14 @@
             <ul class="pagination justify-content-center font-weight-medium">
                 <li class="page-item" th:classappend="${page.number eq 0} ? 'disabled'">
                     <a class="page-link svg-icon"
-                       th:href="@{/configValues?page={id}(id=${page.number lt 2 ? 1 : page.number})}"
+                       th:href="@{/config?page={id}(id=${page.number lt 2 ? 1 : page.number})}"
                        aria-label="Previous"
                        title="Previous Page" rel="tooltip">Previous
                     </a>
                 </li>
                 <li class="page-item" th:classappend="${i eq page.number + 1} ? 'active'"
                     th:each="i : ${#numbers.sequence( page.number + 1, page.totalPages > 10 + page.number ? page.number + 10 : page.totalPages, 1)}">
-                    <a class="page-link" th:href="@{/configValues?page={id}(id=${i})}" th:text="${i}"
+                    <a class="page-link" th:href="@{/config?page={id}(id=${i})}" th:text="${i}"
                        th:title="${'Page '+ i}"
                        rel="tooltip"></a>
                 </li>
@@ -234,7 +234,7 @@
                     <a class="page-link svg-icon" href="#">...</a>
                 </li>
                 <li class="page-item" th:classappend="${page.number + 1 eq page.totalPages} ? 'disabled'">
-                    <a class="page-link svg-icon" th:href="@{/configValues?page={id}(id=${page.number + 2})}"
+                    <a class="page-link svg-icon" th:href="@{/config?page={id}(id=${page.number + 2})}"
                        aria-label="Next"
                        title="Next Page" rel="tooltip">Next
                     </a>
