@@ -10,7 +10,7 @@ public class GameConfig {
     protected GearConfig gearConfig;
 
     protected ConfigValues configValues;
-    protected int value;
+    protected int totalValue;
     protected boolean upgradesAllowed;
 
     public GameConfig(Player player, GearConfig gearConfig, boolean upgradesAllowed) {
@@ -95,8 +95,8 @@ public class GameConfig {
         return configValues.getAttributes();
     }
 
-    public int getValue() {
-        return value;
+    public int getTotalValue() {
+        return totalValue;
     }
 
     public int getCost() {
@@ -115,7 +115,7 @@ public class GameConfig {
         int forehand = player.getAttributes().getForehand() + gearConfig.racket.getAttributes().getForehand() + gearConfig.grip.getAttributes().getForehand() + gearConfig.shoes.getAttributes().getForehand() + gearConfig.wristband.getAttributes().getForehand() + gearConfig.nutrition.getAttributes().getForehand() + gearConfig.workout.getAttributes().getForehand();
         int backhand = player.getAttributes().getBackhand() + gearConfig.racket.getAttributes().getBackhand() + gearConfig.grip.getAttributes().getBackhand() + gearConfig.shoes.getAttributes().getBackhand() + gearConfig.wristband.getAttributes().getBackhand() + gearConfig.nutrition.getAttributes().getBackhand() + gearConfig.workout.getAttributes().getBackhand();
         configValues = new ConfigValues(new Attributes(agility, endurance, service, volley, forehand, backhand), computeCost(), computeMaxLevel());
-        value = agility + endurance + service + volley + forehand + backhand;
+        totalValue = agility + endurance + service + volley + forehand + backhand;
     }
 
     private int computeCost() {
@@ -144,7 +144,7 @@ public class GameConfig {
                 ", workout=" + gearConfig.workout.getName() +
                 ", upgradesAllowed=" + upgradesAllowed +
                 ", config=" + configValues +
-                ", value=" + value +
+                ", value=" + totalValue +
                 '}';
     }
 }

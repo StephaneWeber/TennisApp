@@ -1,12 +1,13 @@
 package com.sweber.tennis.web.model;
 
 import com.sweber.tennis.model.config.Attributes;
+import org.springframework.lang.NonNull;
 
 public class ConfigFilter {
     private String selectedPlayer = null;
     private int minTotal = 100;
     private int upgradeAllowed = 0;
-    private Attributes minAttributes;
+    private @NonNull Attributes minAttributes;
     private int maxLevel;
 
     public String getSelectedPlayer() {

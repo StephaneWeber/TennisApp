@@ -82,6 +82,7 @@ public class Attributes implements Comparable {
 
     @Override
     public int compareTo(Object o) {
+        if (o == null) return 1;
         Attributes target = (Attributes) o;
         return agility >= target.getAgility()
                 && endurance >= target.getEndurance()

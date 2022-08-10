@@ -208,7 +208,7 @@
                         th:classappend="${gameConfig.attributes.forehand >= maxAttributes.forehand ? 'maxAttribute' : ''}"></td>
                     <td th:text="${gameConfig.attributes.backhand}"
                         th:classappend="${gameConfig.attributes.backhand >= maxAttributes.backhand ? 'maxAttribute' : ''}"></td>
-                    <td th:text="${gameConfig.value}" style="font-weight:bold"></td>
+                    <td th:text="${gameConfig.totalValue}" style="font-weight:bold"></td>
                     <td th:text="${gameConfig.cost}"><b>Total</b></td>
                 </tr>
                 </tbody>
