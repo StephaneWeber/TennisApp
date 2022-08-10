@@ -5,6 +5,8 @@ import com.sweber.tennis.model.config.Config;
 import com.sweber.tennis.service.BeanUtil;
 import com.sweber.tennis.service.GearItemService;
 
+import java.util.Objects;
+
 public class GearItem {
     private final String name;
     private final Config config;
@@ -34,5 +36,18 @@ public class GearItem {
 
     public GearType getGearType() {
         return gearType;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GearItem gearItem = (GearItem) o;
+        return Objects.equals(name, gearItem.name) && gearType == gearItem.gearType;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, gearType);
     }
 }
