@@ -209,14 +209,11 @@ public class ConfigGeneratorService {
     }
 
     private boolean matchingAttributes(GameConfig gameConfig, Attributes minimumAttributes) {
-        if (minimumAttributes == null) return true;
-        Attributes gameConfigAttributes = gameConfig.getAttributes();
-        return gameConfigAttributes.getAgility() >= minimumAttributes.getAgility()
-                && gameConfigAttributes.getEndurance() >= minimumAttributes.getEndurance()
-                && gameConfigAttributes.getService() >= minimumAttributes.getService()
-                && gameConfigAttributes.getVolley() >= minimumAttributes.getVolley()
-                && gameConfigAttributes.getForehand() >= minimumAttributes.getForehand()
-                && gameConfigAttributes.getBackhand() >= minimumAttributes.getBackhand();
+        if (minimumAttributes != null) {
+            Attributes gameConfigAttributes = gameConfig.getAttributes();
+            return gameConfigAttributes.compareTo(minimumAttributes) > 0;
+        }
+        return true;
     }
 
     private boolean upgradeAllowed(GameConfig gameConfig, int maxUpgradesAllowed) {

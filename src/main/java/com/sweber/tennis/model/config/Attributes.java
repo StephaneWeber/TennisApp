@@ -1,6 +1,6 @@
 package com.sweber.tennis.model.config;
 
-public class Attributes {
+public class Attributes implements Comparable {
     protected int agility;
     protected int endurance;
     protected int service;
@@ -78,5 +78,16 @@ public class Attributes {
                 ", forehand=" + forehand +
                 ", backhand=" + backhand +
                 '}';
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        Attributes target = (Attributes) o;
+        return agility >= target.getAgility()
+                && endurance >= target.getEndurance()
+                && service >= target.getService()
+                && volley >= target.getVolley()
+                && forehand >= target.getForehand()
+                && backhand >= target.getBackhand() ? 1 : 0;
     }
 }
