@@ -59,7 +59,7 @@ public class ConfigGeneratorService {
         generatePotentialGearItems();
         this.maxPlayer = createMaxPlayer();
         this.numberOfExaminedGameConfigs = 0;
-        this.candidateGameConfigs = generateReducedGameConfigs();
+        generateReducedGameConfigs();
         return generateGameConfigsForPlayers();
     }
 
@@ -109,101 +109,99 @@ public class ConfigGeneratorService {
                 .collect(Collectors.toList());
     }
 
-    private List<GameConfig> generateReducedGameConfigs() {
-        List<GameConfig> results = new ArrayList<>();
+    private void generateReducedGameConfigs() {
+        candidateGameConfigs = new ArrayList<>();
         Map<GearItem, Boolean> itemUpgrades = new HashMap<>();
         GearConfig gearConfig = new GearConfig();
         for (GearItem racket : potentialRackets) {
-            handleRacket(results, itemUpgrades, gearConfig, racket);
+            handleRacket(itemUpgrades, gearConfig, racket);
         }
-        String message = String.format("%d possible configurations, filtered only %d", numberOfExaminedGameConfigs, results.size());
+        String message = String.format("%d possible configurations, filtered only %d", numberOfExaminedGameConfigs, candidateGameConfigs.size());
         LOGGER.info(message);
-        return results;
     }
 
-    private void handleRacket(List<GameConfig> results, Map<GearItem, Boolean> itemUpgrades, GearConfig gearConfig, GearItem racket) {
+    private void handleRacket(Map<GearItem, Boolean> itemUpgrades, GearConfig gearConfig, GearItem racket) {
         gearConfig.setRacket(racket);
         if (maxUpgradesNotReached(itemUpgrades, gearConfig)) {
             for (GearItem grip : potentialGrips) {
-                handleGrip(results, itemUpgrades, gearConfig, grip);
+                handleGrip(itemUpgrades, gearConfig, grip);
             }
             gearConfig.setGrip(null);
         }
     }
 
-    private void handleGrip(List<GameConfig> results, Map<GearItem, Boolean> itemUpgrades, GearConfig gearConfig, GearItem grip) {
+    private void handleGrip(Map<GearItem, Boolean> itemUpgrades, GearConfig gearConfig, GearItem grip) {
         gearConfig.setGrip(grip);
         if (maxUpgradesNotReached(itemUpgrades, gearConfig)) {
             for (GearItem shoes : potentialShoes) {
-                handleShoes(results, itemUpgrades, gearConfig, shoes);
+                handleShoes(itemUpgrades, gearConfig, shoes);
             }
             gearConfig.setShoes(null);
         }
     }
 
-    private void handleShoes(List<GameConfig> results, Map<GearItem, Boolean> itemUpgrades, GearConfig gearConfig, GearItem shoes) {
+    private void handleShoes(Map<GearItem, Boolean> itemUpgrades, GearConfig gearConfig, GearItem shoes) {
         gearConfig.setShoes(shoes);
         if (maxUpgradesNotReached(itemUpgrades, gearConfig)) {
             for (GearItem wristband : potentialWristbands) {
-                handleWristband(results, itemUpgrades, gearConfig, wristband);
+                handleWristband(itemUpgrades, gearConfig, wristband);
             }
             gearConfig.setWristband(null);
         }
     }
 
-    private void handleWristband(List<GameConfig> results, Map<GearItem, Boolean> itemUpgrades, GearConfig gearConfig, GearItem wristband) {
+    private void handleWristband(Map<GearItem, Boolean> itemUpgrades, GearConfig gearConfig, GearItem wristband) {
         gearConfig.setWristband(wristband);
         if (maxUpgradesNotReached(itemUpgrades, gearConfig)) {
             for (GearItem nutrition : potentialNutritions) {
-                handleNutrition(results, itemUpgrades, gearConfig, nutrition);
+                handleNutrition(itemUpgrades, gearConfig, nutrition);
             }
             gearConfig.setNutrition(null);
         }
     }
 
-    private void handleNutrition(List<GameConfig> results, Map<GearItem, Boolean> itemUpgrades, GearConfig gearConfig, GearItem nutrition) {
+    private void handleNutrition(Map<GearItem, Boolean> itemUpgrades, GearConfig gearConfig, GearItem nutrition) {
         gearConfig.setNutrition(nutrition);
         if (maxUpgradesNotReached(itemUpgrades, gearConfig)) {
             for (GearItem workout : potentialWorkouts) {
-                handleWorkout(results, itemUpgrades, gearConfig, workout);
+                handleWorkout(itemUpgrades, gearConfig, workout);
             }
             gearConfig.setWorkout(null);
         }
     }
 
-    private void handleWorkout(List<GameConfig> results, Map<GearItem, Boolean> itemUpgrades, GearConfig gearConfig, GearItem workout) {
+    private void handleWorkout(Map<GearItem, Boolean> itemUpgrades, GearConfig gearConfig, GearItem workout) {
         gearConfig.setWorkout(workout);
         if (maxUpgradesNotReached(itemUpgrades, gearConfig)) {
-            checkGameConfig(maxPlayer, results, gearConfig);
+            checkGameConfig(maxPlayer, gearConfig);
         }
     }
 
-    private void checkGameConfig(Player maxPlayer, List<GameConfig> results, GearConfig gearConfig) {
+    private void checkGameConfig(Player maxPlayer, GearConfig gearConfig) {
         GameConfig gameConfig = new GameConfig(maxPlayer, gearConfig, configFilter.getUpgradeAllowed() > 0);
         numberOfExaminedGameConfigs++;
         if (isSuitableConfig(gameConfig)) {
             gameConfig.updateGearConfig(gearConfig.cloneConfig());
-            results.add(gameConfig);
+            candidateGameConfigs.add(gameConfig);
         }
     }
 
     private Stream<GameConfig> generateGameConfigsForPlayer(Player player, List<GameConfig> configs) {
-        List<GameConfig> results = new ArrayList<>();
+        List<GameConfig> playerResults = new ArrayList<>();
         configs.forEach(config ->
-                validateForPlayer(player, results, config)
+                validateForPlayer(player, playerResults, config)
         );
-        if (!results.isEmpty()) {
-            String message = String.format("%d configurations found for %s", results.size(), player.getName());
+        if (!playerResults.isEmpty()) {
+            String message = String.format("%d configurations found for %s", playerResults.size(), player.getName());
             LOGGER.info(message);
         }
-        return results.stream();
+        return playerResults.stream();
     }
 
     private void validateForPlayer(Player player, List<GameConfig> results, GameConfig config) {
         config.updatePlayer(player);
-        GameConfig newConfig = config.cloneConfig();
-        if (isSuitableConfig(newConfig)) {
-            results.add(newConfig);
+        if (isSuitableConfig(config)) {
+            results.add(config.cloneConfig());
         }
     }
 
