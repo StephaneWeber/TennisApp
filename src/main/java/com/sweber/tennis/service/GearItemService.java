@@ -1,7 +1,7 @@
 package com.sweber.tennis.service;
 
 import com.sweber.tennis.model.config.Attributes;
-import com.sweber.tennis.model.config.Config;
+import com.sweber.tennis.model.config.ConfigValues;
 import com.sweber.tennis.model.gear.GearItem;
 import com.sweber.tennis.model.gear.GearType;
 import org.slf4j.Logger;
@@ -94,8 +94,8 @@ public class GearItemService {
         }
         int cost = Integer.parseInt(inputData[8].trim());
         int level = Integer.parseInt(inputData[9].trim());
-        Config gearItemConfig = new Config(gearItemAttributes, cost, level);
-        return new GearItem(gearItemName, gearItemType, gearItemConfig);
+        ConfigValues gearItemConfigValues = new ConfigValues(gearItemAttributes, cost, level);
+        return new GearItem(gearItemName, gearItemType, gearItemConfigValues);
     }
 
     public List<GearItem> leveledGearItems(int maxLevel, int upgradesAllowed) {

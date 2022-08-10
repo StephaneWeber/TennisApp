@@ -1,21 +1,21 @@
 package com.sweber.tennis.model.player;
 
 import com.sweber.tennis.model.config.Attributes;
-import com.sweber.tennis.model.config.Config;
+import com.sweber.tennis.model.config.ConfigValues;
 import com.sweber.tennis.service.BeanUtil;
 import com.sweber.tennis.service.PlayerService;
 
 public class Player {
     private final String name;
-    private final Config config;
+    private final ConfigValues configValues;
 
-    public Player(String name, Config config) {
+    public Player(String name, ConfigValues configValues) {
         this.name = name;
-        this.config = config;
+        this.configValues = configValues;
     }
 
-    public static Player dummy(Config config) {
-        return new Player("DUMMY", config);
+    public static Player dummy(ConfigValues configValues) {
+        return new Player("DUMMY", configValues);
     }
 
     public String getName() {
@@ -23,22 +23,22 @@ public class Player {
     }
 
     public Attributes getAttributes() {
-        return config.getAttributes();
+        return configValues.getAttributes();
     }
 
     public int getCost() {
-        return BeanUtil.getBean(PlayerService.class).ownedLevel(this) - getLevel() >= 0 ? 0 : config.getCost();
+        return BeanUtil.getBean(PlayerService.class).ownedLevel(this) - getLevel() >= 0 ? 0 : configValues.getCost();
     }
 
     public int getLevel() {
-        return config.getLevel();
+        return configValues.getLevel();
     }
 
     @Override
     public String toString() {
         return "Player{" +
                 "name=" + name +
-                ",config=" + config +
+                ",config=" + configValues +
                 '}';
     }
 }

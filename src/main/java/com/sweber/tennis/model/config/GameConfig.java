@@ -9,7 +9,7 @@ public class GameConfig {
     protected Player player;
     protected GearConfig gearConfig;
 
-    protected Config config;
+    protected ConfigValues configValues;
     protected int value;
     protected boolean upgradesAllowed;
 
@@ -25,8 +25,13 @@ public class GameConfig {
         return new GameConfig(player, gearConfig.cloneConfig(), upgradesAllowed);
     }
 
-    public void updatePlayer(Player player) {
-        this.player = player;
+    public void updatePlayer(Player newPlayer) {
+        this.player = newPlayer;
+        computeConfig();
+    }
+
+    public void updateGearConfig(GearConfig newGearConfig) {
+        this.gearConfig = newGearConfig;
         computeConfig();
     }
 
@@ -87,7 +92,7 @@ public class GameConfig {
     }
 
     public Attributes getAttributes() {
-        return config.getAttributes();
+        return configValues.getAttributes();
     }
 
     public int getValue() {
@@ -95,11 +100,11 @@ public class GameConfig {
     }
 
     public int getCost() {
-        return config.getCost();
+        return configValues.getCost();
     }
 
     public int getLevel() {
-        return config.getLevel();
+        return configValues.getLevel();
     }
 
     private void computeConfig() {
@@ -109,7 +114,7 @@ public class GameConfig {
         int volley = player.getAttributes().getVolley() + gearConfig.racket.getAttributes().getVolley() + gearConfig.grip.getAttributes().getVolley() + gearConfig.shoes.getAttributes().getVolley() + gearConfig.wristband.getAttributes().getVolley() + gearConfig.nutrition.getAttributes().getVolley() + gearConfig.workout.getAttributes().getVolley();
         int forehand = player.getAttributes().getForehand() + gearConfig.racket.getAttributes().getForehand() + gearConfig.grip.getAttributes().getForehand() + gearConfig.shoes.getAttributes().getForehand() + gearConfig.wristband.getAttributes().getForehand() + gearConfig.nutrition.getAttributes().getForehand() + gearConfig.workout.getAttributes().getForehand();
         int backhand = player.getAttributes().getBackhand() + gearConfig.racket.getAttributes().getBackhand() + gearConfig.grip.getAttributes().getBackhand() + gearConfig.shoes.getAttributes().getBackhand() + gearConfig.wristband.getAttributes().getBackhand() + gearConfig.nutrition.getAttributes().getBackhand() + gearConfig.workout.getAttributes().getBackhand();
-        config = new Config(new Attributes(agility, endurance, service, volley, forehand, backhand), computeCost(), computeMaxLevel());
+        configValues = new ConfigValues(new Attributes(agility, endurance, service, volley, forehand, backhand), computeCost(), computeMaxLevel());
         value = agility + endurance + service + volley + forehand + backhand;
     }
 
@@ -138,9 +143,8 @@ public class GameConfig {
                 ", nutrition=" + gearConfig.nutrition.getName() +
                 ", workout=" + gearConfig.workout.getName() +
                 ", upgradesAllowed=" + upgradesAllowed +
-                ", config=" + config +
+                ", config=" + configValues +
                 ", value=" + value +
                 '}';
     }
-
 }

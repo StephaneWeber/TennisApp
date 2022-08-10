@@ -1,7 +1,7 @@
 package com.sweber.tennis.model.gear;
 
 import com.sweber.tennis.model.config.Attributes;
-import com.sweber.tennis.model.config.Config;
+import com.sweber.tennis.model.config.ConfigValues;
 import com.sweber.tennis.service.BeanUtil;
 import com.sweber.tennis.service.GearItemService;
 
@@ -9,13 +9,13 @@ import java.util.Objects;
 
 public class GearItem {
     private final String name;
-    private final Config config;
+    private final ConfigValues configValues;
     private final GearType gearType;
 
-    public GearItem(String name, GearType gearType, Config config) {
+    public GearItem(String name, GearType gearType, ConfigValues configValues) {
         this.name = name;
         this.gearType = gearType;
-        this.config = config;
+        this.configValues = configValues;
     }
 
     public String getName() {
@@ -23,15 +23,15 @@ public class GearItem {
     }
 
     public Attributes getAttributes() {
-        return config.getAttributes();
+        return configValues.getAttributes();
     }
 
     public int getCost() {
-        return BeanUtil.getBean(GearItemService.class).ownedLevel(this) - getLevel() >= 0 ? 0 : config.getCost();
+        return BeanUtil.getBean(GearItemService.class).ownedLevel(this) - getLevel() >= 0 ? 0 : configValues.getCost();
     }
 
     public int getLevel() {
-        return config.getLevel();
+        return configValues.getLevel();
     }
 
     public GearType getGearType() {

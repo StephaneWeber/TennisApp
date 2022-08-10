@@ -1,7 +1,7 @@
 package com.sweber.tennis.service;
 
 import com.sweber.tennis.model.config.Attributes;
-import com.sweber.tennis.model.config.Config;
+import com.sweber.tennis.model.config.ConfigValues;
 import com.sweber.tennis.model.player.Player;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,8 +84,8 @@ public class PlayerService {
         }
         int cost = Integer.parseInt(inputData[7].trim());
         int level = Integer.parseInt(inputData[8].trim());
-        Config config = new Config(attributes, cost, level);
-        return new Player(playerName, config);
+        ConfigValues configValues = new ConfigValues(attributes, cost, level);
+        return new Player(playerName, configValues);
     }
 
     public Player getPlayer(String playerName) {
