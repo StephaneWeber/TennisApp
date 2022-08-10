@@ -36,6 +36,13 @@ public class ConfigGeneratorService {
     private final GearItemService gearItemService;
     private final PlayerService playerService;
 
+    private List<GearItem> potentialRackets;
+    private List<GearItem> potentialGrips;
+    private List<GearItem> potentialShoes;
+    private List<GearItem> potentialWristbands;
+    private List<GearItem> potentialNutritions;
+    private List<GearItem> potentialWorkouts;
+
     public ConfigGeneratorService(GearItemService gearItemService, PlayerService playerService) {
         this.gearItemService = gearItemService;
         this.playerService = playerService;
@@ -45,12 +52,19 @@ public class ConfigGeneratorService {
         String playerName = configFilter.getSelectedPlayer();
         Attributes minAttributes = configFilter.getMinAttributes();
         int minTotal = configFilter.getMinTotal();
-        int upgradeAllowed = configFilter.getUpgradeAllowed();
+        int upgradesAllowed = configFilter.getUpgradeAllowed();
         int maxLevel = configFilter.getMaxLevel();
         List<Player> players = Optional.ofNullable(playerService.getPlayer(playerName))
                 .map(Collections::singletonList)
                 .orElse(playerService.leveledPlayers(maxLevel));
-        return generateGameConfigs(players, minAttributes, minTotal, maxLevel, upgradeAllowed);
+        List<GearItem> leveledGearItems = gearItemService.leveledGearItems(maxLevel, upgradesAllowed);
+        potentialRackets = potentialGearItems(leveledGearItems, RACKET);
+        potentialGrips = potentialGearItems(leveledGearItems, GRIP);
+        potentialShoes = potentialGearItems(leveledGearItems, SHOES);
+        potentialWristbands = potentialGearItems(leveledGearItems, WRISTBAND);
+        potentialNutritions = potentialGearItems(leveledGearItems, NUTRITION);
+        potentialWorkouts = potentialGearItems(leveledGearItems, WORKOUT);
+        return generateGameConfigs(players, minAttributes, minTotal, upgradesAllowed);
     }
 
     private Player createMaxPlayer(List<Player> players) {
@@ -71,9 +85,9 @@ public class ConfigGeneratorService {
                 .orElse(0);
     }
 
-    private List<GameConfig> generateGameConfigs(List<Player> players, Attributes minimumAttributes, int minTotalValue, int maxLevel, int upgradesAllowed) {
+    private List<GameConfig> generateGameConfigs(List<Player> players, Attributes minimumAttributes, int minTotalValue, int upgradesAllowed) {
         Player maxPlayer = createMaxPlayer(players);
-        List<GameConfig> configs = generateReducedGameConfigs(maxPlayer, minimumAttributes, minTotalValue, maxLevel, upgradesAllowed);
+        List<GameConfig> configs = generateReducedGameConfigs(maxPlayer, minimumAttributes, minTotalValue, upgradesAllowed);
         return players
                 .stream()
                 .flatMap(player -> generateGameConfigsForPlayer(player, configs, minimumAttributes, minTotalValue, upgradesAllowed))
@@ -81,52 +95,73 @@ public class ConfigGeneratorService {
                 .collect(Collectors.toList());
     }
 
-    private List<GameConfig> generateReducedGameConfigs(Player maxPlayer, Attributes minimumAttributes, int minTotalValue, int maxLevel, int upgradesAllowed) {
+    private List<GameConfig> generateReducedGameConfigs(Player maxPlayer, Attributes minimumAttributes, int minTotalValue, int upgradesAllowed) {
         int gameConfigs = 0;
         List<GameConfig> results = new ArrayList<>();
-
-        List<GearItem> leveledGearItems = gearItemService.leveledGearItems(maxLevel, upgradesAllowed);
-        List<GearItem> potentialRackets = potentialGearItems(leveledGearItems, RACKET);
-        List<GearItem> potentialGrips = potentialGearItems(leveledGearItems, GRIP);
-        List<GearItem> potentialShoes = potentialGearItems(leveledGearItems, SHOES);
-        List<GearItem> potentialWristbands = potentialGearItems(leveledGearItems, WRISTBAND);
-        List<GearItem> potentialNutritions = potentialGearItems(leveledGearItems, NUTRITION);
-        List<GearItem> potentialWorkouts = potentialGearItems(leveledGearItems, WORKOUT);
-
         Map<GearItem, Boolean> itemUpgrades = new HashMap<>();
         for (GearItem racket : potentialRackets) {
-            if (maxUpgradesNotReached(itemUpgrades, racket, null, null, null, null, null, upgradesAllowed)) {
-                for (GearItem grip : potentialGrips) {
-                    if (maxUpgradesNotReached(itemUpgrades, racket, grip, null, null, null, null, upgradesAllowed)) {
-                        for (GearItem shoes : potentialShoes) {
-                            if (maxUpgradesNotReached(itemUpgrades, racket, grip, shoes, null, null, null, upgradesAllowed)) {
-                                for (GearItem wristband : potentialWristbands) {
-                                    if (maxUpgradesNotReached(itemUpgrades, racket, grip, shoes, wristband, null, null, upgradesAllowed)) {
-                                        for (GearItem nutrition : potentialNutritions) {
-                                            if (maxUpgradesNotReached(itemUpgrades, racket, grip, shoes, wristband, nutrition, null, upgradesAllowed)) {
-                                                for (GearItem workout : potentialWorkouts) {
-                                                    if (maxUpgradesNotReached(itemUpgrades, racket, grip, shoes, wristband, nutrition, workout, upgradesAllowed)) {
-                                                        GearConfig gearConfig = GearConfig.of(racket, grip, shoes, wristband, nutrition, workout);
-                                                        GameConfig gameConfig = new GameConfig(maxPlayer, gearConfig, upgradesAllowed > 0);
-                                                        gameConfigs++;
-                                                        if (isSuitableConfig(minimumAttributes, minTotalValue, upgradesAllowed, gameConfig)) {
-                                                            results.add(gameConfig);
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            gameConfigs = handleRacket(maxPlayer, minimumAttributes, minTotalValue, upgradesAllowed, gameConfigs, results, potentialGrips, potentialShoes, potentialWristbands, potentialNutritions, potentialWorkouts, itemUpgrades, racket);
         }
         String message = String.format("%d possible configurations, filtered only %d", gameConfigs, results.size());
         LOGGER.info(message);
         return results;
+    }
+
+    private int handleRacket(Player maxPlayer, Attributes minimumAttributes, int minTotalValue, int upgradesAllowed, int gameConfigs, List<GameConfig> results, List<GearItem> potentialGrips, List<GearItem> potentialShoes, List<GearItem> potentialWristbands, List<GearItem> potentialNutritions, List<GearItem> potentialWorkouts, Map<GearItem, Boolean> itemUpgrades, GearItem racket) {
+        if (maxUpgradesNotReached(itemUpgrades, racket, null, null, null, null, null, upgradesAllowed)) {
+            for (GearItem grip : potentialGrips) {
+                gameConfigs = handleGrip(maxPlayer, minimumAttributes, minTotalValue, upgradesAllowed, gameConfigs, results, potentialShoes, potentialWristbands, potentialNutritions, potentialWorkouts, itemUpgrades, racket, grip);
+            }
+        }
+        return gameConfigs;
+    }
+
+    private int handleGrip(Player maxPlayer, Attributes minimumAttributes, int minTotalValue, int upgradesAllowed, int gameConfigs, List<GameConfig> results, List<GearItem> potentialShoes, List<GearItem> potentialWristbands, List<GearItem> potentialNutritions, List<GearItem> potentialWorkouts, Map<GearItem, Boolean> itemUpgrades, GearItem racket, GearItem grip) {
+        if (maxUpgradesNotReached(itemUpgrades, racket, grip, null, null, null, null, upgradesAllowed)) {
+            for (GearItem shoes : potentialShoes) {
+                gameConfigs = handleShoes(maxPlayer, minimumAttributes, minTotalValue, upgradesAllowed, gameConfigs, results, potentialWristbands, potentialNutritions, potentialWorkouts, itemUpgrades, racket, grip, shoes);
+            }
+        }
+        return gameConfigs;
+    }
+
+    private int handleShoes(Player maxPlayer, Attributes minimumAttributes, int minTotalValue, int upgradesAllowed, int gameConfigs, List<GameConfig> results, List<GearItem> potentialWristbands, List<GearItem> potentialNutritions, List<GearItem> potentialWorkouts, Map<GearItem, Boolean> itemUpgrades, GearItem racket, GearItem grip, GearItem shoes) {
+        if (maxUpgradesNotReached(itemUpgrades, racket, grip, shoes, null, null, null, upgradesAllowed)) {
+            for (GearItem wristband : potentialWristbands) {
+                gameConfigs = handleWristband(maxPlayer, minimumAttributes, minTotalValue, upgradesAllowed, gameConfigs, results, potentialNutritions, potentialWorkouts, itemUpgrades, racket, grip, shoes, wristband);
+            }
+        }
+        return gameConfigs;
+    }
+
+    private int handleWristband(Player maxPlayer, Attributes minimumAttributes, int minTotalValue, int upgradesAllowed, int gameConfigs, List<GameConfig> results, List<GearItem> potentialNutritions, List<GearItem> potentialWorkouts, Map<GearItem, Boolean> itemUpgrades, GearItem racket, GearItem grip, GearItem shoes, GearItem wristband) {
+        if (maxUpgradesNotReached(itemUpgrades, racket, grip, shoes, wristband, null, null, upgradesAllowed)) {
+            for (GearItem nutrition : potentialNutritions) {
+                gameConfigs = handleNutrition(maxPlayer, minimumAttributes, minTotalValue, upgradesAllowed, gameConfigs, results, potentialWorkouts, itemUpgrades, racket, grip, shoes, wristband, nutrition);
+            }
+        }
+        return gameConfigs;
+    }
+
+    private int handleNutrition(Player maxPlayer, Attributes minimumAttributes, int minTotalValue, int upgradesAllowed, int gameConfigs, List<GameConfig> results, List<GearItem> potentialWorkouts, Map<GearItem, Boolean> itemUpgrades, GearItem racket, GearItem grip, GearItem shoes, GearItem wristband, GearItem nutrition) {
+        if (maxUpgradesNotReached(itemUpgrades, racket, grip, shoes, wristband, nutrition, null, upgradesAllowed)) {
+            for (GearItem workout : potentialWorkouts) {
+                gameConfigs = handleWorkout(maxPlayer, minimumAttributes, minTotalValue, upgradesAllowed, gameConfigs, results, itemUpgrades, racket, grip, shoes, wristband, nutrition, workout);
+            }
+        }
+        return gameConfigs;
+    }
+
+    private int handleWorkout(Player maxPlayer, Attributes minimumAttributes, int minTotalValue, int upgradesAllowed, int gameConfigs, List<GameConfig> results, Map<GearItem, Boolean> itemUpgrades, GearItem racket, GearItem grip, GearItem shoes, GearItem wristband, GearItem nutrition, GearItem workout) {
+        if (maxUpgradesNotReached(itemUpgrades, racket, grip, shoes, wristband, nutrition, workout, upgradesAllowed)) {
+            GearConfig gearConfig = GearConfig.of(racket, grip, shoes, wristband, nutrition, workout);
+            GameConfig gameConfig = new GameConfig(maxPlayer, gearConfig, upgradesAllowed > 0);
+            gameConfigs++;
+            if (isSuitableConfig(minimumAttributes, minTotalValue, upgradesAllowed, gameConfig)) {
+                results.add(gameConfig);
+            }
+        }
+        return gameConfigs;
     }
 
     private Stream<GameConfig> generateGameConfigsForPlayer(Player player, List<GameConfig> configs, Attributes minimumAttributes, int minTotalValue, int upgradesAllowed) {
