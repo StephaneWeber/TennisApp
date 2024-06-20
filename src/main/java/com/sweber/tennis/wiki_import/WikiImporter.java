@@ -53,12 +53,12 @@ public class WikiImporter {
         String importedLine = null;
         try {
             importedLine = bufferedReader.readLine();
-            if (!importedLine.equals(line)) {
+            if (line != null && !importedLine.equals(line)) {
                 bufferedWriter.write(line + "\n");
                 bufferedWriter.write(importedLine + "\n");
                 bufferedWriter.write("=====\n");
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
