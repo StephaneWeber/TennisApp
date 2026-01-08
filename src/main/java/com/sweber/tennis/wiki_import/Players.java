@@ -13,7 +13,11 @@ public enum Players {
     MEILI("Mei-Li"),
     LUC("Luc"),
     DIEGO("Diego"),
-    MARK("Mark");
+    MARK("Mark"),
+    OSAKA("Osaka"),
+    PAUL("Paul"),
+    SABALENKA("Sabalenka"),
+    PAOLINI("Paolini");
 
     private final String page;
 
