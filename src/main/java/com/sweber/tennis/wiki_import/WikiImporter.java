@@ -16,6 +16,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class WikiImporter {
     private static final String RACKET = "RACKET";
@@ -85,20 +87,28 @@ public class WikiImporter {
 
         // Use a single shared fetcher for all gear pages to warm the connection pool and improve performance
         WikiFetcher fetcher = new WikiFetcher(20, 4);
+        // Collect results in a concurrent map keyed by page URL so we can write them in a deterministic order
+        Map<String, String> results = new ConcurrentHashMap<>();
         try {
             fetcher.fetchAndProcessAll(pages, result -> {
                 if (result.error != null) {
                     System.err.println("Error fetching page " + result.page.getUrl() + ": " + result.error.getMessage());
-                } else if (result.content != null) {
-                    synchronized (bufferedWriter) {
-                        try {
-                            bufferedWriter.write(result.content);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                }
+                if (result.content != null) {
+                    results.put(result.page.getUrl(), result.content);
+                } else {
+                    // Put empty string to preserve ordering even if fetch failed
+                    results.put(result.page.getUrl(), "");
                 }
             });
+
+            // Write results in the original deterministic pages order
+            for (WikiPage p : pages) {
+                String content = results.get(p.getUrl());
+                if (content != null && !content.isEmpty()) {
+                    bufferedWriter.write(content);
+                }
+            }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } finally {
@@ -138,23 +148,29 @@ public class WikiImporter {
         fetchAndWritePages(pages);
     }
 
-    // New method: fetch pages in parallel using WikiFetcher and write results as they arrive
+    // New method: fetch pages in parallel using WikiFetcher and collect results, then write in deterministic order
     private void fetchAndWritePages(List<WikiPage> pages) throws IOException {
         WikiFetcher fetcher = new WikiFetcher(20, 4);
+        Map<String, String> results = new ConcurrentHashMap<>();
         try {
             fetcher.fetchAndProcessAll(pages, result -> {
                 if (result.error != null) {
                     System.err.println("Error fetching page " + result.page.getUrl() + ": " + result.error.getMessage());
-                } else if (result.content != null) {
-                    synchronized (bufferedWriter) {
-                        try {
-                            bufferedWriter.write(result.content);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                }
+                if (result.content != null) {
+                    results.put(result.page.getUrl(), result.content);
+                } else {
+                    results.put(result.page.getUrl(), "");
                 }
             });
+
+            // Write in pages order so output is deterministic
+            for (WikiPage p : pages) {
+                String content = results.get(p.getUrl());
+                if (content != null && !content.isEmpty()) {
+                    bufferedWriter.write(content);
+                }
+            }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } finally {
