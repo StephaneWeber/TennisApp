@@ -8,7 +8,7 @@ public enum Nutritions {
     KETO_SOURCE("Keto_Sourcing"),
     ANTIOXIDANTS("Antioxidants"),
     CARBO_LOAD("Carboload"),
-    NEUTRAL_ENERGY("Neutral_Energy");
+    NATURAL_ENERGY("Natural_Energy");
 
     private String page;
 

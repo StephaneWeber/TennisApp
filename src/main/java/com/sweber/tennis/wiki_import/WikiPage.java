@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 public class WikiPage {
-    private static final String PAGE = "http://tennis-clash.fandom.com/wiki/";
+    private static final String PAGE = "https://tennis-clash.fandom.com/wiki/";
 
     private final String pageSuffix;
     private final String itemName;
@@ -27,6 +27,11 @@ public class WikiPage {
         this.pageSuffix = PAGE + pageSuffix;
         this.itemName = itemName;
         this.itemType = itemType;
+    }
+
+    // New accessor for the full URL so external fetchers can use it
+    public String getUrl() {
+        return this.pageSuffix;
     }
 
     private void generateOutput() {
@@ -71,8 +76,8 @@ public class WikiPage {
         }
     }
 
-    public StringBuilder processWikiPage() throws IOException {
-        Document doc = Jsoup.connect(pageSuffix).get();
+    // New: process a Jsoup Document (separates network fetch from parsing)
+    public StringBuilder processWikiDocument(Document doc) {
         Elements articleTables = doc.select(".article-table");
 
         Element skillsTable = articleTables.get(1);
@@ -97,6 +102,12 @@ public class WikiPage {
             stringBuilder.append(outputLine).append("\n");
         }
         return stringBuilder;
+    }
+
+    // Keep the old method for backward compatibility; delegate to the new one
+    public StringBuilder processWikiPage() throws IOException {
+        Document doc = Jsoup.connect(pageSuffix).get();
+        return processWikiDocument(doc);
     }
 
     private void determinePrices(Elements articleTables, String pageSuffix) {

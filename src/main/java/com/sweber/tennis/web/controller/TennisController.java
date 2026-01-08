@@ -100,15 +100,15 @@ public class TennisController {
     private void setupInitialConfigFilter() {
         configFilter = new ConfigFilter();
         Attributes minAttributes = new Attributes();
-        minAttributes.setAgility(40);
-        minAttributes.setEndurance(30);
+        minAttributes.setAgility(90);
+        minAttributes.setEndurance(50);
         minAttributes.setService(40);
-        minAttributes.setForehand(35);
-        minAttributes.setBackhand(35);
+        minAttributes.setForehand(80);
+        minAttributes.setBackhand(80);
         configFilter.setMinAttributes(minAttributes);
-        configFilter.setMinTotal(260);
+        configFilter.setMinTotal(350);
         configFilter.setUpgradeAllowed(0);
-        configFilter.setMaxLevel(9);
+        configFilter.setMaxLevel(15);
     }
 
     private Attributes computeMaxAttributes(List<GameConfig> gameConfigs) {
