@@ -10,7 +10,7 @@ public enum Wristbands {
     GLADIATOR("The_Gladiator"),
     SHIELD("The_Shield");
 
-    private String page;
+    private final String page;
 
     Wristbands(String page) {
         this.page = page;

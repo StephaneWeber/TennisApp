@@ -4,7 +4,8 @@ import java.io.IOException;
 
 public class LoadDataFromWiki {
     public static void main(String... args) throws IOException {
-        WikiImporter wikiImporter = new WikiImporter();
+        // Use TOLERATE so imports do not abort on transient fetch errors by default
+        WikiImporter wikiImporter = new WikiImporter(WikiImporter.FetchFailureMode.TOLERATE);
         wikiImporter.importPlayersData();
         wikiImporter.importGearData();
         wikiImporter.replaceDatasetWithImport();

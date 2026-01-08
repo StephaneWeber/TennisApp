@@ -15,7 +15,7 @@ public enum Players {
     DIEGO("Diego"),
     MARK("Mark");
 
-    private String page;
+    private final String page;
 
     Players(String page) {
         this.page = page;

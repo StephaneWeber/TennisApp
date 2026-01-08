@@ -27,24 +27,24 @@ class ConfigGeneratorServiceTest {
         configFilter.setMinAttributes(minimumAttributes);
         configFilter.setMinTotal(230);
         configFilter.setMaxLevel(6);
-        List<GameConfig> gameConfigs = configGeneratorService.generateGameConfigs(configFilter);
+        List<GameConfig> gameConfigs = configGeneratorService.generateFilteredGameConfigs(configFilter);
         gameConfigs.forEach(gameConfig -> assertThat(gameConfig.getCost()).isZero());
     }
 
     @Test
     void testPlayerService() {
-        List<Player> players = playerService.leveledPlayers(10);
-        assertThat(players).hasSize(11);
+        List<Player> players = playerService.leveledPlayers(15);
+        assertThat(players).hasSize(13);
 
-        int minLevel = 6;
+        int minLevel = 12;
         long count = players.stream().map(playerService::ownedLevel).filter(ownedLevel -> ownedLevel >= minLevel).count();
-        assertThat(count).isEqualTo(11);
-        int minLevel2 = 8;
+        assertThat(count).isEqualTo(13);
+        int minLevel2 = 14;
         count = players.stream().map(playerService::ownedLevel).filter(ownedLevel -> ownedLevel >= minLevel2).count();
-        assertThat(count).isEqualTo(10);
-        int minLevel3 = 11;
+        assertThat(count).isEqualTo(8);
+        int minLevel3 = 15;
         count = players.stream().map(playerService::ownedLevel).filter(ownedLevel -> ownedLevel >= minLevel3).count();
-        assertThat(count).isEqualTo(7);
+        assertThat(count).isEqualTo(5);
     }
 
     @Test
@@ -58,12 +58,12 @@ class ConfigGeneratorServiceTest {
         configFilter.setUpgradeAllowed(1);
 
         long start = System.currentTimeMillis();
-        List<GameConfig> gameConfigs = configGeneratorService.generateGameConfigs(configFilter);
+        List<GameConfig> gameConfigs = configGeneratorService.generateFilteredGameConfigs(configFilter);
         long end = System.currentTimeMillis();
         System.out.printf("Found %d configs%n", gameConfigs.size());
         System.out.printf("Found in %d ms%n", (end - start));
-        assertThat(gameConfigs).hasSize(3235);
-        // 3235 in 9741 ms
+        assertThat(gameConfigs).hasSize(10970);
+        // 3333 in 8148 ms
     }
 
     @Test
@@ -79,11 +79,11 @@ class ConfigGeneratorServiceTest {
         List<GameConfig> gameConfigs;
 
         long start = System.currentTimeMillis();
-        gameConfigs = configGeneratorService.generateGameConfigs(configFilter);
+        gameConfigs = configGeneratorService.generateFilteredGameConfigs(configFilter);
         long end = System.currentTimeMillis();
         System.out.printf("Found %d configs%n", gameConfigs.size());
         System.out.printf("Found in %d ms%n", (end - start));
-        assertThat(gameConfigs).hasSize(640);
-        // 640 in 12956 ms
+        assertThat(gameConfigs).hasSize(1773);
+        // 640 in 11599 ms
     }
 }

@@ -10,7 +10,7 @@ public enum Grips {
     TACTICAL_GRIP("Tactical_Grip"),
     TITAN("The_Titan");
 
-    private String page;
+    private final String page;
 
     Grips(String page) {
         this.page = page;

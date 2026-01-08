@@ -10,7 +10,7 @@ public enum Shoes {
     BALLISTIC("The_Ballistic"),
     HADES_TREADS("The_Hades_Treads");
 
-    private String page;
+    private final String page;
 
     Shoes(String page) {
         this.page = page;

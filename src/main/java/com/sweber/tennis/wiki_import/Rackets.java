@@ -10,7 +10,7 @@ public enum Rackets {
     BULLS_EYE("The_Bullseye"),
     ZEUS("Zeus");
 
-    private String page;
+    private final String page;
 
     Rackets(String page) {
         this.page = page;

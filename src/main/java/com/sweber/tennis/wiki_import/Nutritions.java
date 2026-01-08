@@ -10,7 +10,7 @@ public enum Nutritions {
     CARBO_LOAD("Carboload"),
     NATURAL_ENERGY("Natural_Energy");
 
-    private String page;
+    private final String page;
 
     Nutritions(String page) {
         this.page = page;
