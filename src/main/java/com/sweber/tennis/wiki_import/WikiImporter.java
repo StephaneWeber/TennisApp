@@ -12,14 +12,15 @@ import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class WikiImporter {
+    private static final Logger LOG = Logger.getLogger(WikiImporter.class.getName());
+
     private static final String RACKET = "RACKET";
     private static final String GRIP = "GRIP";
     private static final String SHOES = "SHOES";
@@ -35,17 +36,27 @@ public class WikiImporter {
     private static final String DELTA_PLAYER_FILENAME = "src/main/resources/data/changed_players.csv";
 
     private BufferedWriter bufferedWriter;
+    private final WikiFetcher injectedFetcher;
+
+    public WikiImporter() {
+        this.injectedFetcher = null;
+    }
+
+    // Package-visible constructor for tests to inject a fake fetcher
+    public WikiImporter(WikiFetcher fetcher) {
+        this.injectedFetcher = fetcher;
+    }
 
     public void importPlayersData() throws IOException {
-        System.out.println("Starting importing players data");
+        LOG.info("Starting importing players data");
         bufferedWriter = new BufferedWriter(new FileWriter(IMPORTED_PLAYER_FILENAME));
         importPlayers();
         bufferedWriter.flush();
         bufferedWriter.close();
         removeLastEmptyline(IMPORTED_PLAYER_FILENAME);
-        System.out.println("Imported players data to " + IMPORTED_PLAYER_FILENAME);
+        LOG.info("Imported players data to " + IMPORTED_PLAYER_FILENAME);
 
-        System.out.println("Saving changes into " + DELTA_PLAYER_FILENAME);
+        LOG.info("Saving changes into " + DELTA_PLAYER_FILENAME);
         bufferedWriter = new BufferedWriter(new FileWriter(DELTA_PLAYER_FILENAME));
 
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(PLAYER_FILENAME));
@@ -58,21 +69,20 @@ public class WikiImporter {
     }
 
     private void compareLine(BufferedWriter bufferedWriter, BufferedReader bufferedReader, String line) {
-        String importedLine = null;
         try {
-            importedLine = bufferedReader.readLine();
-            if (!importedLine.equals(line)) {
+            String importedLine = bufferedReader.readLine();
+            if (importedLine == null || !Objects.equals(importedLine, line)) {
                 bufferedWriter.write(line + "\n");
-                bufferedWriter.write(importedLine + "\n");
+                bufferedWriter.write(String.valueOf(importedLine) + "\n");
                 bufferedWriter.write("=====\n");
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.log(Level.WARNING, "Error comparing lines", e);
         }
     }
 
     public void importGearData() throws IOException {
-        System.out.println("Starting importing gear data");
+        LOG.info("Starting importing gear data");
         bufferedWriter = new BufferedWriter(new FileWriter(IMPORTED_GEAR_FILENAME));
         bufferedWriter.write("Name,Type,Agility,Endurance,Service,Volley,Forehand,Backhand,Cost,Level\n");
 
@@ -85,14 +95,15 @@ public class WikiImporter {
         Arrays.stream(Nutritions.values()).forEach(nutrition -> pages.add(new WikiPage(nutrition.getPage(), nutrition.name(), NUTRITION)));
         Arrays.stream(Workouts.values()).forEach(workout -> pages.add(new WikiPage(workout.getPage(), workout.name(), WORKOUT)));
 
-        // Use a single shared fetcher for all gear pages to warm the connection pool and improve performance
-        WikiFetcher fetcher = new WikiFetcher(20, 4);
+        WikiFetcher fetcher = injectedFetcher != null ? injectedFetcher : new WikiFetcher(20, 4);
+        boolean shutdownFetcher = injectedFetcher == null;
+
         // Collect results in a concurrent map keyed by page URL so we can write them in a deterministic order
         Map<String, String> results = new ConcurrentHashMap<>();
         try {
             fetcher.fetchAndProcessAll(pages, result -> {
                 if (result.error != null) {
-                    System.err.println("Error fetching page " + result.page.getUrl() + ": " + result.error.getMessage());
+                    LOG.log(Level.WARNING, "Error fetching page " + result.page.getUrl(), result.error);
                 }
                 if (result.content != null) {
                     results.put(result.page.getUrl(), result.content);
@@ -112,15 +123,17 @@ public class WikiImporter {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } finally {
-            fetcher.shutdown();
+            if (shutdownFetcher) {
+                fetcher.shutdown();
+            }
         }
 
         bufferedWriter.flush();
         bufferedWriter.close();
         removeLastEmptyline(IMPORTED_GEAR_FILENAME);
-        System.out.println("Imported gear data to " + IMPORTED_GEAR_FILENAME);
+        LOG.info("Imported gear data to " + IMPORTED_GEAR_FILENAME);
 
-        System.out.println("Saving changes into " + DELTA_GEAR_FILENAME);
+        LOG.info("Saving changes into " + DELTA_GEAR_FILENAME);
         bufferedWriter = new BufferedWriter(new FileWriter(DELTA_GEAR_FILENAME));
 
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(GEAR_FILENAME));
@@ -150,12 +163,13 @@ public class WikiImporter {
 
     // New method: fetch pages in parallel using WikiFetcher and collect results, then write in deterministic order
     private void fetchAndWritePages(List<WikiPage> pages) throws IOException {
-        WikiFetcher fetcher = new WikiFetcher(20, 4);
+        WikiFetcher fetcher = injectedFetcher != null ? injectedFetcher : new WikiFetcher(20, 4);
+        boolean shutdownFetcher = injectedFetcher == null;
         Map<String, String> results = new ConcurrentHashMap<>();
         try {
             fetcher.fetchAndProcessAll(pages, result -> {
                 if (result.error != null) {
-                    System.err.println("Error fetching page " + result.page.getUrl() + ": " + result.error.getMessage());
+                    LOG.log(Level.WARNING, "Error fetching page " + result.page.getUrl(), result.error);
                 }
                 if (result.content != null) {
                     results.put(result.page.getUrl(), result.content);
@@ -174,61 +188,19 @@ public class WikiImporter {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } finally {
-            fetcher.shutdown();
-        }
-    }
-
-    private void executeAndWriteTasks(List<Callable<String>> tasks) {
-        ExecutorService executor = null;
-        try {
-            // Use virtual threads if available (Java 21+). Fall back to cached thread pool otherwise.
-            try {
-                // Use reflection so we can compile with older JDKs (e.g. 17) while still
-                // taking advantage of virtual threads when running on newer JDKs.
-                java.lang.reflect.Method m = Executors.class.getMethod("newVirtualThreadPerTaskExecutor");
-                executor = (ExecutorService) m.invoke(null);
-            } catch (Throwable t) {
-                // Method not available or invocation failed -> fall back to cached pool
-                executor = Executors.newCachedThreadPool();
+            if (shutdownFetcher) {
+                fetcher.shutdown();
             }
-            List<Future<String>> futures = executor.invokeAll(tasks);
-            for (Future<String> future : futures) {
-                try {
-                    String content = future.get();
-                    synchronized (bufferedWriter) {
-                        bufferedWriter.write(content);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        } finally {
-            if (executor != null) {
-                executor.shutdown();
-            }
-        }
-    }
-
-    private void processWikiPage(String page, String itemName, String itemType) {
-        try {
-            WikiPage wikiPage = new WikiPage(page, itemName, itemType);
-            StringBuilder stringBuffer = wikiPage.processWikiPage();
-            //write contents of StringBuffer to a file
-            bufferedWriter.write(stringBuffer.toString());
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
     public void replaceDatasetWithImport() {
-        System.out.println("Updating data with import files");
+        LOG.info("Updating data with import files");
         try {
             Files.move(Paths.get(IMPORTED_PLAYER_FILENAME), Paths.get(PLAYER_FILENAME), StandardCopyOption.REPLACE_EXISTING);
             Files.move(Paths.get(IMPORTED_GEAR_FILENAME), Paths.get(GEAR_FILENAME), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.log(Level.WARNING, "Error replacing dataset files", e);
         }
     }
 }
