@@ -28,6 +28,14 @@ public class WikiImporterDeterminismTest {
 
     @Test
     public void importerProducesDeterministicFiles() throws IOException {
+        // Create temporary data directory and set system property so importer uses it
+        Path tempDir = Files.createTempDirectory("tennis-data-");
+        System.setProperty("tennis.data.dir", tempDir.toString());
+
+        // Copy baseline source files into temp dir so importer can read them
+        Files.copy(Path.of("src/main/resources/data/players.csv"), tempDir.resolve("players.csv"));
+        Files.copy(Path.of("src/main/resources/data/gear.csv"), tempDir.resolve("gear.csv"));
+
         // Inject fake fetcher to avoid network in tests
         WikiImporter importer = new WikiImporter(new FakeFetcher());
 
@@ -35,8 +43,8 @@ public class WikiImporterDeterminismTest {
         importer.importPlayersData();
         importer.importGearData();
 
-        Path importedPlayers = Path.of("src/main/resources/data/imported_players.csv");
-        Path importedGear = Path.of("src/main/resources/data/imported_gear.csv");
+        Path importedPlayers = tempDir.resolve("imported_players.csv");
+        Path importedGear = tempDir.resolve("imported_gear.csv");
 
         Path tempPlayers = Files.createTempFile("imported_players", ".csv");
         Path tempGear = Files.createTempFile("imported_gear", ".csv");
@@ -56,5 +64,8 @@ public class WikiImporterDeterminismTest {
 
         assertEquals(firstPlayers, secondPlayers, "Imported players file should be identical across runs");
         assertEquals(firstGear, secondGear, "Imported gear file should be identical across runs");
+
+        // Cleanup system property
+        System.clearProperty("tennis.data.dir");
     }
 }

@@ -22,13 +22,21 @@ public class WikiImporterAtomicMoveTest {
 
     @Test
     public void testAtomicMoveLeavesFinalAndRemovesTemp() throws IOException {
+        // Create temporary data directory and set system property so importer uses it
+        Path tempDir = Files.createTempDirectory("tennis-data-");
+        System.setProperty("tennis.data.dir", tempDir.toString());
+
+        // Copy baseline source files into temp dir so importer can read them
+        Files.copy(Path.of("src/main/resources/data/players.csv"), tempDir.resolve("players.csv"));
+        Files.copy(Path.of("src/main/resources/data/gear.csv"), tempDir.resolve("gear.csv"));
+
         // Run importer with fake fetcher to avoid network and ensure success
         WikiFetcher f = new SimpleFetcher();
         WikiImporter importer = new WikiImporter(f, WikiImporter.FetchFailureMode.TOLERATE);
 
         // Ensure no temp files exist before
-        Path tempPlayers = Path.of("src/main/resources/data/imported_players.csv.tmp");
-        Path tempGear = Path.of("src/main/resources/data/imported_gear.csv.tmp");
+        Path tempPlayers = tempDir.resolve("imported_players.csv.tmp");
+        Path tempGear = tempDir.resolve("imported_gear.csv.tmp");
         Files.deleteIfExists(tempPlayers);
         Files.deleteIfExists(tempGear);
 
@@ -40,8 +48,8 @@ public class WikiImporterAtomicMoveTest {
         assertFalse(Files.exists(tempPlayers));
         assertFalse(Files.exists(tempGear));
 
-        Path players = Path.of("src/main/resources/data/imported_players.csv");
-        Path gear = Path.of("src/main/resources/data/imported_gear.csv");
+        Path players = tempDir.resolve("imported_players.csv");
+        Path gear = tempDir.resolve("imported_gear.csv");
 
         assertTrue(Files.exists(players));
         assertTrue(Files.exists(gear));
@@ -51,5 +59,8 @@ public class WikiImporterAtomicMoveTest {
         String gearContent = Files.readString(gear);
         assertTrue(playersContent.contains("#OK#"), "Players file should contain OK markers");
         assertTrue(gearContent.contains("#OK#"), "Gear file should contain OK markers");
+
+        // Cleanup system property
+        System.clearProperty("tennis.data.dir");
     }
 }

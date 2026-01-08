@@ -94,6 +94,13 @@ public class GearConfig {
 
     @Override
     public int hashCode() {
-        return Objects.hash(racket, grip, shoes, wristband, nutrition, workout);
+        return Objects.hash(
+                racket != null ? racket.getName() : null,
+                grip != null ? grip.getName() : null,
+                shoes != null ? shoes.getName() : null,
+                wristband != null ? wristband.getName() : null,
+                nutrition != null ? nutrition.getName() : null,
+                workout != null ? workout.getName() : null
+        );
     }
 }

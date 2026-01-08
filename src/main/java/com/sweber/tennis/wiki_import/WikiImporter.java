@@ -27,12 +27,14 @@ public class WikiImporter {
     private static final String NUTRITION = "NUTRITION";
     private static final String WORKOUT = "WORKOUT";
 
-    private static final String GEAR_FILENAME = "src/main/resources/data/gear.csv";
-    private static final String IMPORTED_GEAR_FILENAME = "src/main/resources/data/imported_gear.csv";
-    private static final String DELTA_GEAR_FILENAME = "src/main/resources/data/changed_gear.csv";
-    private static final String PLAYER_FILENAME = "src/main/resources/data/players.csv";
-    private static final String IMPORTED_PLAYER_FILENAME = "src/main/resources/data/imported_players.csv";
-    private static final String DELTA_PLAYER_FILENAME = "src/main/resources/data/changed_players.csv";
+    // Use configurable data directory so tests can run in isolation. Default to repo resource dir for normal runs.
+    private final Path dataDir = Paths.get(System.getProperty("tennis.data.dir", "src/main/resources/data"));
+    private final Path gearFile = dataDir.resolve("gear.csv");
+    private final Path importedGearFile = dataDir.resolve("imported_gear.csv");
+    private final Path deltaGearFile = dataDir.resolve("changed_gear.csv");
+    private final Path playerFile = dataDir.resolve("players.csv");
+    private final Path importedPlayerFile = dataDir.resolve("imported_players.csv");
+    private final Path deltaPlayerFile = dataDir.resolve("changed_players.csv");
 
     private BufferedWriter bufferedWriter;
     private final WikiFetcher injectedFetcher;
@@ -59,7 +61,7 @@ public class WikiImporter {
     public void importPlayersData() throws IOException {
         LOG.info("Starting importing players data");
 
-        Path tempPlayers = Paths.get(IMPORTED_PLAYER_FILENAME + ".tmp");
+        Path tempPlayers = dataDir.resolve(importedPlayerFile.getFileName().toString() + ".tmp");
         // ensure previous temp removed
         Files.deleteIfExists(tempPlayers);
         bufferedWriter = Files.newBufferedWriter(tempPlayers);
@@ -70,7 +72,7 @@ public class WikiImporter {
             bufferedWriter.close();
             // remove last newline from temp file then atomically move into place
             removeLastEmptyline(tempPlayers.toString());
-            moveTempToFinal(tempPlayers, Paths.get(IMPORTED_PLAYER_FILENAME));
+            moveTempToFinal(tempPlayers, importedPlayerFile);
         } catch (IOException e) {
             // cleanup temp file on failure
             try {
@@ -82,13 +84,13 @@ public class WikiImporter {
             throw e;
         }
 
-        LOG.info("Imported players data to " + IMPORTED_PLAYER_FILENAME);
+        LOG.info("Imported players data to " + importedPlayerFile.toString());
 
-        LOG.info("Saving changes into " + DELTA_PLAYER_FILENAME);
-        bufferedWriter = new BufferedWriter(new FileWriter(DELTA_PLAYER_FILENAME));
+        LOG.info("Saving changes into " + deltaPlayerFile.toString());
+        bufferedWriter = new BufferedWriter(new FileWriter(deltaPlayerFile.toString()));
 
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(PLAYER_FILENAME));
-             BufferedReader bufferedReaderImported = new BufferedReader(new FileReader(IMPORTED_PLAYER_FILENAME))) {
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(playerFile.toString()));
+             BufferedReader bufferedReaderImported = new BufferedReader(new FileReader(importedPlayerFile.toString()))) {
             bufferedReader.lines()
                     .forEach(line -> compareLine(bufferedWriter, bufferedReaderImported, line));
             bufferedWriter.flush();
@@ -112,7 +114,7 @@ public class WikiImporter {
     public void importGearData() throws IOException {
         LOG.info("Starting importing gear data");
 
-        Path tempGear = Paths.get(IMPORTED_GEAR_FILENAME + ".tmp");
+        Path tempGear = dataDir.resolve(importedGearFile.getFileName().toString() + ".tmp");
         Files.deleteIfExists(tempGear);
         bufferedWriter = Files.newBufferedWriter(tempGear);
         bufferedWriter.write("Name,Type,Agility,Endurance,Service,Volley,Forehand,Backhand,Cost,Level\n");
@@ -178,14 +180,14 @@ public class WikiImporter {
         bufferedWriter.flush();
         bufferedWriter.close();
         removeLastEmptyline(tempGear.toString());
-        moveTempToFinal(tempGear, Paths.get(IMPORTED_GEAR_FILENAME));
-        LOG.info("Imported gear data to " + IMPORTED_GEAR_FILENAME);
+        moveTempToFinal(tempGear, importedGearFile);
+        LOG.info("Imported gear data to " + importedGearFile.toString());
 
-        LOG.info("Saving changes into " + DELTA_GEAR_FILENAME);
-        bufferedWriter = new BufferedWriter(new FileWriter(DELTA_GEAR_FILENAME));
+        LOG.info("Saving changes into " + deltaGearFile.toString());
+        bufferedWriter = new BufferedWriter(new FileWriter(deltaGearFile.toString()));
 
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(GEAR_FILENAME));
-             BufferedReader bufferedReaderImported = new BufferedReader(new FileReader(IMPORTED_GEAR_FILENAME))) {
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(gearFile.toString()));
+             BufferedReader bufferedReaderImported = new BufferedReader(new FileReader(importedGearFile.toString()))) {
             bufferedReader.lines()
                     .forEach(line -> compareLine(bufferedWriter, bufferedReaderImported, line));
             bufferedWriter.flush();
@@ -241,7 +243,7 @@ public class WikiImporter {
                 } catch (IOException e) {
                     LOG.debug("Error closing buffered writer during failure cleanup", e);
                 }
-                Files.deleteIfExists(Paths.get(IMPORTED_PLAYER_FILENAME));
+                Files.deleteIfExists(importedPlayerFile);
                 StringBuilder msg = new StringBuilder("Fetch failures:\n");
                 int i = 0;
                 for (String s : errors) {
@@ -270,8 +272,8 @@ public class WikiImporter {
     public void replaceDatasetWithImport() {
         LOG.info("Updating data with import files");
         try {
-            Files.move(Paths.get(IMPORTED_PLAYER_FILENAME), Paths.get(PLAYER_FILENAME), StandardCopyOption.REPLACE_EXISTING);
-            Files.move(Paths.get(IMPORTED_GEAR_FILENAME), Paths.get(GEAR_FILENAME), StandardCopyOption.REPLACE_EXISTING);
+            Files.move(importedPlayerFile, playerFile, StandardCopyOption.REPLACE_EXISTING);
+            Files.move(importedGearFile, gearFile, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             LOG.warn("Error replacing dataset files", e);
         }

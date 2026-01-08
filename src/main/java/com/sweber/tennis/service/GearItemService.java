@@ -126,7 +126,7 @@ public class GearItemService {
     }
 
     private String getGearItemGenericName(String name) {
-        int endIndex = name.indexOf('_');
+        int endIndex = name.lastIndexOf('_');
         if (endIndex != -1) {
             name = name.substring(0, endIndex);
         }
