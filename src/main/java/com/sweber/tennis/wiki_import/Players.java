@@ -11,7 +11,9 @@ public enum Players {
     DIANA("Diana"),
     ABEKE("Abeke"),
     MEILI("Mei-Li"),
-    LUC("Luc");
+    LUC("Luc"),
+    DIEGO("Diego"),
+    MARK("Mark");
 
     private String page;
 

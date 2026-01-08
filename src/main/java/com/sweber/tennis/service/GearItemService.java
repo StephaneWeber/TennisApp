@@ -10,11 +10,14 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
@@ -26,6 +29,8 @@ public class GearItemService {
 
     private final List<GearItem> gearItems;
     private final List<GearItem> ownedGearItems;
+    // Cache owned levels for O(1) lookup. Keyed by "<GEAR_TYPE>:<GENERIC_NAME>" to avoid collisions.
+    private final Map<String, Integer> ownedLevelMap = new HashMap<>();
 
     public GearItemService() throws IOException {
         gearItems = loadGearItems();
@@ -41,9 +46,9 @@ public class GearItemService {
 
     private List<GearItem> loadGearItems() throws IOException {
         List<GearItem> gearItemsData = new ArrayList<>();
-        File dataFile = new ClassPathResource(GEAR_CSV).getFile();
-        try (BufferedReader br = new BufferedReader(new FileReader(dataFile))) {
-            String headerLine = br.readLine(); // Ignore header
+        ClassPathResource resource = new ClassPathResource(GEAR_CSV);
+        try (InputStream is = resource.getInputStream(); BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+            br.readLine(); // ignore header
             String line = br.readLine();
             while (line != null) {
                 String[] inputData = line.split(",");
@@ -57,8 +62,8 @@ public class GearItemService {
 
     private List<GearItem> loadOwnedGearItems() throws IOException {
         List<GearItem> ownedGearItemsData = new ArrayList<>();
-        File dataFile = new ClassPathResource(OWNED_GEAR_CSV).getFile();
-        try (BufferedReader br = new BufferedReader(new FileReader(dataFile))) {
+        ClassPathResource resource = new ClassPathResource(OWNED_GEAR_CSV);
+        try (InputStream is = resource.getInputStream(); BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
             String line = br.readLine();
             while (line != null) {
                 String[] inputData = line.split(",");
@@ -67,6 +72,10 @@ public class GearItemService {
                     String gearItemName = inputData[0].trim() + "_" + level;
                     GearItem gearItem = getGearItem(gearItemName);
                     ownedGearItemsData.add(gearItem);
+                    // populate cache keyed by gear type and generic name
+                    String generic = getGearItemGenericName(gearItem.getName());
+                    String key = gearItem.getGearType().name() + ":" + generic;
+                    ownedLevelMap.merge(key, gearItem.getLevel(), Math::max);
                 }
                 line = br.readLine();
             }
@@ -84,18 +93,17 @@ public class GearItemService {
     private GearItem getGearItem(String[] inputData) {
         String gearItemName = inputData[0].trim();
         GearType gearItemType = GearType.valueOf(inputData[1].trim());
-        Attributes gearItemAttributes = null;
         try {
-            gearItemAttributes = new Attributes(Integer.parseInt(inputData[2].trim()), Integer.parseInt(inputData[3].trim()), Integer.parseInt(inputData[4].trim()), Integer.parseInt(inputData[5].trim()), Integer.parseInt(inputData[6].trim()), Integer.parseInt(inputData[7].trim()));
+            Attributes gearItemAttributes = new Attributes(Integer.parseInt(inputData[2].trim()), Integer.parseInt(inputData[3].trim()), Integer.parseInt(inputData[4].trim()), Integer.parseInt(inputData[5].trim()), Integer.parseInt(inputData[6].trim()), Integer.parseInt(inputData[7].trim()));
+            int cost = Integer.parseInt(inputData[8].trim());
+            int level = Integer.parseInt(inputData[9].trim());
+            Config gearItemConfig = new Config(gearItemAttributes, cost, level);
+            return new GearItem(gearItemName, gearItemType, gearItemConfig);
         } catch (NumberFormatException e) {
-            String message = String.format("Error parsing GearItem %s of type %s - %s", gearItemName, gearItemType, inputData);
+            String message = String.format("Error parsing GearItem %s of type %s - %s", gearItemName, gearItemType, String.join(",", inputData));
             LOGGER.error(message);
             throw new IllegalStateException(message);
         }
-        int cost = Integer.parseInt(inputData[8].trim());
-        int level = Integer.parseInt(inputData[9].trim());
-        Config gearItemConfig = new Config(gearItemAttributes, cost, level);
-        return new GearItem(gearItemName, gearItemType, gearItemConfig);
     }
 
     public List<GearItem> leveledGearItems(int maxLevel, int upgradesAllowed) {
@@ -111,14 +119,10 @@ public class GearItemService {
     }
 
     public int ownedLevel(GearItem gearItem) {
-        GearType gearType = gearItem.getGearType();
+        // use cached map for O(1) lookup
         String configGearName = getGearItemGenericName(gearItem.getName());
-        return ownedGearItems.stream()
-                .filter(item -> item.getGearType() == gearType)
-                .filter(item -> item.getName().startsWith(configGearName))
-                .findFirst()
-                .map(GearItem::getLevel)
-                .orElse(0);
+        String key = gearItem.getGearType().name() + ":" + configGearName;
+        return ownedLevelMap.getOrDefault(key, 0);
     }
 
     private String getGearItemGenericName(String name) {

@@ -9,11 +9,14 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,6 +27,8 @@ public class PlayerService {
 
     private final List<Player> players;
     private final List<Player> ownedPlayers;
+    // Cache owned player levels keyed by generic player name
+    private final Map<String, Integer> ownedLevelMap = new HashMap<>();
 
     public PlayerService() throws IOException {
         players = loadPlayers();
@@ -39,9 +44,9 @@ public class PlayerService {
 
     private List<Player> loadPlayers() throws IOException {
         List<Player> playersData = new ArrayList<>();
-        File dataFile = new ClassPathResource(PLAYERS_CSV).getFile();
-        try (BufferedReader br = new BufferedReader(new FileReader(dataFile))) {
-            String headerLine = br.readLine(); // Ignore header
+        ClassPathResource resource = new ClassPathResource(PLAYERS_CSV);
+        try (InputStream is = resource.getInputStream(); BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+            br.readLine(); // ignore header
             String line = br.readLine();
             while (line != null) {
                 String[] inputData = line.split(",");
@@ -55,8 +60,8 @@ public class PlayerService {
 
     private List<Player> loadOwnedPlayers() throws IOException {
         List<Player> ownedPlayersData = new ArrayList<>();
-        File dataFile = new ClassPathResource(OWNED_PLAYERS_CSV).getFile();
-        try (BufferedReader br = new BufferedReader(new FileReader(dataFile))) {
+        ClassPathResource resource = new ClassPathResource(OWNED_PLAYERS_CSV);
+        try (InputStream is = resource.getInputStream(); BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
             String line = br.readLine();
             while (line != null) {
                 String[] inputData = line.split(",");
@@ -65,6 +70,8 @@ public class PlayerService {
                     String playerName = inputData[0].trim() + "_" + level;
                     Player player = getPlayer(playerName);
                     ownedPlayersData.add(player);
+                    String generic = getPlayerGenericName(player.getName());
+                    ownedLevelMap.merge(generic, player.getLevel(), Math::max);
                 }
                 line = br.readLine();
             }
@@ -74,18 +81,17 @@ public class PlayerService {
 
     private Player getPlayer(String[] inputData) {
         String playerName = inputData[0].trim();
-        Attributes attributes = null;
         try {
-            attributes = new Attributes(Integer.parseInt(inputData[1].trim()), Integer.parseInt(inputData[2].trim()), Integer.parseInt(inputData[3].trim()), Integer.parseInt(inputData[4].trim()), Integer.parseInt(inputData[5].trim()), Integer.parseInt(inputData[6].trim()));
+            Attributes attributes = new Attributes(Integer.parseInt(inputData[1].trim()), Integer.parseInt(inputData[2].trim()), Integer.parseInt(inputData[3].trim()), Integer.parseInt(inputData[4].trim()), Integer.parseInt(inputData[5].trim()), Integer.parseInt(inputData[6].trim()));
+            int cost = Integer.parseInt(inputData[7].trim());
+            int level = Integer.parseInt(inputData[8].trim());
+            Config config = new Config(attributes, cost, level);
+            return new Player(playerName, config);
         } catch (NumberFormatException e) {
-            String message = String.format("Error parsing Player %s - %s", playerName, inputData);
+            String message = String.format("Error parsing Player %s - %s", playerName, String.join(",", inputData));
             LOGGER.error(message);
             throw new IllegalStateException(message);
         }
-        int cost = Integer.parseInt(inputData[7].trim());
-        int level = Integer.parseInt(inputData[8].trim());
-        Config config = new Config(attributes, cost, level);
-        return new Player(playerName, config);
     }
 
     public Player getPlayer(String playerName) {
@@ -105,11 +111,7 @@ public class PlayerService {
 
     public int ownedLevel(Player player) {
         String playerName = getPlayerGenericName(player.getName());
-        return ownedPlayers.stream()
-                .filter(item -> item.getName().startsWith(playerName))
-                .findFirst()
-                .map(Player::getLevel)
-                .orElse(0);
+        return ownedLevelMap.getOrDefault(playerName, 0);
     }
 
     private boolean isOwned(Player player) {
