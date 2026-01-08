@@ -10,7 +10,7 @@ public enum Workouts {
     MOUNTAIN_CLIMBER("Mountain_Climber"),
     LUNGES("Lunges");
 
-    private String page;
+    private final String page;
 
     Workouts(String page) {
         this.page = page;
