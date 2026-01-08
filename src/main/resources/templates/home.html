@@ -4,11 +4,11 @@
     <link rel='stylesheet' th:href="@{/css/block-library.min.css}" type='text/css' media='all'/>
     <link rel='stylesheet' th:href='@{/css/bootstrap.min.css}' type='text/css' media='all'/>
     <link rel='stylesheet' th:href='@{/css/tennis.css}' type='text/css' media='all'/>
-    <script type='text/javascript' th:src='@{/js/jquery.js}' src=""></script>
-    <script type='text/javascript' th:src='@{/js/jquery-migrate.min.js}' src=""></script>
-    <script type='text/javascript' th:src='@{/js/jquery.inputmask.min.js}' src=""></script>
-    <script type='text/javascript' th:src='@{/js/font-awesome.js}' src=""></script>
-    <script type='text/javascript' th:src='@{/js/bootstrap.min.js}' src=""></script>
+    <script type='text/javascript' th:src='@{/js/jquery.js}'></script>
+    <script type='text/javascript' th:src='@{/js/jquery-migrate.min.js}'></script>
+    <script type='text/javascript' th:src='@{/js/jquery.inputmask.min.js}'></script>
+    <script type='text/javascript' th:src='@{/js/font-awesome.js}'></script>
+    <script type='text/javascript' th:src='@{/js/bootstrap.min.js}'></script>
 </head>
 <body>
 <h1><span th:text="${appName}">Our App</span></h1>
@@ -215,26 +215,26 @@
             </table>
         </div>
         <!-- customers pagination -->
-        <nav aria-label="Pagination" th:if="${page.totalPages gt 0}">
-            <ul class="pagination justify-content-center font-weight-medium">
-                <li class="page-item" th:classappend="${page.number eq 0} ? 'disabled'">
+        <nav aria-label="Pagination" th:if="${page != null and page.totalPages > 0}">
+            <ul class="pagination justify-content-center font-weight-medium" th:with="start=${page.number + 1}, end=${page.totalPages > page.number + 10 ? page.number + 10 : page.totalPages}">
+                <li class="page-item" th:classappend="${page.number == 0} ? 'disabled'">
                     <a class="page-link svg-icon"
-                       th:href="@{/config?page={id}(id=${page.number lt 2 ? 1 : page.number})}"
+                       th:href="@{/config(page=${page.number < 1 ? 1 : page.number})}"
                        aria-label="Previous"
                        title="Previous Page" rel="tooltip">Previous
                     </a>
                 </li>
-                <li class="page-item" th:classappend="${i eq page.number + 1} ? 'active'"
-                    th:each="i : ${#numbers.sequence( page.number + 1, page.totalPages > 10 + page.number ? page.number + 10 : page.totalPages, 1)}">
-                    <a class="page-link" th:href="@{/config?page={id}(id=${i})}" th:text="${i}"
-                       th:title="${'Page '+ i}"
+                <li class="page-item" th:each="i : ${#numbers.sequence(start, end)}"
+                    th:classappend="${i == page.number + 1} ? 'active'">
+                    <a class="page-link" th:href="@{/config(page=${i})}" th:text="${i}"
+                       th:title="${'Page ' + i}"
                        rel="tooltip"></a>
                 </li>
                 <li class="page-item disabled" th:if="${page.number + 10 < page.totalPages}">
                     <a class="page-link svg-icon" href="#">...</a>
                 </li>
-                <li class="page-item" th:classappend="${page.number + 1 eq page.totalPages} ? 'disabled'">
-                    <a class="page-link svg-icon" th:href="@{/config?page={id}(id=${page.number + 2})}"
+                <li class="page-item" th:classappend="${page.number + 1 == page.totalPages} ? 'disabled'">
+                    <a class="page-link svg-icon" th:href="@{/config(page=${page.number + 2})}"
                        aria-label="Next"
                        title="Next Page" rel="tooltip">Next
                     </a>

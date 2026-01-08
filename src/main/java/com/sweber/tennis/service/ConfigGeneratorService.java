@@ -57,28 +57,30 @@ public class ConfigGeneratorService {
     private Stream<GameConfig> generateGameConfigsForPlayer(Player player, Attributes minimumAttributes, int minTotalValue, int maxLevel, int upgradesAllowed) {
         List<GameConfig> results = new ArrayList<>();
         List<GearItem> leveledGearItems = gearItemService.leveledGearItems(maxLevel, upgradesAllowed);
+        // Pre-partition items by type to avoid repeated filtering in nested loops
+        Map<GearType, List<GearItem>> itemsByType = leveledGearItems.stream().collect(Collectors.groupingBy(GearItem::getGearType));
         Map<GearItem, Boolean> itemUpgrades = new HashMap<>();
-        for (GearItem racket : potentialGearItems(leveledGearItems, RACKET)) {
+        for (GearItem racket : itemsByType.getOrDefault(RACKET, Collections.emptyList())) {
             if (numberOfUpgrades(itemUpgrades, racket, null, null, null, null, null) > upgradesAllowed) {
                 continue;
             }
-            for (GearItem grip : potentialGearItems(leveledGearItems, GRIP)) {
+            for (GearItem grip : itemsByType.getOrDefault(GRIP, Collections.emptyList())) {
                 if (numberOfUpgrades(itemUpgrades, racket, grip, null, null, null, null) > upgradesAllowed) {
                     continue;
                 }
-                for (GearItem shoes : potentialGearItems(leveledGearItems, SHOES)) {
+                for (GearItem shoes : itemsByType.getOrDefault(SHOES, Collections.emptyList())) {
                     if (numberOfUpgrades(itemUpgrades, racket, grip, shoes, null, null, null) > upgradesAllowed) {
                         continue;
                     }
-                    for (GearItem wristband : potentialGearItems(leveledGearItems, WRISTBAND)) {
+                    for (GearItem wristband : itemsByType.getOrDefault(WRISTBAND, Collections.emptyList())) {
                         if (numberOfUpgrades(itemUpgrades, racket, grip, shoes, wristband, null, null) > upgradesAllowed) {
                             continue;
                         }
-                        for (GearItem nutrition : potentialGearItems(leveledGearItems, NUTRITION)) {
+                        for (GearItem nutrition : itemsByType.getOrDefault(NUTRITION, Collections.emptyList())) {
                             if (numberOfUpgrades(itemUpgrades, racket, grip, shoes, wristband, nutrition, null) > upgradesAllowed) {
                                 continue;
                             }
-                            for (GearItem workout : potentialGearItems(leveledGearItems, WORKOUT)) {
+                            for (GearItem workout : itemsByType.getOrDefault(WORKOUT, Collections.emptyList())) {
                                 if (numberOfUpgrades(itemUpgrades, racket, grip, shoes, wristband, nutrition, workout) > upgradesAllowed) {
                                     continue;
                                 }
@@ -142,12 +144,5 @@ public class ConfigGeneratorService {
 
     private boolean isSimpleUpgrade(GearItem gearItem) {
         return gearItem.getLevel() == gearItemService.ownedLevel(gearItem) + 1;
-    }
-
-    private List<GearItem> potentialGearItems(List<GearItem> items, GearType gearType) {
-        return items
-                .stream()
-                .filter(item -> item.getGearType() == gearType)
-                .collect(Collectors.toList());
     }
 }
