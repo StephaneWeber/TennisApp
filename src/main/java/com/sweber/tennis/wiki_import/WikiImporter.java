@@ -11,13 +11,15 @@ import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.stream.Collectors;
 
 public class WikiImporter {
     private static final Logger LOG = LoggerFactory.getLogger(WikiImporter.class);
 
     public enum FetchFailureMode {
         FAIL_FAST,
-        TOLERATE
+        TOLERATE,
+        TOLERATE_WITH_PLACEHOLDERS
     }
 
     private static final String RACKET = "RACKET";
@@ -162,6 +164,17 @@ public class WikiImporter {
                 throw new IOException(msg.toString());
             }
 
+            // Log missing gear pages explicitly (name + url) for clarity
+            List<WikiPage> missingGear = pages.stream()
+                    .filter(p -> {
+                        String c = results.get(p.getUrl());
+                        return c == null || c.isEmpty();
+                    })
+                    .collect(Collectors.toList());
+            if (!missingGear.isEmpty()) {
+                LOG.warn("Missing gear pages (did not fetch): {}", missingGear.stream().map(p -> p.getItemName() + "(" + p.getUrl() + ")").collect(Collectors.joining(", ")));
+            }
+
             // Write results in the original deterministic pages order
             for (WikiPage p : pages) {
                 String content = results.get(p.getUrl());
@@ -253,11 +266,26 @@ public class WikiImporter {
                 throw new IOException(msg.toString());
             }
 
+            // Log missing pages explicitly (name + url) for clarity
+            List<WikiPage> missing = pages.stream()
+                    .filter(p -> {
+                        String c = results.get(p.getUrl());
+                        return c == null || c.isEmpty();
+                    })
+                    .collect(Collectors.toList());
+            if (!missing.isEmpty()) {
+                LOG.warn("Missing pages (did not fetch): {}", missing.stream().map(p -> p.getItemName() + "(" + p.getUrl() + ")").collect(Collectors.joining(", ")));
+            }
+
             // Write in pages order so output is deterministic
             for (WikiPage p : pages) {
                 String content = results.get(p.getUrl());
                 if (content != null && !content.isEmpty()) {
                     bufferedWriter.write(content);
+                } else if (fetchFailureMode == FetchFailureMode.TOLERATE_WITH_PLACEHOLDERS) {
+                    // generate placeholder player lines (levels 1..15) with stats set to 0
+                    String placeholder = generatePlayerPlaceholder(p.getItemName());
+                    bufferedWriter.write(placeholder);
                 }
             }
         } catch (InterruptedException e) {
@@ -267,6 +295,15 @@ public class WikiImporter {
                 fetcher.shutdown();
             }
         }
+    }
+
+    private String generatePlayerPlaceholder(String playerName) {
+        StringBuilder sb = new StringBuilder();
+        for (int lvl = 1; lvl <= 15; lvl++) {
+            // Player,Agility,Endurance,Service,Volley,Forehand,Backhand,Cost,Level
+            sb.append(playerName).append("_").append(lvl).append(",0,0,0,0,0,0,0,").append(lvl).append("\n");
+        }
+        return sb.toString();
     }
 
     public void replaceDatasetWithImport() {
@@ -279,4 +316,3 @@ public class WikiImporter {
         }
     }
 }
-

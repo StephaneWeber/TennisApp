@@ -34,6 +34,11 @@ public class WikiPage {
         return this.pageSuffix;
     }
 
+    // New accessor to retrieve the item name (used for generating placeholders)
+    public String getItemName() {
+        return this.itemName;
+    }
+
     private void generateOutput() {
         for (int i = 0; i < levels.size(); i++) {
             String outputLine = itemName + "_" + levels.get(i) + ",";
