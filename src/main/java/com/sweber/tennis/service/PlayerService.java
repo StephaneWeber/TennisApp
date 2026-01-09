@@ -1,11 +1,15 @@
 package com.sweber.tennis.service;
 
+import com.sweber.tennis.config.CsvProperties;
 import com.sweber.tennis.model.config.Attributes;
 import com.sweber.tennis.model.config.Config;
 import com.sweber.tennis.model.player.Player;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -22,15 +26,27 @@ import java.util.stream.Collectors;
 @Service
 public class PlayerService {
     private static final Logger LOGGER = LoggerFactory.getLogger(PlayerService.class);
-    private static final String PLAYERS_CSV = "data/players.csv";
-    private static final String OWNED_PLAYERS_CSV = "data/owned_players.csv";
 
-    private final List<Player> players;
-    private final List<Player> ownedPlayers;
+    private final String playersCsv;
+    private final String ownedPlayersCsv;
+
+    private List<Player> players;
     // Cache owned player levels keyed by generic player name
     private final Map<String, Integer> ownedLevelMap = new HashMap<>();
 
-    public PlayerService() throws IOException {
+    // Spring constructor using CsvProperties
+    @Autowired
+    public PlayerService(CsvProperties csvProperties) {
+        this.playersCsv = csvProperties.getPlayers();
+        this.ownedPlayersCsv = csvProperties.getOwnedPlayers();
+        try {
+            init();
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to load players data", e);
+        }
+    }
+
+    private void init() throws IOException {
         players = loadPlayers();
         long distinctPlayers = players.stream()
                 .map(Player::getName)
@@ -38,13 +54,25 @@ public class PlayerService {
                 .distinct()
                 .count();
         LOGGER.info("Loaded {} configurations for {} different players", players.size(), distinctPlayers);
-        ownedPlayers = loadOwnedPlayers();
+        List<Player> ownedPlayers = loadOwnedPlayers();
         LOGGER.info("Loaded {} owned players", ownedPlayers.size());
+    }
+
+    private Resource resolveResource(String path) {
+        if (path == null) throw new IllegalArgumentException("Resource path must not be null");
+        if (path.startsWith("classpath:")) {
+            return new ClassPathResource(path.substring("classpath:".length()));
+        }
+        java.nio.file.Path fs = java.nio.file.Paths.get(path);
+        if (fs.isAbsolute() || fs.toFile().exists()) {
+            return new FileSystemResource(path);
+        }
+        return new ClassPathResource(path);
     }
 
     private List<Player> loadPlayers() throws IOException {
         List<Player> playersData = new ArrayList<>();
-        ClassPathResource resource = new ClassPathResource(PLAYERS_CSV);
+        Resource resource = resolveResource(playersCsv);
         try (InputStream is = resource.getInputStream(); BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
             br.readLine(); // ignore header
             String line = br.readLine();
@@ -60,7 +88,7 @@ public class PlayerService {
 
     private List<Player> loadOwnedPlayers() throws IOException {
         List<Player> ownedPlayersData = new ArrayList<>();
-        ClassPathResource resource = new ClassPathResource(OWNED_PLAYERS_CSV);
+        Resource resource = resolveResource(ownedPlayersCsv);
         try (InputStream is = resource.getInputStream(); BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
             String line = br.readLine();
             while (line != null) {
@@ -94,6 +122,7 @@ public class PlayerService {
         }
     }
 
+    // Change visibility so other services can lookup a single player by name
     public Player getPlayer(String playerName) {
         return players.stream()
                 .filter(item -> item.getName().equals(playerName))
