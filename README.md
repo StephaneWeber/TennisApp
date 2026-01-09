@@ -59,3 +59,58 @@ Notes
 -----
 - Spring Boot relaxed binding means you can also set properties using environment variables or alternative naming (e.g. `APPLICATION_CSV_PLAYERS` or `application.csv.owned-players`).
 - For tests, there's a test helper `TestCsvPropertiesFactory` to easily create `CsvProperties` objects pointing to temporary files.
+
+Benchmarks
+----------
+We include a small integration benchmark that compares the optimized generator to a legacy (baseline) implementation.
+The benchmark test is excluded from the default build and runs only when the `benchmark` Maven profile is activated.
+
+How to run
+- Default build (benchmarks excluded):
+
+```bash
+mvn test
+```
+
+- Run benchmarks (includes `ConfigGeneratorBenchmarkTest`):
+
+```bash
+mvn -Pbenchmark test
+```
+
+- Run only the benchmark test (profile enabled):
+
+```bash
+mvn -Pbenchmark -Dtest=ConfigGeneratorBenchmarkTest test
+```
+
+Toggles and modes
+- The generator supports a legacy baseline mode (no pruning/parallelism) used by the benchmark. The test flips the implementation by setting system property `tennis.generator.legacy`.
+  - `-Dtennis.generator.legacy=true` forces legacy mode.
+  - `-Dtennis.generator.legacy=false` forces the optimized mode.
+  The benchmark test handles switching for you; you can also run experiments manually by adding the system property to the `mvn` command.
+
+Interpreting results
+- The benchmark prints a short summary to stdout and logs average durations (ms) for the optimized and legacy runs and the number of configurations found, e.g.:
+
+```
+Benchmark summary:
+  optimized avg (ms): 123.45
+  legacy    avg (ms): 987.65
+  results count: 4321
+```
+
+- Focus on the average execution time and the result count. The test asserts both implementations produce the same result count. If counts diverge, there is a functional problem.
+- Run the benchmark multiple times on your target machine and use the average as a guide — JIT warming and GC mean single-run numbers are noisy.
+
+Tips and options
+- To reduce noise and get more consistent results, increase heap and pin CPUs using JVM args. You can add JVM options in the `benchmark` profile in `pom.xml` or pass them directly to Maven (example):
+
+```bash
+MAVEN_OPTS="-Xmx4g -XX:+UseG1GC" mvn -Pbenchmark test
+```
+
+- For rigorous microbenchmarks consider using JMH instead of a simple integration test; JMH handles warmup, forks, iterations and provides statistically sound results.
+
+Why benchmarks are in a profile
+- Benchmarks can be long-running and noisy; keeping them out of the default build keeps CI and developer feedback loops fast while letting you run performance experiments locally or in dedicated perf jobs.
