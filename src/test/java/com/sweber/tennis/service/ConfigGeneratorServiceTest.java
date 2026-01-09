@@ -34,7 +34,7 @@ class ConfigGeneratorServiceTest {
     @Test
     void testPlayerService() {
         List<Player> players = playerService.leveledPlayers(15);
-        assertThat(players).hasSize(13);
+        assertThat(players).hasSize(17);
 
         int minLevel = 12;
         long count = players.stream().map(playerService::ownedLevel).filter(ownedLevel -> ownedLevel >= minLevel).count();

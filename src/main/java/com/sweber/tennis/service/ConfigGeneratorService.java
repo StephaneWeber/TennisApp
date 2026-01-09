@@ -33,6 +33,7 @@ import static com.sweber.tennis.model.gear.GearType.WRISTBAND;
 @Component
 public class ConfigGeneratorService {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfigGeneratorService.class);
+
     private final GearItemService gearItemService;
     private final PlayerService playerService;
 
