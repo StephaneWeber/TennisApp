@@ -1,5 +1,6 @@
 package com.sweber.tennis.web.controller;
 
+import com.sweber.tennis.config.ConfigDefaultsProperties;
 import com.sweber.tennis.model.config.Attributes;
 import com.sweber.tennis.model.config.GameConfig;
 import com.sweber.tennis.model.player.Player;
@@ -29,22 +30,22 @@ import java.util.Optional;
 public class TennisController {
     private static final Logger LOGGER = LoggerFactory.getLogger(TennisController.class);
     private static final String HOME_PAGE = "home";
-    private static final int PAGE_SIZE = 100;
 
     private final ConfigGeneratorService configGeneratorService;
     private final PlayerService playerService;
+    private final String appName;
+    private final ConfigDefaultsProperties defaults;
 
     private ConfigFilter configFilter;
     private Attributes maxAttributes;
     private List<GameConfig> gameConfigs = new ArrayList<>();
     private List<Player> playerList = new ArrayList<>();
 
-    @Value("${spring.application.name}")
-    String appName;
-
-    public TennisController(ConfigGeneratorService configGeneratorService, PlayerService playerService) {
+    public TennisController(ConfigGeneratorService configGeneratorService, PlayerService playerService, @Value("${spring.application.name}") String appName, ConfigDefaultsProperties defaults) {
         this.configGeneratorService = configGeneratorService;
         this.playerService = playerService;
+        this.appName = appName;
+        this.defaults = defaults;
     }
 
     @GetMapping("/")
@@ -89,7 +90,8 @@ public class TennisController {
     }
 
     private Page<GameConfig> getConfigPage(Optional<Integer> pageNumber) {
-        Pageable pageable = PageRequest.of(pageNumber.orElse(1) - 1, PAGE_SIZE);
+        int pageSizeConfigured = defaults.getPageSize();
+        Pageable pageable = PageRequest.of(pageNumber.orElse(1) - 1, pageSizeConfigured);
         int pageSize = pageable.getPageSize();
         int currentPage = pageable.getPageNumber();
         int startItem = currentPage * pageSize;
@@ -106,15 +108,15 @@ public class TennisController {
     private void setupInitialConfigFilter() {
         configFilter = new ConfigFilter();
         Attributes minAttributes = new Attributes();
-        minAttributes.setAgility(90);
-        minAttributes.setEndurance(50);
-        minAttributes.setService(40);
-        minAttributes.setForehand(80);
-        minAttributes.setBackhand(80);
+        minAttributes.setAgility(defaults.getMinAgility());
+        minAttributes.setEndurance(defaults.getMinEndurance());
+        minAttributes.setService(defaults.getMinService());
+        minAttributes.setForehand(defaults.getMinForehand());
+        minAttributes.setBackhand(defaults.getMinBackhand());
         configFilter.setMinAttributes(minAttributes);
-        configFilter.setMinTotal(350);
-        configFilter.setUpgradeAllowed(0);
-        configFilter.setMaxLevel(15);
+        configFilter.setMinTotal(defaults.getMinTotal());
+        configFilter.setUpgradeAllowed(defaults.getUpgradeAllowed());
+        configFilter.setMaxLevel(defaults.getMaxLevel());
     }
 
     private Attributes computeMaxAttributes(List<GameConfig> gameConfigs) {

@@ -1,12 +1,16 @@
 package com.sweber.tennis.service;
 
+import com.sweber.tennis.config.CsvProperties;
 import com.sweber.tennis.model.config.Attributes;
 import com.sweber.tennis.model.config.Config;
 import com.sweber.tennis.model.gear.GearItem;
 import com.sweber.tennis.model.gear.GearType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -14,25 +18,34 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class GearItemService {
     private static final Logger LOGGER = LoggerFactory.getLogger(GearItemService.class);
-    private static final String GEAR_CSV = "data/gear.csv";
-    private static final String OWNED_GEAR_CSV = "data/owned_gear.csv";
 
-    private final List<GearItem> gearItems;
-    private final List<GearItem> ownedGearItems;
+    private final String gearCsv;
+    private final String ownedGearCsv;
+
+    private List<GearItem> gearItems;
     // Cache owned levels for O(1) lookup. Keyed by "<GEAR_TYPE>:<GENERIC_NAME>" to avoid collisions.
     private final Map<String, Integer> ownedLevelMap = new HashMap<>();
 
-    public GearItemService() throws IOException {
+    // Constructor used by Spring: accept CsvProperties
+    @Autowired
+    public GearItemService(CsvProperties csvProperties) {
+        this.gearCsv = csvProperties.getGear();
+        this.ownedGearCsv = csvProperties.getOwnedGear();
+        try {
+            init();
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to load gear data", e);
+        }
+    }
+
+
+    private void init() throws IOException {
         gearItems = loadGearItems();
         long distinctGearItems = gearItems.stream()
                 .map(GearItem::getName)
@@ -40,13 +53,28 @@ public class GearItemService {
                 .distinct()
                 .count();
         LOGGER.info("Loaded {} configurations for {} different gear items", gearItems.size(), distinctGearItems);
-        ownedGearItems = loadOwnedGearItems();
+        List<GearItem> ownedGearItems = loadOwnedGearItems();
         LOGGER.info("Loaded {} owned gear items", ownedGearItems.size());
+    }
+
+    private Resource resolveResource(String path) {
+        if (path == null) throw new IllegalArgumentException("Resource path must not be null");
+        // If path explicitly references classpath, use ClassPathResource
+        if (path.startsWith("classpath:")) {
+            return new ClassPathResource(path.substring("classpath:".length()));
+        }
+        // If there's a leading ./ or / or it exists on file system, use FileSystemResource
+        java.nio.file.Path fs = java.nio.file.Paths.get(path);
+        if (fs.isAbsolute() || fs.toFile().exists()) {
+            return new FileSystemResource(path);
+        }
+        // Fallback to ClassPathResource for relative paths
+        return new ClassPathResource(path);
     }
 
     private List<GearItem> loadGearItems() throws IOException {
         List<GearItem> gearItemsData = new ArrayList<>();
-        ClassPathResource resource = new ClassPathResource(GEAR_CSV);
+        Resource resource = resolveResource(gearCsv);
         try (InputStream is = resource.getInputStream(); BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
             br.readLine(); // ignore header
             String line = br.readLine();
@@ -62,7 +90,7 @@ public class GearItemService {
 
     private List<GearItem> loadOwnedGearItems() throws IOException {
         List<GearItem> ownedGearItemsData = new ArrayList<>();
-        ClassPathResource resource = new ClassPathResource(OWNED_GEAR_CSV);
+        Resource resource = resolveResource(ownedGearCsv);
         try (InputStream is = resource.getInputStream(); BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
             String line = br.readLine();
             while (line != null) {

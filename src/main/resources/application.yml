@@ -1,0 +1,30 @@
+server:
+  port: ${port:8081}
+  error:
+    path: /error
+    whitelabel:
+      enabled: false
+spring:
+  application:
+    name: The TennisApp
+  thymeleaf:
+    cache: false
+    enabled: true
+    prefix: classpath:/templates/
+    suffix: .html
+application:
+  csv:
+    players: ./data/players.csv
+    gear: ./data/gear.csv
+    ownedPlayers: ./data/owned_players.csv
+    ownedGear: ./data/owned_gear.csv
+  defaults:
+    minAgility: 90
+    minEndurance: 50
+    minService: 40
+    minForehand: 80
+    minBackhand: 80
+    minTotal: 350
+    upgradeAllowed: 0
+    maxLevel: 15
+    pageSize: 100

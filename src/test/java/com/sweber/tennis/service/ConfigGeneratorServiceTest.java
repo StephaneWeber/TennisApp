@@ -34,7 +34,7 @@ class ConfigGeneratorServiceTest {
     @Test
     void testPlayerService() {
         List<Player> players = playerService.leveledPlayers(15);
-        assertThat(players).hasSize(13);
+        assertThat(players).hasSize(17);
 
         int minLevel = 12;
         long count = players.stream().map(playerService::ownedLevel).filter(ownedLevel -> ownedLevel >= minLevel).count();
@@ -63,7 +63,7 @@ class ConfigGeneratorServiceTest {
         System.out.printf("Found %d configs%n", gameConfigs.size());
         System.out.printf("Found in %d ms%n", (end - start));
         assertThat(gameConfigs).hasSize(10970);
-        // 3333 in 8148 ms
+        // 10970 in 190 ms
     }
 
     @Test
@@ -84,6 +84,6 @@ class ConfigGeneratorServiceTest {
         System.out.printf("Found %d configs%n", gameConfigs.size());
         System.out.printf("Found in %d ms%n", (end - start));
         assertThat(gameConfigs).hasSize(1773);
-        // 640 in 11599 ms
+        // 1773 in 10 ms
     }
 }
